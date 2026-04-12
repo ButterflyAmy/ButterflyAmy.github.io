@@ -1,40 +1,782 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>About Me</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TGCF Quiz</title>
   <style>
+    :root {
+      --bg: #0f0a12;
+      --bg-soft: #1a1220;
+      --card: rgba(255, 255, 255, 0.08);
+      --card-strong: rgba(255, 255, 255, 0.14);
+      --text: #fdf7fb;
+      --muted: #d9c7d4;
+      --accent: #ff5f8f;
+      --accent-2: #ffb3c7;
+      --gold: #f8d27a;
+      --correct: #57d18c;
+      --wrong: #ff6a6a;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      background: black;
+      margin: 0;
+      font-family: "Segoe UI", Inter, system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 95, 143, 0.22), transparent 30%),
+        radial-gradient(circle at top right, rgba(248, 210, 122, 0.16), transparent 24%),
+        linear-gradient(160deg, #0a0710, #140d19 45%, #1a1020 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
+      background-size: 28px 28px;
+      opacity: 0.18;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 56px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: center;
+      min-height: 80vh;
+    }
+
+    .hero-card,
+    .quiz-box,
+    .result-box,
+    .info-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      padding: 42px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      color: var(--gold);
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(2.3rem, 5vw, 4.5rem);
+      line-height: 1.03;
+      letter-spacing: -0.03em;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, var(--accent-2), var(--accent), var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.75;
+      max-width: 60ch;
+      margin-bottom: 26px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 14px 22px;
+      font-size: 1rem;
+      font-weight: 700;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #ff7aa6);
       color: white;
-      font-family: Arial;
-      text-align: center;
+      box-shadow: 0 12px 28px rgba(255, 95, 143, 0.28);
     }
 
-    .box {
-      margin-top: 100px;
+    .btn-secondary {
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12);
     }
 
-    img {
-      width: 120px;
+    .visual-wrap {
+      position: relative;
+      min-height: 460px;
+      display: grid;
+      place-items: center;
+    }
+
+    .glow {
+      position: absolute;
+      width: 360px;
+      height: 360px;
       border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,95,143,0.34), transparent 65%);
+      filter: blur(25px);
+      animation: pulse 5s infinite ease-in-out;
+    }
+
+    .moon {
+      position: absolute;
+      top: 40px;
+      right: 40px;
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff8dd, #f4d990 65%, #d2aa50 100%);
+      box-shadow: 0 0 40px rgba(248, 210, 122, 0.28);
+      opacity: 0.95;
+    }
+
+    .floating-card {
+      position: relative;
+      width: min(100%, 390px);
+      padding: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      transform: rotate(-3deg);
+      animation: float 4.2s infinite ease-in-out;
+      overflow: hidden;
+    }
+
+    .floating-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.08), transparent 70%);
+      transform: rotate(25deg);
+      animation: shine 5s linear infinite;
+    }
+
+    .card-label {
+      font-size: 0.9rem;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .card-sub {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .section-title {
+      text-align: center;
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 3.4vw, 3rem);
+    }
+
+    .section-sub {
+      text-align: center;
+      color: var(--muted);
+      margin: 0 auto 28px;
+      max-width: 700px;
+      line-height: 1.7;
+    }
+
+    .quiz-section {
+      margin-top: 30px;
+      padding-top: 24px;
+    }
+
+    .quiz-box,
+    .result-box {
+      padding: 28px;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .progress-wrap {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--gold));
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    .score-pill {
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      color: var(--gold);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .question {
+      font-size: 1.55rem;
+      font-weight: 800;
+      margin: 18px 0 22px;
+      line-height: 1.4;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .answer-btn {
+      text-align: left;
+      width: 100%;
+      padding: 18px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+      font-size: 1rem;
+      line-height: 1.5;
+      font-weight: 600;
+    }
+
+    .answer-btn:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.11);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    .answer-btn.correct {
+      background: rgba(87, 209, 140, 0.16);
+      border-color: rgba(87, 209, 140, 0.7);
+    }
+
+    .answer-btn.wrong {
+      background: rgba(255, 106, 106, 0.14);
+      border-color: rgba(255, 106, 106, 0.7);
+    }
+
+    .answer-btn:disabled {
+      cursor: default;
+      opacity: 0.95;
+    }
+
+    .feedback {
+      min-height: 28px;
+      margin-top: 18px;
+      font-weight: 700;
+      color: var(--accent-2);
+    }
+
+    .next-wrap {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .result-box {
+      text-align: center;
+      margin-top: 18px;
+    }
+
+    .result-emoji {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+
+    .result-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .result-text {
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 650px;
+      margin: 0 auto 22px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 28px;
+    }
+
+    .info-card {
+      padding: 22px;
+    }
+
+    .info-card h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    .info-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    footer {
+      text-align: center;
+      color: rgba(255,255,255,0.65);
+      padding: 34px 10px 10px;
+      font-size: 0.95rem;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(-3deg); }
+      50% { transform: translateY(-10px) rotate(-2deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.07); opacity: 1; }
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-120%) rotate(25deg); }
+      100% { transform: translateX(180%) rotate(25deg); }
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        padding-top: 12px;
+      }
+
+      .visual-wrap {
+        min-height: 340px;
+      }
+
+      .answers {
+        grid-template-columns: 1fr;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 20px, 1100px);
+        padding-top: 20px;
+      }
+
+      .hero-card,
+      .quiz-box,
+      .result-box,
+      .info-card {
+        padding: 20px;
+        border-radius: 20px;
+      }
+
+      h1 {
+        font-size: 2.3rem;
+      }
+
+      .question {
+        font-size: 1.25rem;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
-
 <body>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">✦ Heaven Official’s Blessing fan page</div>
+        <h1>
+          A little <span class="gradient-text">TGCF dream</span><br />
+          for your GitHub site
+        </h1>
+        <p>
+          Enter a soft, glowing world inspired by <strong>Tian Guan Ci Fu</strong>.
+          Test your knowledge, enjoy the mood, and get a fun result at the end.
+          This page is made as a stylish fan quiz with a romantic fantasy vibe.
+        </p>
 
-<div class="box">
-  <img src="https://via.placeholder.com/150">
-  
-  <h1>ButterflyAmy</h1>
-  
-  <p>hi, this is my page</p>
+        <div class="hero-buttons">
+          <a href="#quiz" class="btn btn-primary">Start the quiz</a>
+          <button class="btn btn-secondary" onclick="scrollToInfo()">About this page</button>
+        </div>
+      </div>
 
-  <h3>🎵 artists i like</h3>
-  <p>NewJeans, BTS, etc.</p>
+      <div class="visual-wrap">
+        <div class="glow"></div>
+        <div class="moon"></div>
 
-  <h3>💭 about me</h3>
-  <p>write whatever you want here</p>
-</div>
+        <div class="floating-card">
+          <div class="card-label">Crimson rain, silver butterflies, devotion eternal</div>
+          <div class="card-title">TGCF Quiz</div>
+          <div class="card-sub">
+            Beautiful UI, soft glow effects, interactive questions, and a final result
+            that feels like a little character card.
+          </div>
+        </div>
+      </div>
+    </section>
 
+    <section id="quiz" class="quiz-section">
+      <h2 class="section-title">How well do you know TGCF?</h2>
+      <p class="section-sub">
+        Pick the answer you think is right. The score updates as you go.
+      </p>
+
+      <div class="quiz-box" id="quizBox">
+        <div class="top-row">
+          <div class="progress-wrap">
+            <div id="progressText">Question 1 of 7</div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+          </div>
+          <div class="score-pill" id="scoreDisplay">Score: 0</div>
+        </div>
+
+        <div class="question" id="questionText"></div>
+        <div class="answers" id="answersContainer"></div>
+        <div class="feedback" id="feedbackText"></div>
+
+        <div class="next-wrap">
+          <button class="btn btn-primary hidden" id="nextBtn">Next question</button>
+        </div>
+      </div>
+
+      <div class="result-box hidden" id="resultBox">
+        <div class="result-emoji" id="resultEmoji">🌸</div>
+        <div class="result-title" id="resultTitle"></div>
+        <p class="result-text" id="resultText"></p>
+        <button class="btn btn-primary" onclick="restartQuiz()">Play again</button>
+      </div>
+    </section>
+
+    <section id="info" style="margin-top: 34px;">
+      <h2 class="section-title">Why this page looks so pretty</h2>
+      <p class="section-sub">
+        The style uses soft glow, glassmorphism, gradients, rounded cards, and a romantic dark palette.
+      </p>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Fantasy mood</h3>
+          <p>
+            The colors are built around rose pink, gold, and deep plum tones to match a dreamy,
+            divine, and emotional atmosphere.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Interactive design</h3>
+          <p>
+            The quiz responds instantly, highlights correct and wrong answers, and shows a themed
+            final message based on your score.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>GitHub Pages friendly</h3>
+          <p>
+            Everything is inside one file, so you can paste it straight into your existing
+            <code>index.html</code> and publish it easily.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Made as a fan-style TGCF themed webpage. Not an official site.
+    </footer>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "What is Xie Lian best known as at the start of the story?",
+        answers: [
+          "A feared ghost king",
+          "A heavenly official who has ascended multiple times",
+          "A dragon prince",
+          "A mortal scholar"
+        ],
+        correct: 1
+      },
+      {
+        question: "Which title is strongly associated with Hua Cheng?",
+        answers: [
+          "Wind Master",
+          "Crimson Rain Sought Flower",
+          "Water Tyrant",
+          "White No-Face"
+        ],
+        correct: 1
+      },
+      {
+        question: "What symbol is famously connected to Hua Cheng’s presence?",
+        answers: [
+          "Silver butterflies",
+          "Golden bells",
+          "Jade birds",
+          "Red lantern fish"
+        ],
+        correct: 0
+      },
+      {
+        question: "What is one of Xie Lian’s most defining traits?",
+        answers: [
+          "Cruel ambition",
+          "Cold indifference",
+          "Kindness and endurance",
+          "Pride above all else"
+        ],
+        correct: 2
+      },
+      {
+        question: "What kind of relationship dynamic is central to TGCF?",
+        answers: [
+          "Rivals forced into battle forever",
+          "A bond shaped by devotion, faith, and waiting",
+          "A political alliance between kingdoms",
+          "A mentor and student story only"
+        ],
+        correct: 1
+      },
+      {
+        question: "What is a major vibe of TGCF as a story?",
+        answers: [
+          "Pure comedy with no emotional stakes",
+          "Romantic fantasy with tragedy, loyalty, and hope",
+          "Hard sci-fi warfare",
+          "Slice-of-life school drama"
+        ],
+        correct: 1
+      },
+      {
+        question: "Which answer best matches Hua Cheng’s feelings toward Xie Lian?",
+        answers: [
+          "Temporary curiosity",
+          "Jealous hatred",
+          "Deep, unwavering devotion",
+          "Total indifference"
+        ],
+        correct: 2
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let answered = false;
+
+    const questionText = document.getElementById("questionText");
+    const answersContainer = document.getElementById("answersContainer");
+    const feedbackText = document.getElementById("feedbackText");
+    const nextBtn = document.getElementById("nextBtn");
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const progressText = document.getElementById("progressText");
+    const progressFill = document.getElementById("progressFill");
+    const quizBox = document.getElementById("quizBox");
+    const resultBox = document.getElementById("resultBox");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultText = document.getElementById("resultText");
+    const resultEmoji = document.getElementById("resultEmoji");
+
+    function loadQuestion() {
+      answered = false;
+      nextBtn.classList.add("hidden");
+      feedbackText.textContent = "";
+
+      const item = quizData[currentQuestion];
+      questionText.textContent = item.question;
+      answersContainer.innerHTML = "";
+
+      progressText.textContent = `Question ${currentQuestion + 1} of ${quizData.length}`;
+      progressFill.style.width = `${(currentQuestion / quizData.length) * 100}%`;
+      scoreDisplay.textContent = `Score: ${score}`;
+
+      item.answers.forEach((answer, index) => {
+        const button = document.createElement("button");
+        button.className = "answer-btn";
+        button.textContent = answer;
+        button.addEventListener("click", () => handleAnswer(index, button));
+        answersContainer.appendChild(button);
+      });
+    }
+
+    function handleAnswer(selectedIndex, clickedButton) {
+      if (answered) return;
+      answered = true;
+
+      const item = quizData[currentQuestion];
+      const buttons = document.querySelectorAll(".answer-btn");
+
+      buttons.forEach((btn, index) => {
+        btn.disabled = true;
+
+        if (index === item.correct) {
+          btn.classList.add("correct");
+        }
+
+        if (index === selectedIndex && index !== item.correct) {
+          btn.classList.add("wrong");
+        }
+      });
+
+      if (selectedIndex === item.correct) {
+        score++;
+        feedbackText.textContent = "Correct ✨";
+      } else {
+        feedbackText.textContent = `Not quite — the right answer was: ${item.answers[item.correct]}`;
+      }
+
+      scoreDisplay.textContent = `Score: ${score}`;
+      nextBtn.classList.remove("hidden");
+    }
+
+    nextBtn.addEventListener("click", () => {
+      currentQuestion++;
+
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    });
+
+    function showResults() {
+      quizBox.classList.add("hidden");
+      resultBox.classList.remove("hidden");
+      progressFill.style.width = "100%";
+
+      let title = "";
+      let text = "";
+      let emoji = "";
+
+      if (score === quizData.length) {
+        title = "You are blessed by the heavens";
+        text = "Perfect score. You clearly know the heart of TGCF: devotion, sorrow, beauty, and hope. This is Hua Cheng-level loyalty to the story.";
+        emoji = "👑";
+      } else if (score >= 5) {
+        title = "A devoted disciple of TGCF";
+        text = "You did really well. You know the major themes, characters, and emotional core of the story. Very elegant, very correct.";
+        emoji = "🦋";
+      } else if (score >= 3) {
+        title = "You walk the path with promise";
+        text = "You know some important TGCF details already. A reread or rewatch and you will ascend immediately.";
+        emoji = "🌙";
+      } else {
+        title = "A curious mortal at the gates of heaven";
+        text = "You may be new, but the vibe is there. This is your sign to dive deeper into TGCF and fall in love with the story all over again.";
+        emoji = "🌸";
+      }
+
+      resultTitle.textContent = `${title} — ${score}/${quizData.length}`;
+      resultText.textContent = text;
+      resultEmoji.textContent = emoji;
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      quizBox.classList.remove("hidden");
+      resultBox.classList.add("hidden");
+      loadQuestion();
+      document.getElementById("quiz").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function scrollToInfo() {
+      document.getElementById("info").scrollIntoView({ behavior: "smooth" });
+    }
+
+    loadQuestion();
+  </script>
 </body>
 </html>
