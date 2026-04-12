@@ -3,22 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TGCF Quiz</title>
+  <title>TGCF Delusional Friend Quiz</title>
   <style>
     :root {
-      --bg: #0f0a12;
-      --bg-soft: #1a1220;
-      --card: rgba(255, 255, 255, 0.08);
-      --card-strong: rgba(255, 255, 255, 0.14);
-      --text: #fdf7fb;
-      --muted: #d9c7d4;
-      --accent: #ff5f8f;
-      --accent-2: #ffb3c7;
-      --gold: #f8d27a;
-      --correct: #57d18c;
-      --wrong: #ff6a6a;
-      --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-      --radius: 24px;
+      --bg1: #090510;
+      --bg2: #140a1d;
+      --bg3: #1b1024;
+      --card: rgba(255,255,255,0.08);
+      --card-border: rgba(255,255,255,0.15);
+      --text: #fff7fb;
+      --muted: #d9c9d5;
+      --pink: #ff77a8;
+      --pink-soft: #ffc1d5;
+      --gold: #f4d47b;
+      --lav: #bda7ff;
+      --correct: #68d79b;
+      --wrong: #ff7a7a;
+      --shadow: 0 20px 60px rgba(0,0,0,0.4);
+      --radius: 28px;
     }
 
     * {
@@ -33,48 +35,83 @@
       margin: 0;
       font-family: "Segoe UI", Inter, system-ui, sans-serif;
       color: var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(255, 95, 143, 0.22), transparent 30%),
-        radial-gradient(circle at top right, rgba(248, 210, 122, 0.16), transparent 24%),
-        linear-gradient(160deg, #0a0710, #140d19 45%, #1a1020 100%);
       min-height: 100vh;
       overflow-x: hidden;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255,119,168,0.18), transparent 20%),
+        radial-gradient(circle at 80% 10%, rgba(244,212,123,0.18), transparent 18%),
+        radial-gradient(circle at 50% 80%, rgba(189,167,255,0.12), transparent 24%),
+        linear-gradient(145deg, var(--bg1), var(--bg2) 45%, var(--bg3));
+      position: relative;
     }
 
     body::before {
       content: "";
       position: fixed;
       inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
-      background-size: 28px 28px;
+      background: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size: 30px 30px;
       opacity: 0.18;
+      pointer-events: none;
       z-index: 0;
     }
 
     .page {
+      width: min(1160px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 26px 0 52px;
       position: relative;
       z-index: 1;
-      width: min(1100px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 32px 0 56px;
+    }
+
+    .music-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 30;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.09);
+      color: white;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .music-btn:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.14);
+    }
+
+    .music-tip {
+      position: fixed;
+      top: 68px;
+      right: 16px;
+      z-index: 30;
+      font-size: 0.88rem;
+      color: var(--muted);
+      background: rgba(0,0,0,0.24);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 8px 12px;
+      border-radius: 999px;
+      backdrop-filter: blur(10px);
     }
 
     .hero {
+      min-height: 92vh;
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 28px;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 30px;
       align-items: center;
-      min-height: 80vh;
     }
 
-    .hero-card,
-    .quiz-box,
-    .result-box,
-    .info-card {
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,0.12);
+    .glass {
+      background: rgba(255,255,255,0.075);
+      border: 1px solid var(--card-border);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-radius: var(--radius);
@@ -83,30 +120,43 @@
 
     .hero-card {
       padding: 42px;
+      animation: fadeUp 1s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: auto -20% -35% auto;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,119,168,0.18), transparent 65%);
+      filter: blur(10px);
+      pointer-events: none;
     }
 
     .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
+      display: inline-block;
+      padding: 9px 14px;
       border-radius: 999px;
       background: rgba(255,255,255,0.08);
       color: var(--gold);
-      font-size: 0.9rem;
-      letter-spacing: 0.04em;
+      font-weight: 700;
       margin-bottom: 18px;
+      font-size: 0.92rem;
     }
 
     h1 {
       margin: 0 0 14px;
-      font-size: clamp(2.3rem, 5vw, 4.5rem);
-      line-height: 1.03;
-      letter-spacing: -0.03em;
+      font-size: clamp(2.4rem, 5.5vw, 5rem);
+      line-height: 1;
+      letter-spacing: -0.04em;
     }
 
-    .gradient-text {
-      background: linear-gradient(90deg, var(--accent-2), var(--accent), var(--gold));
+    .grad {
+      background: linear-gradient(90deg, var(--pink-soft), var(--pink), var(--gold));
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
@@ -114,8 +164,8 @@
 
     .hero p {
       color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.75;
+      line-height: 1.8;
+      font-size: 1.08rem;
       max-width: 60ch;
       margin-bottom: 26px;
     }
@@ -128,12 +178,16 @@
 
     .btn {
       border: none;
-      cursor: pointer;
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 14px 22px;
       font-size: 1rem;
-      font-weight: 700;
-      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn:hover {
@@ -141,116 +195,138 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--accent), #ff7aa6);
       color: white;
-      box-shadow: 0 12px 28px rgba(255, 95, 143, 0.28);
+      background: linear-gradient(135deg, var(--pink), #ff8eb7);
+      box-shadow: 0 16px 34px rgba(255,119,168,0.25);
     }
 
     .btn-secondary {
+      color: white;
       background: rgba(255,255,255,0.08);
-      color: var(--text);
       border: 1px solid rgba(255,255,255,0.12);
     }
 
     .visual-wrap {
+      min-height: 480px;
       position: relative;
-      min-height: 460px;
       display: grid;
       place-items: center;
-    }
-
-    .glow {
-      position: absolute;
-      width: 360px;
-      height: 360px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,95,143,0.34), transparent 65%);
-      filter: blur(25px);
-      animation: pulse 5s infinite ease-in-out;
+      animation: fadeUp 1.3s ease;
     }
 
     .moon {
       position: absolute;
-      top: 40px;
-      right: 40px;
-      width: 88px;
-      height: 88px;
+      top: 24px;
+      right: 64px;
+      width: 118px;
+      height: 118px;
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 30%, #fff8dd, #f4d990 65%, #d2aa50 100%);
-      box-shadow: 0 0 40px rgba(248, 210, 122, 0.28);
-      opacity: 0.95;
+      background: radial-gradient(circle at 35% 30%, #fff7d8, #f4d47b 70%, #caa44b 100%);
+      box-shadow:
+        0 0 30px rgba(244,212,123,0.35),
+        0 0 80px rgba(244,212,123,0.18);
+      animation: pulse 5s ease-in-out infinite;
     }
 
-    .floating-card {
+    .glow {
+      position: absolute;
+      width: 380px;
+      height: 380px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,119,168,0.28), transparent 66%);
+      filter: blur(24px);
+      animation: pulse 6s ease-in-out infinite;
+    }
+
+    .float-card {
       position: relative;
-      width: min(100%, 390px);
-      padding: 28px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+      width: min(100%, 460px);
+      padding: 34px;
+      border-radius: 32px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.13), rgba(255,255,255,0.06));
       border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 28px;
       box-shadow: var(--shadow);
-      transform: rotate(-3deg);
-      animation: float 4.2s infinite ease-in-out;
+      transform: rotate(-4deg);
       overflow: hidden;
+      animation: floatCard 5s ease-in-out infinite;
     }
 
-    .floating-card::before {
+    .float-card::before {
       content: "";
       position: absolute;
-      inset: -40%;
-      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.08), transparent 70%);
-      transform: rotate(25deg);
-      animation: shine 5s linear infinite;
+      inset: -45%;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.1), transparent 70%);
+      transform: rotate(20deg);
+      animation: shine 6s linear infinite;
     }
 
-    .card-label {
-      font-size: 0.9rem;
+    .float-small {
       color: var(--gold);
-      margin-bottom: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
     }
 
-    .card-title {
-      font-size: 2rem;
-      font-weight: 800;
-      margin-bottom: 10px;
+    .float-title {
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
     }
 
-    .card-sub {
+    .float-text {
       color: var(--muted);
-      line-height: 1.7;
+      font-size: 1.08rem;
+      line-height: 1.75;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section {
+      margin-top: 20px;
     }
 
     .section-title {
       text-align: center;
+      font-size: clamp(2rem, 4vw, 4rem);
       margin: 0 0 10px;
-      font-size: clamp(1.8rem, 3.4vw, 3rem);
+      line-height: 1.05;
     }
 
     .section-sub {
       text-align: center;
       color: var(--muted);
+      max-width: 760px;
       margin: 0 auto 28px;
-      max-width: 700px;
-      line-height: 1.7;
+      line-height: 1.8;
+      font-size: 1.04rem;
     }
 
-    .quiz-section {
-      margin-top: 30px;
-      padding-top: 24px;
-    }
-
-    .quiz-box,
-    .result-box {
+    .quiz-box, .result-box, .extra-card {
       padding: 28px;
+      background: rgba(255,255,255,0.075);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .quiz-box {
+      animation: fadeUp 0.9s ease;
     }
 
     .top-row {
       display: flex;
       justify-content: space-between;
-      gap: 16px;
       align-items: center;
-      margin-bottom: 20px;
+      gap: 16px;
       flex-wrap: wrap;
+      margin-bottom: 20px;
     }
 
     .progress-wrap {
@@ -258,37 +334,42 @@
       min-width: 220px;
     }
 
+    .progress-label {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
     .progress-bar {
       width: 100%;
       height: 12px;
       background: rgba(255,255,255,0.08);
       border-radius: 999px;
-      overflow: hidden;
       margin-top: 8px;
+      overflow: hidden;
     }
 
     .progress-fill {
-      height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, var(--accent), var(--gold));
+      height: 100%;
       border-radius: 999px;
+      background: linear-gradient(90deg, var(--pink), var(--gold), var(--lav));
       transition: width 0.3s ease;
     }
 
     .score-pill {
       padding: 10px 16px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.08);
+      font-weight: 800;
       color: var(--gold);
-      font-weight: 700;
-      white-space: nowrap;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
     }
 
     .question {
-      font-size: 1.55rem;
-      font-weight: 800;
-      margin: 18px 0 22px;
+      font-size: clamp(1.35rem, 2vw, 1.8rem);
       line-height: 1.4;
+      font-weight: 900;
+      margin: 18px 0 22px;
     }
 
     .answers {
@@ -298,46 +379,47 @@
     }
 
     .answer-btn {
-      text-align: left;
       width: 100%;
-      padding: 18px 18px;
-      border-radius: 18px;
+      text-align: left;
+      padding: 18px;
+      border-radius: 20px;
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(255,255,255,0.06);
-      color: var(--text);
+      color: white;
       cursor: pointer;
-      transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
       font-size: 1rem;
-      line-height: 1.5;
-      font-weight: 600;
+      font-weight: 700;
+      line-height: 1.55;
+      transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+      animation: fadeUp 0.4s ease;
     }
 
     .answer-btn:hover {
-      transform: translateY(-2px);
-      background: rgba(255,255,255,0.11);
-      border-color: rgba(255,255,255,0.2);
+      transform: translateY(-2px) scale(1.01);
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.18);
     }
 
     .answer-btn.correct {
-      background: rgba(87, 209, 140, 0.16);
-      border-color: rgba(87, 209, 140, 0.7);
+      background: rgba(104,215,155,0.15);
+      border-color: rgba(104,215,155,0.7);
     }
 
     .answer-btn.wrong {
-      background: rgba(255, 106, 106, 0.14);
-      border-color: rgba(255, 106, 106, 0.7);
+      background: rgba(255,122,122,0.14);
+      border-color: rgba(255,122,122,0.7);
     }
 
     .answer-btn:disabled {
       cursor: default;
-      opacity: 0.95;
+      opacity: 0.96;
     }
 
     .feedback {
-      min-height: 28px;
+      min-height: 30px;
       margin-top: 18px;
-      font-weight: 700;
-      color: var(--accent-2);
+      font-weight: 800;
+      color: var(--pink-soft);
     }
 
     .next-wrap {
@@ -353,111 +435,230 @@
     .result-box {
       text-align: center;
       margin-top: 18px;
+      animation: fadeUp 0.9s ease;
     }
 
     .result-emoji {
-      font-size: 3rem;
+      font-size: 3.3rem;
       margin-bottom: 10px;
+      animation: pulse 3s ease-in-out infinite;
     }
 
     .result-title {
-      font-size: 2rem;
-      font-weight: 800;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 900;
       margin-bottom: 12px;
     }
 
     .result-text {
       color: var(--muted);
       line-height: 1.8;
-      max-width: 650px;
+      max-width: 720px;
       margin: 0 auto 22px;
+      font-size: 1.04rem;
     }
 
-    .info-grid {
+    .extras {
+      margin-top: 34px;
+    }
+
+    .extras-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 18px;
-      margin-top: 28px;
     }
 
-    .info-card {
-      padding: 22px;
+    .extra-card h3 {
+      margin: 0 0 10px;
+      font-size: 1.4rem;
     }
 
-    .info-card h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      font-size: 1.1rem;
-    }
-
-    .info-card p {
+    .extra-card p {
       margin: 0;
       color: var(--muted);
-      line-height: 1.7;
+      line-height: 1.8;
     }
 
     footer {
       text-align: center;
-      color: rgba(255,255,255,0.65);
+      color: rgba(255,255,255,0.7);
       padding: 34px 10px 10px;
-      font-size: 0.95rem;
+      font-size: 0.96rem;
     }
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(-3deg); }
-      50% { transform: translateY(-10px) rotate(-2deg); }
+    .sparkles,
+    .petals,
+    .butterflies {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 0 10px rgba(255,255,255,0.8);
+      animation: twinkle ease-in-out infinite;
+    }
+
+    .petal {
+      position: absolute;
+      top: -40px;
+      width: 18px;
+      height: 12px;
+      background: linear-gradient(135deg, #ffd7e4, #ff8fb5);
+      border-radius: 70% 30% 70% 30%;
+      opacity: 0.82;
+      animation: fall linear infinite;
+      filter: blur(0.1px);
+    }
+
+    .butterfly {
+      position: absolute;
+      top: -80px;
+      font-size: 18px;
+      color: rgba(220, 230, 255, 0.95);
+      text-shadow:
+        0 0 8px rgba(255,255,255,0.65),
+        0 0 18px rgba(189,167,255,0.5);
+      animation: butterflyFlight linear infinite;
+      opacity: 0.95;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes twinkle {
+      0%, 100% {
+        opacity: 0.25;
+        transform: scale(0.7);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.5);
+      }
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-40px) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.9;
+      }
+      100% {
+        transform: translateY(110vh) translateX(90px) rotate(380deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes butterflyFlight {
+      0% {
+        transform: translateY(-80px) translateX(0px) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.95;
+      }
+      25% {
+        transform: translateY(20vh) translateX(30px) rotate(8deg);
+      }
+      50% {
+        transform: translateY(45vh) translateX(-25px) rotate(-7deg);
+      }
+      75% {
+        transform: translateY(75vh) translateX(35px) rotate(6deg);
+      }
+      100% {
+        transform: translateY(115vh) translateX(-18px) rotate(-4deg);
+        opacity: 0;
+      }
     }
 
     @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 0.9; }
-      50% { transform: scale(1.07); opacity: 1; }
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.95;
+      }
+      50% {
+        transform: scale(1.06);
+        opacity: 1;
+      }
+    }
+
+    @keyframes floatCard {
+      0%, 100% {
+        transform: translateY(0) rotate(-4deg);
+      }
+      50% {
+        transform: translateY(-12px) rotate(-2.8deg);
+      }
     }
 
     @keyframes shine {
-      0% { transform: translateX(-120%) rotate(25deg); }
-      100% { transform: translateX(180%) rotate(25deg); }
+      0% {
+        transform: translateX(-120%) rotate(20deg);
+      }
+      100% {
+        transform: translateX(180%) rotate(20deg);
+      }
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 920px) {
       .hero {
         grid-template-columns: 1fr;
         min-height: auto;
-        padding-top: 12px;
+        padding-top: 64px;
       }
 
       .visual-wrap {
-        min-height: 340px;
+        min-height: 360px;
       }
 
-      .answers {
+      .answers,
+      .extras-grid {
         grid-template-columns: 1fr;
       }
 
-      .info-grid {
-        grid-template-columns: 1fr;
+      .moon {
+        right: 30px;
       }
     }
 
     @media (max-width: 560px) {
       .page {
-        width: min(100% - 20px, 1100px);
-        padding-top: 20px;
+        width: min(100% - 20px, 1160px);
+        padding-top: 16px;
       }
 
       .hero-card,
       .quiz-box,
       .result-box,
-      .info-card {
+      .extra-card {
         padding: 20px;
-        border-radius: 20px;
+        border-radius: 22px;
       }
 
-      h1 {
-        font-size: 2.3rem;
+      .float-card {
+        padding: 24px;
       }
 
-      .question {
-        font-size: 1.25rem;
+      .float-title {
+        font-size: 2.2rem;
       }
 
       .btn {
@@ -471,23 +672,34 @@
   </style>
 </head>
 <body>
+  <div class="sparkles" id="sparkles"></div>
+  <div class="petals" id="petals"></div>
+  <div class="butterflies" id="butterflies"></div>
+
+  <button class="music-btn" id="musicBtn">♫ Play music</button>
+  <div class="music-tip">Click once. Browsers usually block autoplay.</div>
+
+  <audio id="bgMusic" loop>
+    <source src="say yes to heaven.mp3" type="audio/mpeg">
+  </audio>
+
   <div class="page">
     <section class="hero">
-      <div class="hero-card">
-        <div class="eyebrow">✦ Heaven Official’s Blessing fan page</div>
+      <div class="hero-card glass">
+        <div class="eyebrow">Silver butterflies, delusions, and pure correctness</div>
         <h1>
-          A little <span class="gradient-text">TGCF dream</span><br />
-          for your GitHub site
+          The <span class="grad">TGCF Delusional</span><br />
+          Friend Quiz
         </h1>
         <p>
-          Enter a soft, glowing world inspired by <strong>Tian Guan Ci Fu</strong>.
-          Test your knowledge, enjoy the mood, and get a fun result at the end.
-          This page is made as a stylish fan quiz with a romantic fantasy vibe.
+          This is a dramatic, dreamy, mildly evil little quiz for your friend.
+          It has glowing glass cards, music, falling petals, silver butterflies,
+          and enough delusion to bless the heavens.
         </p>
 
         <div class="hero-buttons">
-          <a href="#quiz" class="btn btn-primary">Start the quiz</a>
-          <button class="btn btn-secondary" onclick="scrollToInfo()">About this page</button>
+          <a href="#quiz" class="btn btn-primary">Start the chaos</a>
+          <button class="btn btn-secondary" onclick="scrollToExtras()">Why is this so pretty?</button>
         </div>
       </div>
 
@@ -495,27 +707,26 @@
         <div class="glow"></div>
         <div class="moon"></div>
 
-        <div class="floating-card">
-          <div class="card-label">Crimson rain, silver butterflies, devotion eternal</div>
-          <div class="card-title">TGCF Quiz</div>
-          <div class="card-sub">
-            Beautiful UI, soft glow effects, interactive questions, and a final result
-            that feels like a little character card.
+        <div class="float-card">
+          <div class="float-small">Crimson rain, silver butterflies, devotion eternal</div>
+          <div class="float-title">TGCF Quiz</div>
+          <div class="float-text">
+            Hua Cheng is perfect, the vibes are immaculate, and this website fully supports dramatic friendship warfare.
           </div>
         </div>
       </div>
     </section>
 
-    <section id="quiz" class="quiz-section">
-      <h2 class="section-title">How well do you know TGCF?</h2>
+    <section class="section" id="quiz">
+      <h2 class="section-title">Answer honestly. Or lie beautifully.</h2>
       <p class="section-sub">
-        Pick the answer you think is right. The score updates as you go.
+        Pick the correct answer and prove you are not tragically wrong.
       </p>
 
       <div class="quiz-box" id="quizBox">
         <div class="top-row">
           <div class="progress-wrap">
-            <div id="progressText">Question 1 of 7</div>
+            <div class="progress-label" id="progressText">Question 1 of 8</div>
             <div class="progress-bar">
               <div class="progress-fill" id="progressFill"></div>
             </div>
@@ -533,122 +744,129 @@
       </div>
 
       <div class="result-box hidden" id="resultBox">
-        <div class="result-emoji" id="resultEmoji">🌸</div>
+        <div class="result-emoji" id="resultEmoji">🦋</div>
         <div class="result-title" id="resultTitle"></div>
         <p class="result-text" id="resultText"></p>
         <button class="btn btn-primary" onclick="restartQuiz()">Play again</button>
       </div>
     </section>
 
-    <section id="info" style="margin-top: 34px;">
-      <h2 class="section-title">Why this page looks so pretty</h2>
+    <section class="extras" id="extras">
+      <h2 class="section-title">Why this page is objectively superior</h2>
       <p class="section-sub">
-        The style uses soft glow, glassmorphism, gradients, rounded cards, and a romantic dark palette.
+        Because it is smart, because Xie Lian is better than your wife, and because the website is aggressively fruity.
       </p>
 
-      <div class="info-grid">
-        <div class="info-card">
-          <h3>Fantasy mood</h3>
+      <div class="extras-grid">
+        <div class="extra-card">
+          <h3>Because I am smart</h3>
           <p>
-            The colors are built around rose pink, gold, and deep plum tones to match a dreamy,
-            divine, and emotional atmosphere.
+            The design uses dreamy gradients, soft glow, glassmorphism, rounded cards, and fantasy lighting like a proper dramatic shrine.
           </p>
         </div>
 
-        <div class="info-card">
-          <h3>Interactive design</h3>
+        <div class="extra-card">
+          <h3>Because Xie Lian is better than your wife</h3>
           <p>
-            The quiz responds instantly, highlights correct and wrong answers, and shows a themed
-            final message based on your score.
+            The page is polished, animated, and built to look like a soft heavenly fever dream with just enough chaos.
           </p>
         </div>
 
-        <div class="info-card">
-          <h3>GitHub Pages friendly</h3>
+        <div class="extra-card">
+          <h3>Because ur gay</h3>
           <p>
-            Everything is inside one file, so you can paste it straight into your existing
-            <code>index.html</code> and publish it easily.
+            There are petals, sparkles, silver butterflies, glowing effects, and background music. The allegations are not helping.
           </p>
         </div>
       </div>
     </section>
 
     <footer>
-      Made as a fan-style TGCF themed webpage. Not an official site.
+      Made for friendship violence, TGCF delusions, and silver butterfly supremacy.
     </footer>
   </div>
 
   <script>
     const quizData = [
       {
-        question: "What is Xie Lian best known as at the start of the story?",
+        question: "Why does Maryam hate Hua Cheng?",
         answers: [
-          "A feared ghost king",
-          "A heavenly official who has ascended multiple times",
-          "A dragon prince",
-          "A mortal scholar"
+          "He is too manly",
+          "She thinks he is obsessed",
+          "She just says that because she “hates” everyone Amina likes",
+          "She secretly likes him"
+        ],
+        correct: 3
+      },
+      {
+        question: "Who is Sunnita’s favorite character?",
+        answers: [
+          "Hua Cheng",
+          "San Lang",
+          "Xie Lian",
+          "Mu Qing"
         ],
         correct: 1
       },
       {
-        question: "Which title is strongly associated with Hua Cheng?",
+        question: "Did Maryam spoil almost everything?",
         answers: [
-          "Wind Master",
-          "Crimson Rain Sought Flower",
-          "Water Tyrant",
-          "White No-Face"
+          "Nuh uh",
+          "Yea...",
+          "Amina already knew everything",
+          "Yes, absolutely"
         ],
-        correct: 1
+        correct: 3
       },
       {
-        question: "What symbol is famously connected to Hua Cheng’s presence?",
+        question: "Who is Amina’s favorite character?",
         answers: [
-          "Silver butterflies",
-          "Golden bells",
-          "Jade birds",
-          "Red lantern fish"
+          "Hua Cheng",
+          "Xie Lian",
+          "White No-Face",
+          "E-Ming"
         ],
-        correct: 0
+        correct: 3
       },
       {
-        question: "What is one of Xie Lian’s most defining traits?",
+        question: "Does Kukushka like gay people?",
         answers: [
-          "Cruel ambition",
-          "Cold indifference",
-          "Kindness and endurance",
-          "Pride above all else"
+          "No????",
+          "I think so",
+          "Yes...",
+          "She HATES them"
         ],
         correct: 2
       },
       {
-        question: "What kind of relationship dynamic is central to TGCF?",
+        question: "MDZS or TGCF??",
         answers: [
-          "Rivals forced into battle forever",
-          "A bond shaped by devotion, faith, and waiting",
-          "A political alliance between kingdoms",
-          "A mentor and student story only"
+          "MDZS",
+          "BOTH",
+          "They are gay",
+          "TGCF baby"
         ],
-        correct: 1
+        correct: 3
       },
       {
-        question: "What is a major vibe of TGCF as a story?",
+        question: "Does Wei Wuxian like Lan Zhan?",
         answers: [
-          "Pure comedy with no emotional stakes",
-          "Romantic fantasy with tragedy, loyalty, and hope",
-          "Hard sci-fi warfare",
-          "Slice-of-life school drama"
+          "Yes ofc",
+          "Noo",
+          "Sunnita liked Lan Zhan...",
+          "No, he just felt bad for him"
         ],
-        correct: 1
+        correct: 3
       },
       {
-        question: "Which answer best matches Hua Cheng’s feelings toward Xie Lian?",
+        question: "Who is Crimson Rain Sought Flower?",
         answers: [
-          "Temporary curiosity",
-          "Jealous hatred",
-          "Deep, unwavering devotion",
-          "Total indifference"
+          "Hong-er",
+          "Adam",
+          "Evangeline Fox",
+          "Klein"
         ],
-        correct: 2
+        correct: 3
       }
     ];
 
@@ -686,12 +904,12 @@
         const button = document.createElement("button");
         button.className = "answer-btn";
         button.textContent = answer;
-        button.addEventListener("click", () => handleAnswer(index, button));
+        button.addEventListener("click", () => handleAnswer(index));
         answersContainer.appendChild(button);
       });
     }
 
-    function handleAnswer(selectedIndex, clickedButton) {
+    function handleAnswer(selectedIndex) {
       if (answered) return;
       answered = true;
 
@@ -712,9 +930,9 @@
 
       if (selectedIndex === item.correct) {
         score++;
-        feedbackText.textContent = "Correct ✨";
+        feedbackText.textContent = "Correct. Finally some intelligence.";
       } else {
-        feedbackText.textContent = `Not quite — the right answer was: ${item.answers[item.correct]}`;
+        feedbackText.textContent = `Wrong. The correct answer was: ${item.answers[item.correct]}`;
       }
 
       scoreDisplay.textContent = `Score: ${score}`;
@@ -741,20 +959,20 @@
       let emoji = "";
 
       if (score === quizData.length) {
-        title = "You are blessed by the heavens";
-        text = "Perfect score. You clearly know the heart of TGCF: devotion, sorrow, beauty, and hope. This is Hua Cheng-level loyalty to the story.";
+        title = "Heavenly level hater and knower";
+        text = "Perfect score. You are terrifyingly informed, spiritually delusional, and fully worthy of the silver butterflies.";
         emoji = "👑";
-      } else if (score >= 5) {
-        title = "A devoted disciple of TGCF";
-        text = "You did really well. You know the major themes, characters, and emotional core of the story. Very elegant, very correct.";
+      } else if (score >= 6) {
+        title = "Certified TGCF menace";
+        text = "You know exactly what is going on, and worse, you enjoy it. Extremely dangerous energy.";
         emoji = "🦋";
-      } else if (score >= 3) {
-        title = "You walk the path with promise";
-        text = "You know some important TGCF details already. A reread or rewatch and you will ascend immediately.";
+      } else if (score >= 4) {
+        title = "Mildly blessed, mildly delusional";
+        text = "You have enough knowledge to survive this quiz, but there is still room for further heavenly enlightenment.";
         emoji = "🌙";
       } else {
-        title = "A curious mortal at the gates of heaven";
-        text = "You may be new, but the vibe is there. This is your sign to dive deeper into TGCF and fall in love with the story all over again.";
+        title = "Tragically wrong but aesthetically pleasing";
+        text = "The score is unfortunate, but at least the website is beautiful and the music is dramatic.";
         emoji = "🌸";
       }
 
@@ -772,10 +990,90 @@
       document.getElementById("quiz").scrollIntoView({ behavior: "smooth" });
     }
 
-    function scrollToInfo() {
-      document.getElementById("info").scrollIntoView({ behavior: "smooth" });
+    function scrollToExtras() {
+      document.getElementById("extras").scrollIntoView({ behavior: "smooth" });
     }
 
+    const bgMusic = document.getElementById("bgMusic");
+    const musicBtn = document.getElementById("musicBtn");
+    let musicPlaying = false;
+
+    musicBtn.addEventListener("click", async () => {
+      try {
+        if (musicPlaying) {
+          bgMusic.pause();
+          musicBtn.textContent = "♫ Play music";
+        } else {
+          await bgMusic.play();
+          musicBtn.textContent = "♫ Pause music";
+        }
+        musicPlaying = !musicPlaying;
+      } catch (error) {
+        musicBtn.textContent = "Music blocked";
+      }
+    });
+
+    function createSparkles() {
+      const container = document.getElementById("sparkles");
+      for (let i = 0; i < 36; i++) {
+        const s = document.createElement("div");
+        s.className = "sparkle";
+        s.style.left = Math.random() * 100 + "vw";
+        s.style.top = Math.random() * 100 + "vh";
+        s.style.animationDelay = (Math.random() * 5) + "s";
+        s.style.animationDuration = (2.5 + Math.random() * 4) + "s";
+        container.appendChild(s);
+      }
+    }
+
+    function createPetals() {
+      const container = document.getElementById("petals");
+      for (let i = 0; i < 18; i++) {
+        const p = document.createElement("div");
+        p.className = "petal";
+        p.style.left = Math.random() * 100 + "vw";
+        p.style.animationDuration = (8 + Math.random() * 7) + "s";
+        p.style.animationDelay = (Math.random() * 10) + "s";
+        p.style.opacity = 0.45 + Math.random() * 0.45;
+        p.style.transform = `scale(${0.7 + Math.random() * 0.8})`;
+        container.appendChild(p);
+      }
+    }
+
+    function createButterflies() {
+      const container = document.getElementById("butterflies");
+      const butterflyChar = "🦋";
+      for (let i = 0; i < 12; i++) {
+        const b = document.createElement("div");
+        b.className = "butterfly";
+        b.textContent = butterflyChar;
+        b.style.left = Math.random() * 100 + "vw";
+        b.style.animationDuration = (10 + Math.random() * 10) + "s";
+        b.style.animationDelay = (Math.random() * 12) + "s";
+        b.style.fontSize = (14 + Math.random() * 12) + "px";
+        b.style.opacity = 0.65 + Math.random() * 0.35;
+        container.appendChild(b);
+      }
+    }
+
+    function autoPlayAfterFirstClick() {
+      const startMusic = async () => {
+        if (!musicPlaying) {
+          try {
+            await bgMusic.play();
+            musicPlaying = true;
+            musicBtn.textContent = "♫ Pause music";
+          } catch (e) {}
+        }
+        document.removeEventListener("click", startMusic);
+      };
+      document.addEventListener("click", startMusic);
+    }
+
+    createSparkles();
+    createPetals();
+    createButterflies();
+    autoPlayAfterFirstClick();
     loadQuestion();
   </script>
 </body>
