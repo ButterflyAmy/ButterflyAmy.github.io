@@ -20,9 +20,6 @@
       --blue: #a8dfff;
       --gold: #ffe7b4;
       --shadow: 0 24px 70px rgba(0,0,0,0.35);
-      --radius-xl: 30px;
-      --radius-lg: 22px;
-      --radius-md: 16px;
       --sidebar-width: 270px;
       --player-height: 98px;
     }
@@ -54,8 +51,7 @@
       content: "";
       position: fixed;
       inset: 0;
-      background:
-        radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
+      background: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
       background-size: 42px 42px;
       opacity: 0.18;
       pointer-events: none;
@@ -773,11 +769,15 @@
       transition: 0.25s ease;
     }
 
-    .gallery-item img {
+    .gallery-item img,
+    .gallery-item video,
+    .gallery-item iframe {
       width: 100%;
       height: 100%;
+      min-height: 200px;
       object-fit: cover;
       display: block;
+      border: 0;
     }
 
     .track-list {
@@ -1031,9 +1031,7 @@
     <aside class="sidebar" id="sidebar">
       <div class="brand">
         <h1>Dream Archive</h1>
-        <p>
-          Big dreamy archive for people, characters, idols, OCs, musicians, actors, and fictional worlds.
-        </p>
+        <p>Big dreamy archive for people, characters, idols, OCs, musicians, actors, and fictional worlds.</p>
       </div>
 
       <div class="sidebar-group">
@@ -1060,7 +1058,6 @@
     </aside>
 
     <main class="content">
-      <!-- HOME VIEW -->
       <section class="view active" id="homeView">
         <div class="hero">
           <div class="hero-top">
@@ -1068,8 +1065,8 @@
           </div>
           <h2><span>Beautiful pages for everyone you love.</span></h2>
           <p>
-            Click a profile and open their own page with music, lore, gallery, quotes, relationships,
-            facts, aesthetic details, and more. The sample content here is placeholder content so you can replace it with your own.
+            Click a profile and open their own page with music, lore, gallery, videos, quotes,
+            relationships, facts, aesthetic details, and more.
           </p>
           <div class="hero-actions">
             <a class="soft-btn" href="#home">Browse Archive</a>
@@ -1090,11 +1087,8 @@
             <div class="chips" id="filterChips">
               <button class="chip active" data-filter="all">All</button>
               <button class="chip" data-filter="Fictional">Fictional</button>
-              <button class="chip" data-filter="OC">OC</button>
               <button class="chip" data-filter="Anime">Anime</button>
               <button class="chip" data-filter="Game">Game</button>
-              <button class="chip" data-filter="Music">Music</button>
-              <button class="chip" data-filter="Movie">Movie</button>
             </div>
           </div>
         </div>
@@ -1104,23 +1098,20 @@
         <div class="cards-grid" id="cardsGrid"></div>
 
         <div class="footer-note">
-          Replace all names, text, images, music, categories, quotes, and relationships with your own data.
+          Replace all names, text, images, music, videos, quotes, and relationships with your own data.
         </div>
       </section>
 
-      <!-- CHARACTER VIEW -->
       <section class="view" id="characterView"></section>
     </main>
   </div>
 
-  <!-- AUDIO -->
   <audio id="mainMusic" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    <source src="music/main-theme.mp3" type="audio/mpeg">
   </audio>
 
   <audio id="audioPlayer"></audio>
 
-  <!-- PLAYER -->
   <div class="player" id="player">
     <div class="player-main">
       <small>Now Playing</small>
@@ -1151,12 +1142,6 @@
   </div>
 
   <script>
-    // =========================================================
-    // REPLACE THIS ARRAY WITH YOUR OWN DATA
-    // Each character has:
-    // slug, name, category, images, description, quotes, relations, music etc.
-    // defaultTrack = which song should auto-play when opening this character page
-    // =========================================================
     const characters = [
       {
         id: 1,
@@ -1165,7 +1150,7 @@
         category: "Fictional",
         fandom: "Heaven Official's Blessing",
         role: "Crown Prince of Xianle",
-        vibe: "soft, celestial, gentle, resilient, quietly tragic, compassionate, enduring, emotionally restrained",
+        vibe: "soft, celestial, gentle, resilient",
         quote: "Body in abyss, heart in paradise.",
         cover: "images/xl.png",
         gallery: [
@@ -1173,44 +1158,37 @@
           "images/xl3.png",
           "images/xl4.png"
         ],
-        age: "800",
+        videos: [
+          "videos/xie-lian-edit.mp4"
+        ],
+        age: "800+",
         birthday: "June 15",
         origin: "Xianle Kingdom",
         status: "Active",
-        species: "Ascended God",
-        color: "White, gold, muted red",
-        favorites: "Helping others, simple meals, peaceful moments, repairing things, small acts of kindness, children’s laughter",
-        personality: "Kind beyond reason, patient, selfless to a fault, humble, emotionally contained, quietly stubborn in his beliefs, deeply empathetic, carries pain without burdening others, gentle even when the world is not.",
-        story: "Once the beloved Crown Prince of Xianle, Xie Lian was raised to believe he could save everyone. After ascending to godhood, he tried to protect his kingdom from calamity—but failed, watching it collapse along with the faith of his people. Cast down from the heavens, he endured centuries of hardship, ridicule, and isolation. He ascended again, only to fall once more. By his third ascension, he had lost status, power, and reputation—but not his core belief in kindness. Now he wanders quietly, helping where he can, asking for nothing, carrying the weight of his past without letting it turn him cruel.",
+        species: "God",
+        color: "White / Gold / Red",
+        favorites: "Helping people, peace, small kindnesses",
+        personality: "Kind, patient, selfless, emotionally restrained, stubborn in a gentle way.",
+        story: "A long-suffering god who lost almost everything but never lost his kindness.",
         facts: [
-          "Ascended to godhood three separate times",
-          "Infamously cursed with extremely bad luck",
-          "Highly skilled in martial arts despite lack of spiritual power",
-          "Often collects scraps to survive in the mortal realm",
-          "Wears bandages to restrain cursed shackles and injuries",
-          "Was once worshipped by an entire kingdom, now largely forgotten or mocked",
-          "Maintains compassion even toward those who harmed or abandoned him"
+          "Ascended more than once.",
+          "Has very bad luck.",
+          "Still helps others anyway."
         ],
-        aesthetics: "Flowing white robes worn thin with time, bamboo hat shading a calm expression, bandaged hands, quiet shrines, worn paths through mountains, drifting petals, soft moonlight, stillness that hides deep scars",
+        aesthetics: "White robes, bandages, moonlight, shrines, drifting petals.",
         relationships: [
-          { name: "Hua Cheng", type: "Unwavering devotion", detail: "sees Xie Lian fully and loves him without judgment." },
-          { name: "Heavenly Officials", type: "Quiet ally", detail: "Often dismissive or mocking, though some hold quiet respect." }
+          { name: "Hua Cheng", type: "Devotion", detail: "Loves him completely and without judgment." }
         ],
         quotes: [
           "Body in abyss, heart in paradise.",
-          "If I can help, then I will.",
-          "I will not change, no matter how many times I fall."
+          "If I can help, then I will."
         ],
         music: [
-          {
-            title: "Song name",
-            artist: "Artist",
-            url: "music/Yes To Heaven (I've got my eye on you) - Lana del rey - [edit audio].mp3"
-          },
-          { title: "Summertime Sadness", artist: "Lana del Rey", url: "music/summertime sadness - lana del rey [edit audio].mp3" }
+          { title: "Yes To Heaven", artist: "Lana Del Rey", url: "music/yes-to-heaven.mp3" },
+          { title: "Summertime Sadness", artist: "Lana Del Rey", url: "music/summertime-sadness.mp3" }
         ],
         defaultTrack: 0,
-        tags: ["god", "fallen prince", "devotion", "peace"]
+        tags: ["god", "gentle", "tragic", "devotion"]
       },
       {
         id: 2,
@@ -1219,44 +1197,45 @@
         category: "Fictional",
         fandom: "Heaven Official's Blessing",
         role: "Ghost King",
-        vibe: "romantic, tragic, luminous",
-        quote: "He smiles like he has already lost everything.",
-        cover: "images/𓈒𓂃꙳⋆  Hua Cheng 𖥔 ࣪  ♡ _  TGCF.jpg",
+        vibe: "loyal, dangerous, romantic, elegant",
+        quote: "I pray to never rest in peace.",
+        cover: "images/hua-cheng-cover.jpg",
         gallery: [
-          "images/๖ۣۜ➻❥_ 𝒜𝑛𝑖𝑚𝑒 𝐼𝑐𝑜𝑛_⊹⊱ 𝐒𝒂𝒏 𝐋𝒂𝒏𝒈ུ ི࿐ཽ༵.jpg",
-          "images/twi_ @rabbitamika.jpg",
-          "images/Tgcf short movie ࣪˖ ִֶָ𐀔 ⊹.jpg"
+          "images/hua-cheng-1.jpg",
+          "images/hua-cheng-2.jpg",
+          "images/hua-cheng-3.jpg"
         ],
-        age: "22",
-        birthday: "September 3",
-        origin: "The Glass Kingdom",
-        status: "Missing",
-        species: "Human",
-        color: "Rose Gold / White",
-        favorites: "Vinyl records, opera halls, winter gardens, candles",
-        personality: "Charismatic, lonely, graceful, impulsive, emotionally guarded.",
-        story: "Aster fled the crown and now lives under borrowed names. He is remembered as dazzling, elegant, and impossible to forget, but the archive reveals someone exhausted by being watched. He collects music the way other people collect apologies.",
+        videos: [
+          "videos/hua-cheng-edit.mp4"
+        ],
+        age: "Unknown",
+        birthday: "Unknown",
+        origin: "Ghost City",
+        status: "Active",
+        species: "Ghost King",
+        color: "Red / Silver / Black",
+        favorites: "Xie Lian, butterflies, silver chains",
+        personality: "Devoted, calm, teasing, powerful, deeply emotional beneath control.",
+        story: "A powerful ghost king whose entire existence is shaped by devotion and unwavering love.",
         facts: [
-          "He can fence, sing, and speak four languages.",
-          "He hates being photographed.",
-          "He keeps a dried flower in every coat pocket."
+          "One of the strongest ghosts.",
+          "Known for silver butterflies.",
+          "Would destroy the world for one person."
         ],
-        aesthetics: "Crystal chandeliers, velvet curtains, champagne shimmer, white gloves, handwritten scores.",
+        aesthetics: "Red robes, silver chains, butterflies, lantern light, night streets.",
         relationships: [
-          { name: "Luna Evermere", type: "Emotional trust", detail: "He tells her what he tells no one else." },
-          { name: "Celestine Vale", type: "Distant relative rumor", detail: "Some believe their families were linked long ago." }
+          { name: "Xie Lian", type: "Unwavering devotion", detail: "His entire heart belongs to him." }
         ],
         quotes: [
-          "Elegance is only useful when it hides the damage.",
-          "I was raised to be looked at, not known.",
-          "Running away still counts as survival."
+          "Your Highness, I understand your everything.",
+          "I only live for one person."
         ],
         music: [
-                { title: "Mary on a cross", artist: "Ghost", url: "music/mary on a cross(bestpart!slowed) [edit audio].mp3" },
-                { title: "Cardigan", artist: "Taylor Swift", url: "music/cardigan (slowed  reverb) - taylor swift [edit audio].mp3" }
-              ],
+          { title: "Mary on a Cross", artist: "Ghost", url: "music/mary-on-a-cross.mp3" },
+          { title: "Cardigan", artist: "Taylor Swift", url: "music/cardigan.mp3" }
+        ],
         defaultTrack: 0,
-        tags: ["Ghost", "King", "loyal", "holy"]
+        tags: ["ghost", "romantic", "devotion", "powerful"]
       },
       {
         id: 3,
@@ -1264,458 +1243,279 @@
         name: "Ken Kaneki",
         category: "Anime",
         fandom: "Tokyo Ghoul",
-        role: "Lead Vocalist",
-        vibe: "cute, bright, bittersweet",
-        quote: "I sing louder when I am scared.",
-        cover: "images/Kaneki Ken _ Tokyo Ghoul.jpg",
+        role: "Main Character",
+        vibe: "broken, soft, haunted, intense",
+        quote: "It hurts, doesn't it?",
+        cover: "images/kaneki-cover.jpg",
         gallery: [
-          "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80"
+          "images/kaneki-1.jpg",
+          "images/kaneki-2.jpg",
+          "images/kaneki-3.jpg"
         ],
-        age: "17",
-        birthday: "April 9",
+        videos: [
+          "videos/kaneki-edit.mp4"
+        ],
+        age: "18",
+        birthday: "December 20",
         origin: "Tokyo",
         status: "Active",
-        species: "Human",
-        color: "Pink / Blue",
-        favorites: "Soda candies, stage lights, lucky charms, polaroids",
-        personality: "Energetic, affectionate, insecure, brave under pressure.",
-        story: "Mika is the bright face of a futuristic idol group, but behind the performance is a girl fighting fear every time she steps onto a stage. Her songs sparkle, but the emotion under them is always real.",
+        species: "Half-ghoul",
+        color: "Black / White / Red",
+        favorites: "Books, coffee, silence",
+        personality: "Sensitive, conflicted, intelligent, self-sacrificing, unstable under pressure.",
+        story: "A boy forced into a world of violence and identity crisis after becoming part ghoul.",
         facts: [
-          "She writes lyrics on train tickets.",
-          "She always wears mismatched earrings.",
-          "She cries after successful performances."
+          "Loves books.",
+          "Struggles with identity.",
+          "One of the most tragic anime leads."
         ],
-        aesthetics: "Pastel neon, holographic hearts, glitter tears, oversized bows, glittering microphones.",
+        aesthetics: "Rain, masks, blood, white hair, city lights, broken glass.",
         relationships: [
-          { name: "Sora Minami", type: "Rivalry", detail: "Their tension pushes both of them forward." },
-          { name: "Rin Solstice", type: "Admiration", detail: "She secretly studies Rin's songwriting." }
+          { name: "Hide", type: "Best friend", detail: "One of the most important people in his life." }
         ],
         quotes: [
-          "Even cute songs can hurt a little.",
-          "I want the stage to feel like a promise.",
-          "Please hear the part of me I hid in the chorus."
+          "What's wrong isn't me. What's wrong is this world.",
+          "I can no longer tell the difference between dream and reality."
         ],
         music: [
-          { title: "Unravel", artist: "Tk from Ling", url: "music/Tokyo Ghoul - Unravel (8D Audio).mp3" },
-          { title: "Candy Orbit", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3" }
+          { title: "Unravel", artist: "TK", url: "music/unravel.mp3" },
+          { title: "After Dark", artist: "Mr. Kitty", url: "music/after-dark.mp3" }
         ],
         defaultTrack: 0,
-        tags: ["idol", "anime", "singer", "cute"]
+        tags: ["ghoul", "tragic", "anime", "dark"]
       },
       {
         id: 4,
-        slug: "kairo-noct",
-        name: "Kairo Noct",
-        category: "Game",
-        fandom: "Night Protocol",
-        role: "Boss Character",
-        vibe: "dark, dramatic, powerful",
-        quote: "Mercy is only useful if someone is watching.",
-        cover: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?auto=format&fit=crop&w=1200&q=80",
+        slug: "hide",
+        name: "Hide",
+        category: "Anime",
+        fandom: "Tokyo Ghoul",
+        role: "Best Friend",
+        vibe: "bright, loyal, warm, clever",
+        quote: "I know Kaneki better than he knows himself.",
+        cover: "images/hide-cover.jpg",
         gallery: [
-          "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1504257432389-52343af06ae3?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1496347646636-ea47f7d6b37b?auto=format&fit=crop&w=1200&q=80"
+          "images/hide-1.jpg",
+          "images/hide-2.jpg",
+          "images/hide-3.jpg"
         ],
-        age: "29",
-        birthday: "January 30",
-        origin: "Sector Nine",
-        status: "Classified",
-        species: "Modified Human",
-        color: "Black / Crimson",
-        favorites: "Synth music, rain, black tea, chess, surveillance rooms",
-        personality: "Cold, strategic, controlled, theatrical, dangerously calm.",
-        story: "Kairo rules a cyberpunk skyline through information and spectacle. Players first meet a villain, then uncover someone shaped by the system he now manipulates. He is less monster than mirror.",
+        videos: [
+          "videos/hide-edit.mp4"
+        ],
+        age: "18",
+        birthday: "June 10",
+        origin: "Tokyo",
+        status: "Active",
+        species: "Human",
+        color: "Yellow / Orange",
+        favorites: "Friends, jokes, curiosity",
+        personality: "Cheerful, emotionally intelligent, brave, loyal.",
+        story: "Hide hides his seriousness behind warmth and humor, but he sees more than people think.",
         facts: [
-          "He never misses a move in chess.",
-          "He has a mechanical left eye.",
-          "His boss theme changes in phase two."
+          "Very observant.",
+          "Extremely loyal to Kaneki.",
+          "Often underestimated."
         ],
-        aesthetics: "Rain on neon glass, leather gloves, glowing cityscapes, chrome weapons, red static.",
+        aesthetics: "Sunlight, smiles, casual clothes, city afternoons.",
         relationships: [
-          { name: "Vesper Quinn", type: "Temporary alliance", detail: "They work together when interests match." },
-          { name: "Mika Hoshino", type: "Theme contrast", detail: "Fans love the brutal contrast between their worlds." }
+          { name: "Ken Kaneki", type: "Best friend", detail: "Understands him even in darkness." }
         ],
         quotes: [
-          "Power is just choreography with better lighting.",
-          "The city taught me how to become inevitable.",
-          "Do not call me cruel before you learn what built me."
+          "You don't have to tell me everything. I still know you.",
+          "I'll stay."
         ],
         music: [
-          { title: "Red Frequency", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" },
-          { title: "Protocol Glass", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" }
+          { title: "Yellow", artist: "Coldplay", url: "music/yellow.mp3" }
         ],
         defaultTrack: 0,
-        tags: ["villain", "cyberpunk", "boss", "game"]
+        tags: ["best friend", "warm", "loyal", "anime"]
       },
       {
         id: 5,
-        slug: "elara-bloom",
-        name: "Elara Bloom",
-        category: "Movie",
-        fandom: "The Garden of Echoes",
-        role: "Lead Character",
-        vibe: "dreamy, poetic, fragile",
-        quote: "Every flower remembers a different version of me.",
-        cover: "https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=1200&q=80",
+        slug: "akaashi-keiji",
+        name: "Akaashi Keiji",
+        category: "Anime",
+        fandom: "Haikyuu!!",
+        role: "Setter",
+        vibe: "calm, elegant, quiet, pretty",
+        quote: "I'm okay. It was just a little frustrating.",
+        cover: "images/akaashi-cover.jpg",
         gallery: [
-          "https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1200&q=80"
+          "images/akaashi-1.jpg",
+          "images/akaashi-2.jpg",
+          "images/akaashi-3.jpg"
         ],
-        age: "25",
-        birthday: "October 11",
-        origin: "Rosewater Estate",
-        status: "Unknown",
+        videos: [
+          "videos/akaashi-edit.mp4"
+        ],
+        age: "17",
+        birthday: "December 5",
+        origin: "Tokyo",
+        status: "Active",
         species: "Human",
-        color: "Blush / Ivory",
-        favorites: "Botanical books, pressed flowers, ribbon bookmarks, perfume",
-        personality: "Gentle, nostalgic, private, observant, emotionally layered.",
-        story: "Elara lives in a fading estate where the garden reacts to memory. The flowers bloom with dates, names, and hidden confessions. Her life is soft on the surface and devastating underneath.",
+        color: "Black / White / Teal",
+        favorites: "Books, volleyball, quiet moments",
+        personality: "Collected, intelligent, polite, emotionally subtle.",
+        story: "Akaashi is the composed setter of Fukurodani, known for his calm presence and hidden depth.",
         facts: [
-          "She keeps voice recordings instead of journals.",
-          "She knows the language of flowers.",
-          "She hates clocks."
+          "Very smart.",
+          "Great at reading people.",
+          "Fan favorite for a reason."
         ],
-        aesthetics: "Foggy gardens, vintage gowns, dew, lace curtains, old fountains, petals in water.",
+        aesthetics: "Gym light, clean lines, soft shadows, school uniforms.",
         relationships: [
-          { name: "Ivy Marlowe", type: "Mirror character", detail: "Warmth and melancholy meet in their scenes." }
+          { name: "Bokuto", type: "Teammate bond", detail: "Balances him perfectly." }
         ],
         quotes: [
-          "There are houses that never stop listening.",
-          "I trusted the flowers because people forgot too easily.",
-          "Beauty is not the opposite of grief."
+          "I just need to stay calm.",
+          "It's fine. I'll handle it."
         ],
         music: [
-          { title: "Rosewater", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" },
-          { title: "Dew Memory", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3" }
+          { title: "Sweater Weather", artist: "The Neighbourhood", url: "music/sweater-weather.mp3" }
         ],
         defaultTrack: 0,
-        tags: ["movie", "poetic", "garden", "haunting"]
+        tags: ["haikyuu", "setter", "quiet", "pretty"]
       },
       {
         id: 6,
-        slug: "rin-solstice",
-        name: "Rin Solstice",
-        category: "Music",
-        fandom: "Solo Artist",
-        role: "Singer-Songwriter",
-        vibe: "ethereal, emotional, soft",
-        quote: "I write songs like letters I never send.",
-        cover: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=80",
+        slug: "illumi-zoldyck",
+        name: "Illumi Zoldyck",
+        category: "Anime",
+        fandom: "Hunter x Hunter",
+        role: "Assassin",
+        vibe: "creepy, elegant, cold, dangerous",
+        quote: "Killua belongs to the family.",
+        cover: "images/illumi-cover.jpg",
         gallery: [
-          "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80"
+          "images/illumi-1.jpg",
+          "images/illumi-2.jpg",
+          "images/illumi-3.jpg"
+        ],
+        videos: [
+          "videos/illumi-edit.mp4"
         ],
         age: "24",
-        birthday: "February 21",
-        origin: "Seoul",
+        birthday: "Unknown",
+        origin: "Zoldyck Estate",
         status: "Active",
         species: "Human",
-        color: "Silver Blue",
-        favorites: "Rain audio, candles, oversized sweaters, piano demos",
-        personality: "Tender, introspective, artistic, shy but sincere.",
-        story: "Rin became known for songs that feel private even when millions hear them. Fans treat every release like a page torn out of a diary at 3 AM.",
+        color: "Black / Purple",
+        favorites: "Control, silence, obedience",
+        personality: "Emotionally detached, controlling, eerie, highly intelligent.",
+        story: "A terrifying assassin whose calmness is more disturbing than rage.",
         facts: [
-          "They collect old cassette players.",
-          "Their first viral song was recorded under a blanket.",
-          "They compose late at night."
+          "Uses needles as weapons.",
+          "Extremely manipulative.",
+          "One of the most unsettling characters."
         ],
-        aesthetics: "Blue hour skies, dim lamps, silver rings, messy notebooks, headphones, soft static.",
+        aesthetics: "Black nails, shadows, pale skin, long hair, silence.",
         relationships: [
-          { name: "Mika Hoshino", type: "Industry admiration", detail: "Mika openly loves Rin's lyrics." },
-          { name: "Eden Noir", type: "Occasional collaborator", detail: "Their sounds blend perfectly." }
+          { name: "Killua", type: "Possessive family bond", detail: "Sees control as love." }
         ],
         quotes: [
-          "Some songs should sound like windows in winter.",
-          "I like voices that feel almost too close.",
-          "Sadness is not always heavy. Sometimes it glows."
+          "You're mine to protect.",
+          "I only want what is best."
         ],
         music: [
-          { title: "Night Window", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3" },
-          { title: "Blue Thread", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3" }
+          { title: "Control", artist: "Halsey", url: "music/control.mp3" }
         ],
         defaultTrack: 0,
-        tags: ["artist", "music", "sad", "ethereal"]
+        tags: ["assassin", "cold", "anime", "creepy"]
       },
       {
         id: 7,
-        slug: "noa-reverie",
-        name: "Noa Reverie",
+        slug: "wei-wuxian",
+        name: "Wei Wuxian",
         category: "Fictional",
-        fandom: "City of Sleep",
-        role: "Memory Collector",
-        vibe: "fantasy, quiet, glowing",
-        quote: "Forgotten things are the easiest to love.",
-        cover: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=1200&q=80",
+        fandom: "Mo Dao Zu Shi",
+        role: "Cultivator",
+        vibe: "chaotic, brilliant, tragic, lively",
+        quote: "Who cares about the crowded, broad road?",
+        cover: "images/wei-wuxian-cover.jpg",
         gallery: [
-          "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80"
+          "images/wei-wuxian-1.jpg",
+          "images/wei-wuxian-2.jpg",
+          "images/wei-wuxian-3.jpg"
         ],
-        age: "19",
-        birthday: "May 17",
-        origin: "The Sleeping District",
+        videos: [
+          "videos/wei-wuxian-edit.mp4"
+        ],
+        age: "Unknown",
+        birthday: "October 31",
+        origin: "Yunmeng",
         status: "Active",
-        species: "Spirit-Bound Human",
-        color: "Lilac / Gold",
-        favorites: "Music boxes, fireflies, paper stars, window seats",
-        personality: "Soft-spoken, deeply empathetic, curious, wistful.",
-        story: "Noa gathers memories that fall out of people during sleep and keeps them safe until they are needed again. Some are ordinary. Some can rewrite lives.",
+        species: "Human",
+        color: "Black / Red",
+        favorites: "Wine, flute music, teasing, freedom",
+        personality: "Playful, clever, rebellious, deeply loving, emotionally strong.",
+        story: "A legendary cultivator whose life is full of brilliance, sacrifice, exile, and devotion.",
         facts: [
-          "They hear lullabies in abandoned buildings.",
-          "Their satchel is larger on the inside.",
-          "They never forget a face."
+          "Uses a flute.",
+          "Very talented and very chaotic.",
+          "One of the most loved danmei leads."
         ],
-        aesthetics: "Soft lanterns, floating notes, moon alleys, dream fog, gold dust.",
+        aesthetics: "Black robes, red ribbon, moonlight, lotus ponds, flute songs.",
         relationships: [
-          { name: "Luna Evermere", type: "Trusted ally", detail: "They understand each other's work with memory and dreams." }
+          { name: "Lan Wangji", type: "Soulmate bond", detail: "Their connection is everything." }
         ],
         quotes: [
-          "People lose themselves in smaller pieces than they think.",
-          "I only keep what wants to be found again.",
-          "Not all forgotten things are gone."
+          "I want to save people, not just kill them.",
+          "Let the self judge the heart."
         ],
         music: [
-          { title: "Lantern Alley", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3" },
-          { title: "Soft Gold", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" }
+          { title: "Willow", artist: "Taylor Swift", url: "music/willow.mp3" }
         ],
         defaultTrack: 0,
-        tags: ["fantasy", "dream", "memory", "soft"]
+        tags: ["danmei", "chaotic", "tragic", "flute"]
       },
       {
         id: 8,
-        slug: "sora-minami",
-        name: "Sora Minami",
-        category: "Anime",
-        fandom: "Glass Hearts",
-        role: "Rival Character",
-        vibe: "sharp, elegant, emotional",
-        quote: "Perfection is the only apology I know.",
-        cover: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80",
-        gallery: [
-          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=1200&q=80"
-        ],
-        age: "18",
-        birthday: "August 28",
-        origin: "Kyoto",
-        status: "Active",
-        species: "Human",
-        color: "Ice Blue / White",
-        favorites: "Tea houses, violin practice, snowy mornings, classical music",
-        personality: "Disciplined, proud, affectionate in secret, emotionally repressed.",
-        story: "Sora starts as the flawless rival everyone envies, then becomes one of the most vulnerable people in the story. Their perfection was always armor.",
-        facts: [
-          "They memorize scores instantly.",
-          "They hate crowded places.",
-          "Their best scene is completely silent."
-        ],
-        aesthetics: "Snow light, glass reflections, satin bows, violin cases, pale blue ribbon.",
-        relationships: [
-          { name: "Mika Hoshino", type: "Rival / emotional foil", detail: "Their growth is tied together." }
-        ],
-        quotes: [
-          "I became perfect because I could not become safe.",
-          "Even ice has a breaking point.",
-          "You noticed me too late."
-        ],
-        music: [
-          { title: "White Sonata", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3" },
-          { title: "Glass Pulse", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }
-        ],
-        defaultTrack: 0,
-        tags: ["rival", "anime", "elegant", "emotional"]
-      },
-      {
-        id: 9,
-        slug: "vesper-quinn",
-        name: "Vesper Quinn",
+        slug: "aventurine",
+        name: "Aventurine",
         category: "Game",
-        fandom: "Obsidian Waltz",
-        role: "Playable Character",
-        vibe: "gothic, stylish, dangerous",
-        quote: "I only dance with disasters.",
-        cover: "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=1200&q=80",
+        fandom: "Honkai: Star Rail",
+        role: "Strategist",
+        vibe: "glamorous, dangerous, teasing, lucky",
+        quote: "All or nothing.",
+        cover: "images/aventurine-cover.jpg",
         gallery: [
-          "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1496347646636-ea47f7d6b37b?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=1200&q=80"
+          "images/aventurine-1.jpg",
+          "images/aventurine-2.jpg",
+          "images/aventurine-3.jpg"
         ],
-        age: "27",
-        birthday: "November 4",
-        origin: "Black Cathedral District",
-        status: "Wanted",
-        species: "Human",
-        color: "Wine Red / Black",
-        favorites: "Velvet coats, silver daggers, ballroom masks, ravens",
-        personality: "Flirtatious, unpredictable, witty, ruthless when needed.",
-        story: "Vesper is a rogue assassin with too much charm for someone that dangerous. Their path in the game begins with spectacle and ends in tragedy, loyalty, and a ruined noble house.",
-        facts: [
-          "Their weapon changes shape.",
-          "They leave black roses.",
-          "They can lockpick while wearing gloves."
+        videos: [
+          "videos/aventurine-edit.mp4"
         ],
-        aesthetics: "Cathedrals at night, red velvet, chandeliers, ravens, candlewax, lace gloves.",
-        relationships: [
-          { name: "Kairo Noct", type: "Tense ally", detail: "They only cooperate when it benefits both." }
-        ],
-        quotes: [
-          "Style is still useful during a catastrophe.",
-          "Do not confuse grace for mercy.",
-          "I look better in danger."
-        ],
-        music: [
-          { title: "Obsidian Waltz", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-          { title: "Black Rose Exit", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
-        ],
-        defaultTrack: 0,
-        tags: ["gothic", "assassin", "game", "dark"]
-      },
-      {
-        id: 10,
-        slug: "ivy-marlowe",
-        name: "Ivy Marlowe",
-        category: "Movie",
-        fandom: "Velvet Summer",
-        role: "Secondary Lead",
-        vibe: "warm, vintage, cinematic",
-        quote: "The best moments always look accidental.",
-        cover: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80",
-        gallery: [
-          "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=1200&q=80"
-        ],
-        age: "26",
-        birthday: "July 6",
-        origin: "Marina Town",
+        age: "Unknown",
+        birthday: "Unknown",
+        origin: "IPC",
         status: "Active",
         species: "Human",
-        color: "Honey / Cream",
-        favorites: "Film cameras, lemonade, road trips, old postcards",
-        personality: "Charming, spontaneous, nostalgic, emotionally honest.",
-        story: "Ivy changes every scene she walks into. She looks like summer and sounds like old film grain. She makes other characters tell the truth by simply staying soft.",
+        color: "Gold / Green / Blue",
+        favorites: "Cards, risk, luxury, winning",
+        personality: "Charming, strategic, flashy, emotionally hidden.",
+        story: "A gambler-like strategist wrapped in glamour, confidence, and very suspicious luck.",
         facts: [
-          "She always carries a disposable camera.",
-          "She names every car she owns.",
-          "Her laugh scene became iconic."
+          "Very stylish.",
+          "Loves risk.",
+          "Hides more than he shows."
         ],
-        aesthetics: "Sun flare, faded film, motel signs, floral dresses, polaroids, golden hour.",
+        aesthetics: "Cards, glitter, green gems, luxury halls, gold light.",
         relationships: [
-          { name: "Elara Bloom", type: "Parallel emotional energy", detail: "Fans pair their aesthetics constantly." }
+          { name: "Ratio", type: "Interesting tension", detail: "Their dynamic is loved by fans." }
         ],
         quotes: [
-          "I like days that feel already remembered.",
-          "The camera was never the point. The feeling was.",
-          "Warmth can still ache."
+          "Luck is a skill if you know what you're doing.",
+          "Why play safe?"
         ],
         music: [
-          { title: "Summer Reel", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
-          { title: "Dusty Motel Light", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" }
+          { title: "Poker Face", artist: "Lady Gaga", url: "music/poker-face.mp3" }
         ],
         defaultTrack: 0,
-        tags: ["cinematic", "vintage", "warm", "movie"]
-      },
-      {
-        id: 11,
-        slug: "eden-noir",
-        name: "Eden Noir",
-        category: "Music",
-        fandom: "Band Member",
-        role: "Bassist",
-        vibe: "cool, nocturnal, magnetic",
-        quote: "Silence is useful until the bass drops.",
-        cover: "https://images.unsplash.com/photo-1504257432389-52343af06ae3?auto=format&fit=crop&w=1200&q=80",
-        gallery: [
-          "https://images.unsplash.com/photo-1504257432389-52343af06ae3?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1496347646636-ea47f7d6b37b?auto=format&fit=crop&w=1200&q=80"
-        ],
-        age: "28",
-        birthday: "December 2",
-        origin: "Berlin",
-        status: "Touring",
-        species: "Human",
-        color: "Indigo / Silver",
-        favorites: "Club lights, vintage boots, incense, underground venues",
-        personality: "Reserved, dry-humored, stylish, deeply loyal.",
-        story: "Eden is the band's quiet center. The mystique comes first, but the archive reveals someone thoughtful, observant, and unexpectedly romantic under all the smoke and mirrors.",
-        facts: [
-          "They tune by ear in seconds.",
-          "Their stage outfits are mostly custom-made.",
-          "They archive every setlist."
-        ],
-        aesthetics: "Blue smoke, silver chains, black nails, tunnel lights, leather, mirrored shadows.",
-        relationships: [
-          { name: "Rin Solstice", type: "Creative chemistry", detail: "Fans love their collaborations." }
-        ],
-        quotes: [
-          "I trust low light more than applause.",
-          "The best basslines feel like secrets.",
-          "Not everything cold is empty."
-        ],
-        music: [
-          { title: "Midnight Pulse", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" },
-          { title: "Blue Static Club", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3" }
-        ],
-        defaultTrack: 0,
-        tags: ["band", "music", "cool", "night"]
-      },
-      {
-        id: 12,
-        slug: "celestine-vale",
-        name: "Celestine Vale",
-        category: "OC",
-        fandom: "Original Universe",
-        role: "Star Cartographer",
-        vibe: "magical, elegant, lonely",
-        quote: "I map the sky because I cannot map my heart.",
-        cover: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=1200&q=80",
-        gallery: [
-          "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=1200&q=80",
-          "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=80"
-        ],
-        age: "31",
-        birthday: "March 12",
-        origin: "The Observatory Isles",
-        status: "Traveling",
-        species: "Human",
-        color: "Midnight Blue / Gold",
-        favorites: "Telescopes, silk gloves, constellations, star charts, dried lavender",
-        personality: "Elegant, intelligent, guarded, romantic beneath the surface.",
-        story: "Celestine maps the heavens and believes every star mirrors a human life. Their charts have predicted reunions, storms, and disappearances. Some call them gifted. Others call them cursed.",
-        facts: [
-          "They never travel without ink and sealing wax.",
-          "Their handwriting is famous.",
-          "They once crossed a sea by following one star."
-        ],
-        aesthetics: "Observatories, navy silk, gold foil maps, candlelight, constellations, midnight glass.",
-        relationships: [
-          { name: "Aster Vale", type: "Rumored family link", detail: "Their names appear in the same old records." }
-        ],
-        quotes: [
-          "The sky always leaves clues.",
-          "I trust patterns more than promises.",
-          "Distance can still be intimate."
-        ],
-        music: [
-          { title: "Atlas of Stars", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" },
-          { title: "Midnight Observatory", artist: "Placeholder Artist", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" }
-        ],
-        defaultTrack: 0,
-        tags: ["stars", "oc", "magic", "elegant"]
+        tags: ["game", "luxury", "gambling", "glamorous"]
       }
     ];
 
-    // =========================================================
-    // ELEMENTS
-    // =========================================================
     const homeView = document.getElementById("homeView");
     const characterView = document.getElementById("characterView");
     const cardsGrid = document.getElementById("cardsGrid");
@@ -1745,9 +1545,6 @@
     const duration = document.getElementById("duration");
     const volumeBar = document.getElementById("volumeBar");
 
-    // =========================================================
-    // STATE
-    // =========================================================
     let currentFilter = "all";
     let currentCharacterSlug = null;
     let currentTrackIndex = null;
@@ -1758,9 +1555,6 @@
     const favoriteKey = "dreamArchiveFavorites";
     let favorites = JSON.parse(localStorage.getItem(favoriteKey) || "[]");
 
-    // =========================================================
-    // HELPERS
-    // =========================================================
     function formatTime(seconds) {
       if (!isFinite(seconds)) return "0:00";
       const mins = Math.floor(seconds / 60);
@@ -1799,9 +1593,6 @@
       }
     }
 
-    // =========================================================
-    // HOME CARDS
-    // =========================================================
     function createCard(character) {
       const article = document.createElement("article");
       article.className = "card";
@@ -1829,7 +1620,9 @@
       const query = searchInput.value.toLowerCase().trim();
 
       const filtered = characters.filter(character => {
-        const filterPass = currentFilter === "all" || character.category.toLowerCase() === currentFilter.toLowerCase();
+        const filterPass =
+          currentFilter === "all" ||
+          character.category.toLowerCase() === currentFilter.toLowerCase();
 
         const text = `
           ${character.name}
@@ -1855,16 +1648,10 @@
       emptyState.style.display = filtered.length ? "none" : "block";
     }
 
-    // =========================================================
-    // FAVORITES SIDEBAR
-    // =========================================================
     function renderFavorites() {
       favoritesList.innerHTML = "";
 
-      const items = favorites
-        .map(slug => getCharacterBySlug(slug))
-        .filter(Boolean);
-
+      const items = favorites.map(slug => getCharacterBySlug(slug)).filter(Boolean);
       favoritesEmpty.style.display = items.length ? "none" : "block";
 
       items.forEach(character => {
@@ -1877,9 +1664,6 @@
       });
     }
 
-    // =========================================================
-    // CHARACTER PAGE
-    // =========================================================
     function renderCharacterPage(slug, playDefaultTrack = false) {
       const character = getCharacterBySlug(slug);
       if (!character) return;
@@ -1930,6 +1714,7 @@
             <button class="tab-btn active" data-tab="overview">Overview</button>
             <button class="tab-btn" data-tab="music">Music</button>
             <button class="tab-btn" data-tab="gallery">Gallery</button>
+            <button class="tab-btn" data-tab="videos">Videos</button>
             <button class="tab-btn" data-tab="quotes">Quotes</button>
             <button class="tab-btn" data-tab="relationships">Relationships</button>
             <button class="tab-btn" data-tab="extras">Extras</button>
@@ -1989,6 +1774,34 @@
                     <img src="${img}" alt="${character.name}">
                   </div>
                 `).join("")}
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-panel" id="tab-videos">
+            <div class="box">
+              <h3>Videos</h3>
+              <div class="gallery-grid">
+                ${
+                  character.videos && character.videos.length
+                    ? character.videos.map(video => {
+                        if (video.includes("youtube.com/embed")) {
+                          return `
+                            <div class="gallery-item">
+                              <iframe src="${video}" allowfullscreen></iframe>
+                            </div>
+                          `;
+                        }
+                        return `
+                          <div class="gallery-item">
+                            <video controls preload="metadata">
+                              <source src="${video}" type="video/mp4">
+                            </video>
+                          </div>
+                        `;
+                      }).join("")
+                    : `<p class="small">No videos yet.</p>`
+                }
               </div>
             </div>
           </div>
@@ -2085,11 +1898,6 @@
       });
     }
 
-    // =========================================================
-    // ROUTING
-    // #home
-    // #character/slug
-    // =========================================================
     function showView(viewName) {
       homeView.classList.remove("active");
       characterView.classList.remove("active");
@@ -2128,9 +1936,6 @@
       window.location.hash = `#character/${slug}`;
     }
 
-    // =========================================================
-    // MUSIC PLAYER
-    // =========================================================
     function stopMainMusic() {
       mainMusic.pause();
       mainMusic.currentTime = 0;
@@ -2166,7 +1971,6 @@
       currentTrackIndex = trackIndex;
 
       const track = currentPlaylist[currentTrackIndex];
-
       audioPlayer.src = track.url;
       audioPlayer.volume = Number(volumeBar.value);
 
@@ -2291,9 +2095,6 @@
       playPauseBtn.textContent = "▶";
     });
 
-    // =========================================================
-    // SEARCH / FILTER
-    // =========================================================
     searchInput.addEventListener("input", renderCards);
 
     filterChips.addEventListener("click", (e) => {
@@ -2306,9 +2107,6 @@
       renderCards();
     });
 
-    // =========================================================
-    // SIDEBAR
-    // =========================================================
     sidebarToggle.addEventListener("click", () => {
       sidebar.classList.toggle("open");
     });
@@ -2323,9 +2121,6 @@
       }
     });
 
-    // =========================================================
-    // EFFECTS
-    // =========================================================
     function buildSparkles() {
       for (let i = 0; i < 26; i++) {
         const el = document.createElement("div");
@@ -2357,9 +2152,6 @@
       cursorGlow.style.top = `${e.clientY}px`;
     });
 
-    // =========================================================
-    // INIT
-    // =========================================================
     function init() {
       buildSparkles();
       buildPetals();
@@ -2370,7 +2162,6 @@
       audioPlayer.volume = Number(volumeBar.value);
       mainMusic.volume = Number(volumeBar.value);
 
-      // if direct open to a character page, render it without forcing auto music
       if (window.location.hash.startsWith("#character/")) {
         const slug = window.location.hash.replace("#character/", "");
         if (getCharacterBySlug(slug)) {
