@@ -65,6 +65,8 @@
 
     button {
       font: inherit;
+      border: none;
+      outline: none;
     }
 
     .cursor-glow {
@@ -158,6 +160,20 @@
       border: 1px solid var(--border);
       margin-bottom: 16px;
       box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand::after {
+      content: "";
+      position: absolute;
+      inset: auto -60px -80px auto;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,156,221,0.18), transparent 70%);
+      filter: blur(10px);
+      pointer-events: none;
     }
 
     .brand h1 {
@@ -169,12 +185,16 @@
       -webkit-text-fill-color: transparent;
       background-size: 300% 300%;
       animation: shimmer 8s ease infinite;
+      position: relative;
+      z-index: 1;
     }
 
     .brand p {
       color: var(--muted);
       line-height: 1.6;
       font-size: 0.95rem;
+      position: relative;
+      z-index: 1;
     }
 
     @keyframes shimmer {
@@ -189,6 +209,7 @@
       border: 1px solid var(--border);
       border-radius: 22px;
       padding: 14px;
+      box-shadow: 0 14px 38px rgba(0,0,0,0.18);
     }
 
     .sidebar-group h3 {
@@ -208,12 +229,15 @@
     .side-link,
     .fav-item {
       display: block;
-      padding: 11px 12px;
-      border-radius: 14px;
+      width: 100%;
+      text-align: left;
+      padding: 13px 14px;
+      border-radius: 16px;
       background: rgba(255,255,255,0.06);
       border: 1px solid transparent;
       transition: 0.25s ease;
       color: var(--text);
+      cursor: pointer;
     }
 
     .side-link:hover,
@@ -223,9 +247,17 @@
     .tab-btn:hover,
     .track-btn:hover,
     .gallery-item:hover,
-    .chip:hover {
+    .chip:hover,
+    .circle-btn:hover,
+    .mini-btn:hover {
       transform: translateY(-2px);
       border-color: rgba(255,255,255,0.14);
+    }
+
+    .side-link.active-link {
+      background: linear-gradient(135deg, rgba(255,156,221,0.24), rgba(168,223,255,0.16));
+      border-color: rgba(255,255,255,0.18);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
     .fav-empty {
@@ -247,6 +279,7 @@
       background: rgba(17, 12, 31, 0.88);
       color: white;
       backdrop-filter: blur(12px);
+      cursor: pointer;
     }
 
     .content {
@@ -269,7 +302,7 @@
     }
 
     .hero {
-      padding: 26px;
+      padding: 32px 32px 28px;
       border-radius: 34px;
       border: 1px solid var(--border);
       background:
@@ -279,6 +312,7 @@
       position: relative;
       overflow: hidden;
       margin-bottom: 20px;
+      min-height: 410px;
     }
 
     .hero::before {
@@ -320,45 +354,48 @@
       align-items: center;
       gap: 10px;
       border-radius: 999px;
-      padding: 10px 14px;
+      padding: 10px 16px;
       background: rgba(255,255,255,0.09);
       border: 1px solid rgba(255,255,255,0.14);
       color: var(--gold);
       font-size: 0.92rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     }
 
     .hero h2 {
-      margin-top: 18px;
-      font-size: clamp(2.2rem, 5vw, 4.6rem);
-      line-height: 1.02;
-      max-width: 900px;
+      margin-top: 22px;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: 0.98;
+      max-width: 980px;
       position: relative;
       z-index: 1;
+      letter-spacing: -0.03em;
     }
 
     .hero h2 span {
       background: linear-gradient(90deg, var(--pink), var(--lavender), var(--blue), var(--gold));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 18px rgba(255,255,255,0.06));
     }
 
     .hero p {
       position: relative;
       z-index: 1;
-      margin-top: 14px;
-      max-width: 860px;
+      margin-top: 18px;
+      max-width: 900px;
       line-height: 1.8;
       color: var(--muted);
-      font-size: 1.02rem;
+      font-size: 1.08rem;
     }
 
     .hero-actions {
       position: relative;
       z-index: 1;
-      margin-top: 22px;
+      margin-top: 24px;
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 12px;
     }
 
     .soft-btn, .chip, .tab-btn, .track-btn, .favorite-btn, .mini-btn {
@@ -370,8 +407,19 @@
     }
 
     .soft-btn, .chip {
-      padding: 12px 16px;
+      padding: 13px 18px;
       border-radius: 999px;
+    }
+
+    .hero-actions .soft-btn {
+      min-width: 170px;
+      text-align: center;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+    }
+
+    .hero-actions .soft-btn.primary-glow {
+      background: linear-gradient(135deg, rgba(255,156,221,0.24), rgba(168,223,255,0.16));
+      border-color: rgba(255,255,255,0.22);
     }
 
     .controls {
@@ -387,6 +435,19 @@
       background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.05));
       box-shadow: var(--shadow);
       padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::after {
+      content: "";
+      position: absolute;
+      inset: auto -60px -60px auto;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(208,176,255,0.13), transparent 72%);
+      pointer-events: none;
     }
 
     .search-input {
@@ -398,6 +459,13 @@
       padding: 15px 16px;
       outline: none;
       font-size: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .search-input:focus {
+      border-color: rgba(255,255,255,0.22);
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.03);
     }
 
     .search-input::placeholder {
@@ -408,6 +476,8 @@
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
+      position: relative;
+      z-index: 1;
     }
 
     .chip.active {
@@ -435,6 +505,22 @@
       transition: 0.28s ease;
       cursor: pointer;
       position: relative;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: auto 10px 10px 10px;
+      height: 70px;
+      border-radius: 18px;
+      background: linear-gradient(to top, rgba(255,255,255,0.06), transparent);
+      opacity: 0;
+      transition: 0.28s ease;
+      pointer-events: none;
+    }
+
+    .card:hover::after {
+      opacity: 1;
     }
 
     .card-cover {
@@ -767,6 +853,7 @@
       background: rgba(255,255,255,0.05);
       min-height: 200px;
       transition: 0.25s ease;
+      position: relative;
     }
 
     .gallery-item img,
@@ -879,6 +966,7 @@
       background: rgba(255,255,255,0.08);
       color: white;
       cursor: pointer;
+      transition: 0.25s ease;
     }
 
     .progress-wrap {
@@ -999,6 +1087,10 @@
       .character-cover {
         min-height: 380px;
       }
+
+      .hero {
+        min-height: auto;
+      }
     }
 
     @media (max-width: 700px) {
@@ -1017,11 +1109,15 @@
       .card-cover {
         height: 260px;
       }
+
+      .hero h2 {
+        line-height: 1.02;
+      }
     }
   </style>
 </head>
 <body>
-  <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+  <button class="sidebar-toggle" id="sidebarToggle" type="button">☰</button>
 
   <div class="cursor-glow" id="cursorGlow"></div>
   <div class="sparkles" id="sparkles"></div>
@@ -1037,9 +1133,9 @@
       <div class="sidebar-group">
         <h3>Navigate</h3>
         <div class="side-links">
-          <a class="side-link" href="#home">Home</a>
-          <a class="side-link" href="#home">All Profiles</a>
-          <a class="side-link" href="#home">Favorites</a>
+          <button class="side-link active-link" id="goHomeBtn" type="button">Home</button>
+          <button class="side-link" id="showAllBtn" type="button">All Profiles</button>
+          <button class="side-link" id="showFavoritesBtn" type="button">Favorites</button>
         </div>
       </div>
 
@@ -1059,22 +1155,25 @@
 
     <main class="content">
       <section class="view active" id="homeView">
-        <div class="hero">
+        <div class="hero" id="homeHero">
           <div class="hero-top">
             <div class="badge">✦ dreamy profile archive ✦</div>
           </div>
+
           <h2><span>Beautiful pages for everyone you love.</span></h2>
+
           <p>
             Click a profile and open their own page with music, lore, gallery, videos, quotes,
             relationships, facts, aesthetic details, and more.
           </p>
+
           <div class="hero-actions">
-            <a class="soft-btn" href="#home">Browse Archive</a>
-            <a class="soft-btn" href="#home">Start Editing</a>
+            <button class="soft-btn primary-glow" id="browseArchiveBtn" type="button">Browse Archive</button>
+            <button class="soft-btn" id="surpriseMeBtn" type="button">Surprise Me</button>
           </div>
         </div>
 
-        <div class="controls">
+        <div class="controls" id="controlsSection">
           <div class="panel">
             <input
               type="text"
@@ -1083,17 +1182,19 @@
               placeholder="Search names, fandoms, tags, vibes, titles..."
             />
           </div>
+
           <div class="panel">
             <div class="chips" id="filterChips">
-              <button class="chip active" data-filter="all">All</button>
-              <button class="chip" data-filter="Fictional">Fictional</button>
-              <button class="chip" data-filter="Anime">Anime</button>
-              <button class="chip" data-filter="Game">Game</button>
+              <button class="chip active" data-filter="all" type="button">All</button>
+              <button class="chip" data-filter="Fictional" type="button">Fictional</button>
+              <button class="chip" data-filter="Anime" type="button">Anime</button>
+              <button class="chip" data-filter="Game" type="button">Game</button>
+              <button class="chip" data-filter="Real Person" type="button">Real Person</button>
             </div>
           </div>
         </div>
 
-        <h3 class="section-title">Profiles</h3>
+        <h3 class="section-title" id="profilesSection">Profiles</h3>
         <div class="empty" id="emptyState">No profiles found.</div>
         <div class="cards-grid" id="cardsGrid"></div>
 
@@ -1255,7 +1356,6 @@
         videos: [
           "videos/Bildschirmaufnahme 2026-04-15 215634.mp4",
           "videos/Bildschirmaufnahme 2026-02-28 201959.mp4"
-          
         ],
         age: "18",
         birthday: "December 20",
@@ -1287,7 +1387,7 @@
         tags: ["ghoul", "tragic", "anime", "dark"]
       },
       {
-      id: 4,
+        id: 4,
         slug: "sunnita-mukh",
         name: "Sunnita",
         category: "Real Person",
@@ -1304,7 +1404,6 @@
         videos: [
           "videos/Bildschirmaufnahme 2026-04-15 234630.mp4",
           "videos/sunvid.mp4"
-          
         ],
         age: "21",
         birthday: "December 20",
@@ -1334,7 +1433,7 @@
         ],
         defaultTrack: 0,
         tags: ["ghoul", "tragic", "anime", "dark"]
-      },
+      }
     ];
 
     const homeView = document.getElementById("homeView");
@@ -1350,6 +1449,14 @@
     const cursorGlow = document.getElementById("cursorGlow");
     const sparkles = document.getElementById("sparkles");
     const petals = document.getElementById("petals");
+
+    const goHomeBtn = document.getElementById("goHomeBtn");
+    const showAllBtn = document.getElementById("showAllBtn");
+    const showFavoritesBtn = document.getElementById("showFavoritesBtn");
+    const browseArchiveBtn = document.getElementById("browseArchiveBtn");
+    const surpriseMeBtn = document.getElementById("surpriseMeBtn");
+    const homeHero = document.getElementById("homeHero");
+    const profilesSection = document.getElementById("profilesSection");
 
     const mainMusic = document.getElementById("mainMusic");
     const toggleMainMusicBtn = document.getElementById("toggleMainMusicBtn");
@@ -1367,6 +1474,7 @@
     const volumeBar = document.getElementById("volumeBar");
 
     let currentFilter = "all";
+    let favoritesOnly = false;
     let currentCharacterSlug = null;
     let currentTrackIndex = null;
     let currentPlaylist = [];
@@ -1397,8 +1505,11 @@
       } else {
         favorites.push(slug);
       }
+
       saveFavorites();
       renderFavorites();
+      renderCards();
+
       if (currentCharacterSlug === slug) {
         renderCharacterPage(slug, false);
       }
@@ -1414,9 +1525,63 @@
       }
     }
 
+    function scrollToProfiles() {
+      profilesSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function scrollToHero() {
+      homeHero.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function setActiveSidebarButton(buttonKey) {
+      [goHomeBtn, showAllBtn, showFavoritesBtn].forEach(btn => btn.classList.remove("active-link"));
+
+      if (buttonKey === "home") goHomeBtn.classList.add("active-link");
+      if (buttonKey === "all") showAllBtn.classList.add("active-link");
+      if (buttonKey === "favorites") showFavoritesBtn.classList.add("active-link");
+    }
+
+    function setChipActive(value) {
+      document.querySelectorAll(".chip").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.filter === value);
+      });
+    }
+
+    function resetToAllProfiles() {
+      favoritesOnly = false;
+      currentFilter = "all";
+      searchInput.value = "";
+      setChipActive("all");
+      renderCards();
+      setActiveSidebarButton("all");
+    }
+
+    function showOnlyFavorites() {
+      favoritesOnly = true;
+      currentFilter = "all";
+      searchInput.value = "";
+      setChipActive("all");
+      renderCards();
+      setActiveSidebarButton("favorites");
+    }
+
+    function goHomeAction() {
+      if (window.location.hash.startsWith("#character/")) {
+        window.location.hash = "#home";
+        setTimeout(() => {
+          scrollToHero();
+        }, 50);
+      } else {
+        scrollToHero();
+      }
+      setActiveSidebarButton("home");
+      closeSidebarOnMobile();
+    }
+
     function createCard(character) {
       const article = document.createElement("article");
       article.className = "card";
+
       article.innerHTML = `
         <div class="card-cover">
           <img src="${character.cover}" alt="${character.name}">
@@ -1433,6 +1598,7 @@
           </div>
         </div>
       `;
+
       article.addEventListener("click", () => openCharacter(character.slug, true));
       return article;
     }
@@ -1444,6 +1610,8 @@
         const filterPass =
           currentFilter === "all" ||
           character.category.toLowerCase() === currentFilter.toLowerCase();
+
+        const favoritePass = !favoritesOnly || isFavorite(character.slug);
 
         const text = `
           ${character.name}
@@ -1461,7 +1629,7 @@
           ${character.tags.join(" ")}
         `.toLowerCase();
 
-        return filterPass && text.includes(query);
+        return filterPass && favoritePass && text.includes(query);
       });
 
       cardsGrid.innerHTML = "";
@@ -1476,13 +1644,31 @@
       favoritesEmpty.style.display = items.length ? "none" : "block";
 
       items.forEach(character => {
-        const link = document.createElement("a");
-        link.href = `#character/${character.slug}`;
+        const link = document.createElement("button");
+        link.type = "button";
         link.className = "fav-item";
         link.textContent = `♡ ${character.name}`;
-        link.addEventListener("click", () => closeSidebarOnMobile());
+        link.addEventListener("click", () => {
+          openCharacter(character.slug, false);
+          closeSidebarOnMobile();
+        });
         favoritesList.appendChild(link);
       });
+    }
+
+    function normalizeVideoUrl(video) {
+      if (video.includes("youtube.com/embed")) return video;
+      if (video.includes("youtu.be/")) {
+        const idPart = video.split("youtu.be/")[1] || "";
+        const videoId = idPart.split("?")[0];
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
+      if (video.includes("youtube.com/watch?v=")) {
+        const url = new URL(video);
+        const videoId = url.searchParams.get("v");
+        if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+      }
+      return video;
     }
 
     function renderCharacterPage(slug, playDefaultTrack = false) {
@@ -1532,13 +1718,13 @@
           </div>
 
           <div class="character-tabs" id="characterTabs">
-            <button class="tab-btn active" data-tab="overview">Overview</button>
-            <button class="tab-btn" data-tab="music">Music</button>
-            <button class="tab-btn" data-tab="gallery">Gallery</button>
-            <button class="tab-btn" data-tab="videos">Videos</button>
-            <button class="tab-btn" data-tab="quotes">Quotes</button>
-            <button class="tab-btn" data-tab="relationships">Relationships</button>
-            <button class="tab-btn" data-tab="extras">Extras</button>
+            <button class="tab-btn active" data-tab="overview" type="button">Overview</button>
+            <button class="tab-btn" data-tab="music" type="button">Music</button>
+            <button class="tab-btn" data-tab="gallery" type="button">Gallery</button>
+            <button class="tab-btn" data-tab="videos" type="button">Videos</button>
+            <button class="tab-btn" data-tab="quotes" type="button">Quotes</button>
+            <button class="tab-btn" data-tab="relationships" type="button">Relationships</button>
+            <button class="tab-btn" data-tab="extras" type="button">Extras</button>
           </div>
 
           <div class="tab-panel active" id="tab-overview">
@@ -1606,13 +1792,21 @@
                 ${
                   character.videos && character.videos.length
                     ? character.videos.map(video => {
-                        if (video.includes("youtube.com/embed")) {
+                        const normalized = normalizeVideoUrl(video);
+
+                        if (normalized.includes("youtube.com/embed")) {
                           return `
                             <div class="gallery-item">
-                              <iframe src="${video}" allowfullscreen></iframe>
+                              <iframe
+                                src="${normalized}"
+                                allowfullscreen
+                                loading="lazy"
+                                referrerpolicy="strict-origin-when-cross-origin">
+                              </iframe>
                             </div>
                           `;
                         }
+
                         return `
                           <div class="gallery-item">
                             <video controls preload="metadata">
@@ -1751,9 +1945,13 @@
     }
 
     function openCharacter(slug, playDefault = true) {
+      const character = getCharacterBySlug(slug);
+      if (!character) return;
+
       if (playDefault) {
-        playCharacterTrack(slug, getCharacterBySlug(slug)?.defaultTrack ?? 0);
+        playCharacterTrack(slug, character.defaultTrack ?? 0);
       }
+
       window.location.hash = `#character/${slug}`;
     }
 
@@ -1773,8 +1971,10 @@
           toggleMainMusicBtn.textContent = "Pause Main Music";
           playerTrackTitle.textContent = "Main Page Theme";
           playerTrackMeta.textContent = "Dream Archive";
+          playPauseBtn.textContent = "❚❚";
         } else {
           stopMainMusic();
+          playPauseBtn.textContent = "▶";
         }
       } catch (err) {
         alert("The browser blocked music. Click again after interacting with the page.");
@@ -1790,6 +1990,7 @@
       currentPlaylist = character.music;
       currentPlaylistOwner = character.name;
       currentTrackIndex = trackIndex;
+      currentCharacterSlug = slug;
 
       const track = currentPlaylist[currentTrackIndex];
       audioPlayer.src = track.url;
@@ -1810,21 +2011,29 @@
       playerTrackMeta.textContent = meta || "Choose a profile or a song";
     }
 
+    function getSlugByOwner(name) {
+      const character = characters.find(c => c.name === name);
+      return character ? character.slug : null;
+    }
+
     function playNextTrack() {
       if (!currentPlaylist.length || currentTrackIndex === null) return;
       const nextIndex = (currentTrackIndex + 1) % currentPlaylist.length;
-      playCharacterTrack(currentCharacterSlug || getSlugByOwner(currentPlaylistOwner), nextIndex);
+      const slug = currentCharacterSlug || getSlugByOwner(currentPlaylistOwner);
+      if (slug) playCharacterTrack(slug, nextIndex);
     }
 
     function playPrevTrack() {
       if (!currentPlaylist.length || currentTrackIndex === null) return;
       const prevIndex = (currentTrackIndex - 1 + currentPlaylist.length) % currentPlaylist.length;
-      playCharacterTrack(currentCharacterSlug || getSlugByOwner(currentPlaylistOwner), prevIndex);
+      const slug = currentCharacterSlug || getSlugByOwner(currentPlaylistOwner);
+      if (slug) playCharacterTrack(slug, prevIndex);
     }
 
-    function getSlugByOwner(name) {
-      const character = characters.find(c => c.name === name);
-      return character ? character.slug : null;
+    function openRandomCharacter() {
+      if (!characters.length) return;
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      openCharacter(characters[randomIndex].slug, true);
     }
 
     playPauseBtn.addEventListener("click", async () => {
@@ -1860,6 +2069,9 @@
       audioPlayer.currentTime = 0;
       stopMainMusic();
       playPauseBtn.textContent = "▶";
+      progressBar.value = 0;
+      currentTime.textContent = "0:00";
+      duration.textContent = "0:00";
       updatePlayerInfo("Nothing playing", "Choose a profile or a song");
     });
 
@@ -1916,7 +2128,11 @@
       playPauseBtn.textContent = "▶";
     });
 
-    searchInput.addEventListener("input", renderCards);
+    searchInput.addEventListener("input", () => {
+      setActiveSidebarButton("all");
+      favoritesOnly = false;
+      renderCards();
+    });
 
     filterChips.addEventListener("click", (e) => {
       const button = e.target.closest(".chip");
@@ -1924,9 +2140,65 @@
 
       document.querySelectorAll(".chip").forEach(btn => btn.classList.remove("active"));
       button.classList.add("active");
+
       currentFilter = button.dataset.filter;
+      favoritesOnly = false;
+      setActiveSidebarButton("all");
       renderCards();
     });
+
+    goHomeBtn.addEventListener("click", () => {
+      if (window.location.hash.startsWith("#character/")) {
+        window.location.hash = "#home";
+        setTimeout(scrollToHero, 100);
+      } else {
+        scrollToHero();
+      }
+      setActiveSidebarButton("home");
+    });
+
+    showAllBtn.addEventListener("click", () => {
+      if (window.location.hash.startsWith("#character/")) {
+        window.location.hash = "#home";
+        setTimeout(() => {
+          resetToAllProfiles();
+          scrollToProfiles();
+        }, 100);
+      } else {
+        resetToAllProfiles();
+        scrollToProfiles();
+      }
+      closeSidebarOnMobile();
+    });
+
+    showFavoritesBtn.addEventListener("click", () => {
+      if (window.location.hash.startsWith("#character/")) {
+        window.location.hash = "#home";
+        setTimeout(() => {
+          showOnlyFavorites();
+          scrollToProfiles();
+        }, 100);
+      } else {
+        showOnlyFavorites();
+        scrollToProfiles();
+      }
+      closeSidebarOnMobile();
+    });
+
+    browseArchiveBtn.addEventListener("click", () => {
+      if (window.location.hash.startsWith("#character/")) {
+        window.location.hash = "#home";
+        setTimeout(() => {
+          resetToAllProfiles();
+          scrollToProfiles();
+        }, 100);
+      } else {
+        resetToAllProfiles();
+        scrollToProfiles();
+      }
+    });
+
+    surpriseMeBtn.addEventListener("click", openRandomCharacter);
 
     sidebarToggle.addEventListener("click", () => {
       sidebar.classList.toggle("open");
