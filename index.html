@@ -11,13 +11,13 @@
 
   <div class="cursor-glow" id="cursorGlow"></div>
   <div class="sparkles" id="sparkles"></div>
-  <div class="petals" id="petals"></div>
 
   <div class="layout">
     <aside class="sidebar" id="sidebar">
       <div class="brand">
+        <span class="brand-kicker">gloss archive</span>
         <h1>Dream Archive</h1>
-        <p>Big dreamy archive for people, characters, idols, OCs, musicians, actors, and fictional worlds.</p>
+        <p>Profiles, obsessions, memories, moods, music, edits, favorite people, and fictional worlds.</p>
       </div>
 
       <div class="sidebar-group">
@@ -49,19 +49,37 @@
       <section class="view active" id="homeView">
         <div class="hero" id="homeHero">
           <div class="hero-top">
-            <div class="badge">✦ dreamy profile archive ✦</div>
+            <div class="badge">✦ glossy archive mode ✦</div>
           </div>
 
-          <h2><span>Beautiful pages for everyone you love.</span></h2>
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <h2><span>Pretty pages for everything you can’t stop thinking about.</span></h2>
 
-          <p>
-            Click a profile and open their own page with music, lore, gallery, videos, quotes,
-            relationships, facts, aesthetic details, and more.
-          </p>
+              <p>
+                A glossy archive for favorite people, characters, moods, music, edits, memories,
+                lore, and visual obsession.
+              </p>
 
-          <div class="hero-actions">
-            <button class="soft-btn primary-glow" id="browseArchiveBtn" type="button">Browse Archive</button>
-            <button class="soft-btn" id="surpriseMeBtn" type="button">Surprise Me</button>
+              <div class="hero-actions">
+                <button class="soft-btn primary-glow" id="browseArchiveBtn" type="button">Browse Archive</button>
+                <button class="soft-btn" id="surpriseMeBtn" type="button">Surprise Me</button>
+              </div>
+            </div>
+
+            <div class="hero-side">
+              <div class="hero-stat-card">
+                <small>Total Profiles</small>
+                <strong id="profileCount">0</strong>
+                <span>your curated universe</span>
+              </div>
+
+              <div class="hero-stat-card">
+                <small>Style</small>
+                <strong>Glossy Night</strong>
+                <span>black cherry / blush / chrome</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -106,7 +124,7 @@
         <div class="cards-grid" id="cardsGrid"></div>
 
         <div class="footer-note">
-          Replace all names, text, images, music, videos, quotes, and relationships with your own data.
+          Keep your file names the same. Images stay in <strong>images/</strong>, videos stay in <strong>videos/</strong>, music stays in <strong>music/</strong>.
         </div>
       </section>
 
