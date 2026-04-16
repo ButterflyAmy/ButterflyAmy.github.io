@@ -15,12 +15,16 @@ const sparkles = document.getElementById("sparkles");
 const petals = document.getElementById("petals");
 
 const goHomeBtn = document.getElementById("goHomeBtn");
-const showAllBtn = document.getElementById("showAllBtn");
 const showFavoritesBtn = document.getElementById("showFavoritesBtn");
+const showRecentBtn = document.getElementById("showRecentBtn");
+const surpriseSidebarBtn = document.getElementById("surpriseSidebarBtn");
 const browseArchiveBtn = document.getElementById("browseArchiveBtn");
 const surpriseMeBtn = document.getElementById("surpriseMeBtn");
+const copyPageBtn = document.getElementById("copyPageBtn");
 const homeHero = document.getElementById("homeHero");
 const profilesSection = document.getElementById("profilesSection");
+const featuredProfile = document.getElementById("featuredProfile");
+const sortSelect = document.getElementById("sortSelect");
 
 const mainMusic = document.getElementById("mainMusic");
 const toggleMainMusicBtn = document.getElementById("toggleMainMusicBtn");
@@ -37,6 +41,10 @@ const currentTime = document.getElementById("currentTime");
 const duration = document.getElementById("duration");
 const volumeBar = document.getElementById("volumeBar");
 
+const lightbox = document.getElementById("lightbox");
+const lightboxImage = document.getElementById("lightboxImage");
+const lightboxClose = document.getElementById("lightboxClose");
+
 let currentFilter = "all";
 let favoritesOnly = false;
 let currentCharacterSlug = null;
@@ -44,9 +52,13 @@ let currentTrackIndex = null;
 let currentPlaylist = [];
 let currentPlaylistOwner = "";
 let mainMusicPlaying = false;
+let currentSort = "default";
 
 const favoriteKey = "dreamArchiveFavorites";
+const recentKey = "dreamArchiveRecent";
+
 let favorites = JSON.parse(localStorage.getItem(favoriteKey) || "[]");
+let recentViewed = JSON.parse(localStorage.getItem(recentKey) || "[]");
 
 function formatTime(seconds) {
   if (!isFinite(seconds)) return "0:00";
@@ -59,8 +71,17 @@ function saveFavorites() {
   localStorage.setItem(favoriteKey, JSON.stringify(favorites));
 }
 
+function saveRecent() {
+  localStorage.setItem(recentKey, JSON.stringify(recentViewed));
+}
+
 function isFavorite(slug) {
   return favorites.includes(slug);
+}
+
+function addRecent(slug) {
+  recentViewed = [slug, ...recentViewed.filter(item => item !== slug)].slice(0, 8);
+  saveRecent();
 }
 
 function toggleFavorite(slug) {
@@ -98,11 +119,14 @@ function scrollToHero() {
 }
 
 function setActiveSidebarButton(buttonKey) {
-  [goHomeBtn, showAllBtn, showFavoritesBtn].forEach(btn => btn.classList.remove("active-link"));
+  [goHomeBtn, showFavoritesBtn, showRecentBtn, surpriseSidebarBtn].forEach(btn => {
+    if (btn) btn.classList.remove("active-link");
+  });
 
   if (buttonKey === "home") goHomeBtn.classList.add("active-link");
-  if (buttonKey === "all") showAllBtn.classList.add("active-link");
   if (buttonKey === "favorites") showFavoritesBtn.classList.add("active-link");
+  if (buttonKey === "recent") showRecentBtn.classList.add("active-link");
+  if (buttonKey === "random") surpriseSidebarBtn.classList.add("active-link");
 }
 
 function setChipActive(value) {
@@ -115,9 +139,11 @@ function resetToAllProfiles() {
   favoritesOnly = false;
   currentFilter = "all";
   searchInput.value = "";
+  currentSort = "default";
+  if (sortSelect) sortSelect.value = "default";
   setChipActive("all");
   renderCards();
-  setActiveSidebarButton("all");
+  setActiveSidebarButton("home");
 }
 
 function showOnlyFavorites() {
@@ -154,7 +180,7 @@ function createCard(character) {
   return article;
 }
 
-function renderCards() {
+function getFilteredCharacters() {
   const query = searchInput.value.toLowerCase().trim();
 
   const filtered = characters.filter(character => {
@@ -183,6 +209,22 @@ function renderCards() {
     return filterPass && favoritePass && text.includes(query);
   });
 
+  if (currentSort === "name-asc") {
+    filtered.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (currentSort === "name-desc") {
+    filtered.sort((a, b) => b.name.localeCompare(a.name));
+  } else if (currentSort === "favorites") {
+    filtered.sort((a, b) => Number(isFavorite(b.slug)) - Number(isFavorite(a.slug)));
+  } else if (currentSort === "category") {
+    filtered.sort((a, b) => a.category.localeCompare(b.category));
+  }
+
+  return filtered;
+}
+
+function renderCards() {
+  const filtered = getFilteredCharacters();
+
   cardsGrid.innerHTML = "";
   filtered.forEach(character => cardsGrid.appendChild(createCard(character)));
   emptyState.style.display = filtered.length ? "none" : "block";
@@ -205,6 +247,34 @@ function renderFavorites() {
     });
     favoritesList.appendChild(link);
   });
+}
+
+function renderFeaturedProfile() {
+  if (!featuredProfile || !characters.length) return;
+  const featured = characters[0];
+
+  featuredProfile.innerHTML = `
+    <div class="featured-card">
+      <img src="${featured.cover}" alt="${featured.name}">
+      <div class="featured-info">
+        <span class="card-type">${featured.category}</span>
+        <h3>${featured.name}</h3>
+        <p>${featured.story}</p>
+        <button class="soft-btn" id="openFeaturedBtn" type="button">Open Profile</button>
+      </div>
+    </div>
+  `;
+
+  const openFeaturedBtn = document.getElementById("openFeaturedBtn");
+  openFeaturedBtn?.addEventListener("click", () => openCharacter(featured.slug, true));
+}
+
+function renderRecentCards() {
+  const items = recentViewed.map(slug => getCharacterBySlug(slug)).filter(Boolean);
+
+  cardsGrid.innerHTML = "";
+  items.forEach(character => cardsGrid.appendChild(createCard(character)));
+  emptyState.style.display = items.length ? "none" : "block";
 }
 
 function normalizeVideoUrl(video) {
@@ -257,6 +327,7 @@ function renderCharacterPage(slug, playDefaultTrack = false) {
               ${isFavorite(character.slug) ? "♥ Favorited" : "♡ Add to Favorites"}
             </button>
             <button class="soft-btn" id="playDefaultBtn" type="button">Play Character Theme</button>
+            <button class="soft-btn" id="copyCharacterLinkBtn" type="button">Copy Profile Link</button>
             <a class="soft-btn" href="#home">Back to Archive</a>
           </div>
 
@@ -273,12 +344,9 @@ function renderCharacterPage(slug, playDefaultTrack = false) {
 
       <div class="character-tabs" id="characterTabs">
         <button class="tab-btn active" data-tab="overview" type="button">Overview</button>
+        <button class="tab-btn" data-tab="media" type="button">Media</button>
         <button class="tab-btn" data-tab="music" type="button">Music</button>
-        <button class="tab-btn" data-tab="gallery" type="button">Gallery</button>
-        <button class="tab-btn" data-tab="videos" type="button">Videos</button>
-        <button class="tab-btn" data-tab="quotes" type="button">Quotes</button>
-        <button class="tab-btn" data-tab="relationships" type="button">Relationships</button>
-        <button class="tab-btn" data-tab="extras" type="button">Extras</button>
+        <button class="tab-btn" data-tab="details" type="button">Details</button>
       </div>
 
       <div class="tab-panel active" id="tab-overview">
@@ -307,6 +375,55 @@ function renderCharacterPage(slug, playDefaultTrack = false) {
         </div>
       </div>
 
+      <div class="tab-panel" id="tab-media">
+        <div class="stack">
+          <div class="box">
+            <h3>Gallery</h3>
+            <div class="gallery-grid">
+              ${character.gallery.map(img => `
+                <div class="gallery-item">
+                  <img src="${img}" alt="${character.name}">
+                </div>
+              `).join("")}
+            </div>
+          </div>
+
+          <div class="box">
+            <h3>Videos</h3>
+            <div class="gallery-grid">
+              ${
+                character.videos && character.videos.length
+                  ? character.videos.map(video => {
+                      const normalized = normalizeVideoUrl(video);
+
+                      if (normalized.includes("youtube.com/embed")) {
+                        return `
+                          <div class="gallery-item">
+                            <iframe
+                              src="${normalized}"
+                              allowfullscreen
+                              loading="lazy"
+                              referrerpolicy="strict-origin-when-cross-origin">
+                            </iframe>
+                          </div>
+                        `;
+                      }
+
+                      return `
+                        <div class="gallery-item">
+                          <video controls preload="metadata">
+                            <source src="${video}" type="video/mp4">
+                          </video>
+                        </div>
+                      `;
+                    }).join("")
+                  : `<p class="small">No videos yet.</p>`
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="tab-panel" id="tab-music">
         <div class="box">
           <h3>Music</h3>
@@ -326,91 +443,43 @@ function renderCharacterPage(slug, playDefaultTrack = false) {
         </div>
       </div>
 
-      <div class="tab-panel" id="tab-gallery">
-        <div class="box">
-          <h3>Gallery</h3>
-          <div class="gallery-grid">
-            ${character.gallery.map(img => `
-              <div class="gallery-item">
-                <img src="${img}" alt="${character.name}">
-              </div>
-            `).join("")}
-          </div>
-        </div>
-      </div>
-
-      <div class="tab-panel" id="tab-videos">
-        <div class="box">
-          <h3>Videos</h3>
-          <div class="gallery-grid">
-            ${
-              character.videos && character.videos.length
-                ? character.videos.map(video => {
-                    const normalized = normalizeVideoUrl(video);
-
-                    if (normalized.includes("youtube.com/embed")) {
-                      return `
-                        <div class="gallery-item">
-                          <iframe
-                            src="${normalized}"
-                            allowfullscreen
-                            loading="lazy"
-                            referrerpolicy="strict-origin-when-cross-origin">
-                          </iframe>
-                        </div>
-                      `;
-                    }
-
-                    return `
-                      <div class="gallery-item">
-                        <video controls preload="metadata">
-                          <source src="${video}" type="video/mp4">
-                        </video>
-                      </div>
-                    `;
-                  }).join("")
-                : `<p class="small">No videos yet.</p>`
-            }
-          </div>
-        </div>
-      </div>
-
-      <div class="tab-panel" id="tab-quotes">
-        <div class="box">
-          <h3>Quotes</h3>
-          <div class="quote-list">
-            ${character.quotes.map(q => `<div class="quote-item">“${q}”</div>`).join("")}
-          </div>
-        </div>
-      </div>
-
-      <div class="tab-panel" id="tab-relationships">
-        <div class="box">
-          <h3>Relationships</h3>
-          <div class="relationships">
-            ${character.relationships.map(r => `
-              <div class="relation">
-                <strong>${r.name}</strong>
-                <span>${r.type}</span>
-                <p>${r.detail}</p>
-              </div>
-            `).join("")}
-          </div>
-        </div>
-      </div>
-
-      <div class="tab-panel" id="tab-extras">
+      <div class="tab-panel" id="tab-details">
         <div class="content-grid">
-          <div class="box">
-            <h3>Facts</h3>
-            <ul>
-              ${character.facts.map(f => `<li>${f}</li>`).join("")}
-            </ul>
+          <div class="stack">
+            <div class="box">
+              <h3>Quotes</h3>
+              <div class="quote-list">
+                ${character.quotes.map(q => `<div class="quote-item">“${q}”</div>`).join("")}
+              </div>
+            </div>
+
+            <div class="box">
+              <h3>Facts</h3>
+              <ul>
+                ${character.facts.map(f => `<li>${f}</li>`).join("")}
+              </ul>
+            </div>
           </div>
-          <div class="box">
-            <h3>Tags</h3>
-            <div class="tags">
-              ${character.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+
+          <div class="stack">
+            <div class="box">
+              <h3>Relationships</h3>
+              <div class="relationships">
+                ${character.relationships.map(r => `
+                  <div class="relation">
+                    <strong>${r.name}</strong>
+                    <span>${r.type}</span>
+                    <p>${r.detail}</p>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+
+            <div class="box">
+              <h3>Tags</h3>
+              <div class="tags">
+                ${character.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+              </div>
             </div>
           </div>
         </div>
@@ -420,6 +489,7 @@ function renderCharacterPage(slug, playDefaultTrack = false) {
 
   setupCharacterTabs();
   setupCharacterButtons(character);
+  setupGalleryLightbox();
 
   if (playDefaultTrack) {
     playCharacterTrack(character.slug, character.defaultTrack);
@@ -445,9 +515,26 @@ function setupCharacterTabs() {
   });
 }
 
+function setupGalleryLightbox() {
+  const galleryImages = characterView.querySelectorAll(".gallery-item img");
+  galleryImages.forEach(img => {
+    img.addEventListener("click", () => {
+      lightboxImage.src = img.src;
+      lightbox.classList.add("open");
+    });
+  });
+}
+
+function copyCurrentLink() {
+  navigator.clipboard.writeText(window.location.href)
+    .then(() => alert("Link copied!"))
+    .catch(() => alert("Could not copy link."));
+}
+
 function setupCharacterButtons(character) {
   const favoriteBtn = document.getElementById("favoriteBtn");
   const playDefaultBtn = document.getElementById("playDefaultBtn");
+  const copyCharacterLinkBtn = document.getElementById("copyCharacterLinkBtn");
   const playTrackButtons = characterView.querySelectorAll(".play-track-btn");
 
   if (favoriteBtn) {
@@ -456,6 +543,10 @@ function setupCharacterButtons(character) {
 
   if (playDefaultBtn) {
     playDefaultBtn.addEventListener("click", () => playCharacterTrack(character.slug, character.defaultTrack));
+  }
+
+  if (copyCharacterLinkBtn) {
+    copyCharacterLinkBtn.addEventListener("click", copyCurrentLink);
   }
 
   playTrackButtons.forEach(btn => {
@@ -501,6 +592,8 @@ function route() {
 function openCharacter(slug, playDefault = true) {
   const character = getCharacterBySlug(slug);
   if (!character) return;
+
+  addRecent(slug);
 
   if (playDefault) {
     playCharacterTrack(slug, character.defaultTrack ?? 0);
@@ -587,6 +680,7 @@ function playPrevTrack() {
 function openRandomCharacter() {
   if (!characters.length) return;
   const randomIndex = Math.floor(Math.random() * characters.length);
+  setActiveSidebarButton("random");
   openCharacter(characters[randomIndex].slug, true);
 }
 
@@ -683,8 +777,13 @@ mainMusic.addEventListener("pause", () => {
 });
 
 searchInput.addEventListener("input", () => {
-  setActiveSidebarButton("all");
+  setActiveSidebarButton("home");
   favoritesOnly = false;
+  renderCards();
+});
+
+sortSelect?.addEventListener("change", () => {
+  currentSort = sortSelect.value;
   renderCards();
 });
 
@@ -697,7 +796,7 @@ filterChips.addEventListener("click", e => {
 
   currentFilter = button.dataset.filter;
   favoritesOnly = false;
-  setActiveSidebarButton("all");
+  setActiveSidebarButton("home");
   renderCards();
 });
 
@@ -709,20 +808,6 @@ goHomeBtn.addEventListener("click", () => {
     scrollToHero();
   }
   setActiveSidebarButton("home");
-});
-
-showAllBtn.addEventListener("click", () => {
-  if (window.location.hash.startsWith("#character/")) {
-    window.location.hash = "#home";
-    setTimeout(() => {
-      resetToAllProfiles();
-      scrollToProfiles();
-    }, 100);
-  } else {
-    resetToAllProfiles();
-    scrollToProfiles();
-  }
-  closeSidebarOnMobile();
 });
 
 showFavoritesBtn.addEventListener("click", () => {
@@ -739,6 +824,32 @@ showFavoritesBtn.addEventListener("click", () => {
   closeSidebarOnMobile();
 });
 
+showRecentBtn?.addEventListener("click", () => {
+  favoritesOnly = false;
+  currentFilter = "all";
+  searchInput.value = "";
+  setChipActive("all");
+  setActiveSidebarButton("recent");
+
+  if (window.location.hash.startsWith("#character/")) {
+    window.location.hash = "#home";
+    setTimeout(() => {
+      renderRecentCards();
+      scrollToProfiles();
+    }, 100);
+  } else {
+    renderRecentCards();
+    scrollToProfiles();
+  }
+
+  closeSidebarOnMobile();
+});
+
+surpriseSidebarBtn?.addEventListener("click", () => {
+  closeSidebarOnMobile();
+  openRandomCharacter();
+});
+
 browseArchiveBtn.addEventListener("click", () => {
   if (window.location.hash.startsWith("#character/")) {
     window.location.hash = "#home";
@@ -753,6 +864,7 @@ browseArchiveBtn.addEventListener("click", () => {
 });
 
 surpriseMeBtn.addEventListener("click", openRandomCharacter);
+copyPageBtn?.addEventListener("click", copyCurrentLink);
 
 sidebarToggle.addEventListener("click", () => {
   sidebar.classList.toggle("open");
@@ -765,6 +877,16 @@ document.addEventListener("click", e => {
     if (!insideSidebar && !onToggle) {
       sidebar.classList.remove("open");
     }
+  }
+});
+
+lightboxClose?.addEventListener("click", () => {
+  lightbox.classList.remove("open");
+});
+
+lightbox?.addEventListener("click", e => {
+  if (e.target === lightbox) {
+    lightbox.classList.remove("open");
   }
 });
 
@@ -804,6 +926,7 @@ function init() {
   buildPetals();
   renderCards();
   renderFavorites();
+  renderFeaturedProfile();
   route();
 
   audioPlayer.volume = Number(volumeBar.value);
