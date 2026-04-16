@@ -146,9 +146,9 @@ export const characters = [
     slug: "sunnita-mukh",
     name: "Sunnita",
     category: "Real Person",
-    fandom: "No Fandom",
-    role: "ordinary girl",
-    vibe: "overreacter, sometimes nice",
+    fandom: "My World",
+    role: "Dreamer / MedAT fighter",
+    vibe: "emotional, dramatic, loyal, determined, soft-hearted",
     quote: "Lee taught me to never give up- so I will not give up, and pass my MedAT exam!",
     cover: "images/su1.png",
     gallery: [
@@ -162,31 +162,31 @@ export const characters = [
     ],
     age: "21",
     birthday: "December 20",
-    origin: "Tokyo",
-    status: "Active",
-    species: "Half-ghoul",
-    color: "Black / White / Red",
-    favorites: "Books, coffee, silence",
-    personality: "Sensitive, conflicted, intelligent, self-sacrificing, unstable under pressure.",
-    story: "A boy forced into a world of violence and identity crisis after becoming part ghoul.",
+    origin: "Austria",
+    status: "Still trying, still glowing",
+    species: "Human",
+    color: "Pink / Black / Silver",
+    favorites: "music, memories, pretty things, comfort characters, late-night thoughts",
+    personality: "Sensitive, expressive, passionate, sometimes chaotic, but full of love and ambition.",
+    story: "A girl trying to build a beautiful life while carrying a thousand feelings at once. She overthinks, dreams too much, gets attached deeply, and still keeps going.",
     facts: [
-      "Loves books.",
-      "Struggles with identity.",
-      "One of the most tragic anime leads."
+      "Wants to pass MedAT.",
+      "Gets attached to fictional characters and emotions very deeply.",
+      "Can be dramatic but also very sincere."
     ],
-    aesthetics: "Rain, masks, blood, white hair, city lights, broken glass.",
+    aesthetics: "pink glow, night sky, edits, nostalgia, roses, soft chaos, playlists, dreamcore",
     relationships: [
-      { name: "Hide", type: "Best friend", detail: "One of the most important people in his life." }
+      { name: "Lee", type: "Inspiration", detail: "A source of strength and motivation when giving up feels easy." }
     ],
     quotes: [
-      "What's wrong isn't me. What's wrong is this world.",
-      "I can no longer tell the difference between dream and reality."
+      "Lee taught me to never give up- so I will not give up, and pass my MedAT exam!",
+      "I feel everything too much, but maybe that's also my power."
     ],
     music: [
       { title: "Fairytale", artist: "Rybak", url: "music/fairytale - alexander rybak [edit audio].mp3" },
       { title: "After Dark", artist: "Mr. Kitty", url: "music/after-dark.mp3" }
     ],
     defaultTrack: 0,
-    tags: ["ghoul", "tragic", "anime", "dark"]
+    tags: ["real person", "dreamy", "emotional", "ambitious"]
   }
 ];
