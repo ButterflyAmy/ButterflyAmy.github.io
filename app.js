@@ -1,1 +1,821 @@
+import { characters } from "./data.js";
 
+const homeView = document.getElementById("homeView");
+const characterView = document.getElementById("characterView");
+const cardsGrid = document.getElementById("cardsGrid");
+const searchInput = document.getElementById("searchInput");
+const filterChips = document.getElementById("filterChips");
+const emptyState = document.getElementById("emptyState");
+const favoritesList = document.getElementById("favoritesList");
+const favoritesEmpty = document.getElementById("favoritesEmpty");
+const sidebar = document.getElementById("sidebar");
+const sidebarToggle = document.getElementById("sidebarToggle");
+const cursorGlow = document.getElementById("cursorGlow");
+const sparkles = document.getElementById("sparkles");
+const petals = document.getElementById("petals");
+
+const goHomeBtn = document.getElementById("goHomeBtn");
+const showAllBtn = document.getElementById("showAllBtn");
+const showFavoritesBtn = document.getElementById("showFavoritesBtn");
+const browseArchiveBtn = document.getElementById("browseArchiveBtn");
+const surpriseMeBtn = document.getElementById("surpriseMeBtn");
+const homeHero = document.getElementById("homeHero");
+const profilesSection = document.getElementById("profilesSection");
+
+const mainMusic = document.getElementById("mainMusic");
+const toggleMainMusicBtn = document.getElementById("toggleMainMusicBtn");
+
+const audioPlayer = document.getElementById("audioPlayer");
+const playerTrackTitle = document.getElementById("playerTrackTitle");
+const playerTrackMeta = document.getElementById("playerTrackMeta");
+const playPauseBtn = document.getElementById("playPauseBtn");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const stopBtn = document.getElementById("stopBtn");
+const progressBar = document.getElementById("progressBar");
+const currentTime = document.getElementById("currentTime");
+const duration = document.getElementById("duration");
+const volumeBar = document.getElementById("volumeBar");
+
+let currentFilter = "all";
+let favoritesOnly = false;
+let currentCharacterSlug = null;
+let currentTrackIndex = null;
+let currentPlaylist = [];
+let currentPlaylistOwner = "";
+let mainMusicPlaying = false;
+
+const favoriteKey = "dreamArchiveFavorites";
+let favorites = JSON.parse(localStorage.getItem(favoriteKey) || "[]");
+
+function formatTime(seconds) {
+  if (!isFinite(seconds)) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${String(secs).padStart(2, "0")}`;
+}
+
+function saveFavorites() {
+  localStorage.setItem(favoriteKey, JSON.stringify(favorites));
+}
+
+function isFavorite(slug) {
+  return favorites.includes(slug);
+}
+
+function toggleFavorite(slug) {
+  if (isFavorite(slug)) {
+    favorites = favorites.filter(item => item !== slug);
+  } else {
+    favorites.push(slug);
+  }
+
+  saveFavorites();
+  renderFavorites();
+  renderCards();
+
+  if (currentCharacterSlug === slug) {
+    renderCharacterPage(slug, false);
+  }
+}
+
+function getCharacterBySlug(slug) {
+  return characters.find(c => c.slug === slug);
+}
+
+function closeSidebarOnMobile() {
+  if (window.innerWidth <= 900) {
+    sidebar.classList.remove("open");
+  }
+}
+
+function scrollToProfiles() {
+  profilesSection.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function scrollToHero() {
+  homeHero.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function setActiveSidebarButton(buttonKey) {
+  [goHomeBtn, showAllBtn, showFavoritesBtn].forEach(btn => btn.classList.remove("active-link"));
+
+  if (buttonKey === "home") goHomeBtn.classList.add("active-link");
+  if (buttonKey === "all") showAllBtn.classList.add("active-link");
+  if (buttonKey === "favorites") showFavoritesBtn.classList.add("active-link");
+}
+
+function setChipActive(value) {
+  document.querySelectorAll(".chip").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.filter === value);
+  });
+}
+
+function resetToAllProfiles() {
+  favoritesOnly = false;
+  currentFilter = "all";
+  searchInput.value = "";
+  setChipActive("all");
+  renderCards();
+  setActiveSidebarButton("all");
+}
+
+function showOnlyFavorites() {
+  favoritesOnly = true;
+  currentFilter = "all";
+  searchInput.value = "";
+  setChipActive("all");
+  renderCards();
+  setActiveSidebarButton("favorites");
+}
+
+function createCard(character) {
+  const article = document.createElement("article");
+  article.className = "card";
+
+  article.innerHTML = `
+    <div class="card-cover">
+      <img src="${character.cover}" alt="${character.name}">
+      <div class="card-overlay">
+        <span class="card-type">${character.category}</span>
+        <h3>${character.name}</h3>
+        <p>${character.quote}</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="small"><strong>${character.role}</strong> • ${character.fandom}</div>
+      <div class="tags">
+        ${character.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+      </div>
+    </div>
+  `;
+
+  article.addEventListener("click", () => openCharacter(character.slug, true));
+  return article;
+}
+
+function renderCards() {
+  const query = searchInput.value.toLowerCase().trim();
+
+  const filtered = characters.filter(character => {
+    const filterPass =
+      currentFilter === "all" ||
+      character.category.toLowerCase() === currentFilter.toLowerCase();
+
+    const favoritePass = !favoritesOnly || isFavorite(character.slug);
+
+    const text = `
+      ${character.name}
+      ${character.category}
+      ${character.fandom}
+      ${character.role}
+      ${character.vibe}
+      ${character.quote}
+      ${character.personality}
+      ${character.story}
+      ${character.facts.join(" ")}
+      ${character.aesthetics}
+      ${character.relationships.map(r => `${r.name} ${r.type} ${r.detail}`).join(" ")}
+      ${character.quotes.join(" ")}
+      ${character.tags.join(" ")}
+    `.toLowerCase();
+
+    return filterPass && favoritePass && text.includes(query);
+  });
+
+  cardsGrid.innerHTML = "";
+  filtered.forEach(character => cardsGrid.appendChild(createCard(character)));
+  emptyState.style.display = filtered.length ? "none" : "block";
+}
+
+function renderFavorites() {
+  favoritesList.innerHTML = "";
+
+  const items = favorites.map(slug => getCharacterBySlug(slug)).filter(Boolean);
+  favoritesEmpty.style.display = items.length ? "none" : "block";
+
+  items.forEach(character => {
+    const link = document.createElement("button");
+    link.type = "button";
+    link.className = "fav-item";
+    link.textContent = `♡ ${character.name}`;
+    link.addEventListener("click", () => {
+      openCharacter(character.slug, false);
+      closeSidebarOnMobile();
+    });
+    favoritesList.appendChild(link);
+  });
+}
+
+function normalizeVideoUrl(video) {
+  if (video.includes("youtube.com/embed")) return video;
+
+  if (video.includes("youtu.be/")) {
+    const idPart = video.split("youtu.be/")[1] || "";
+    const videoId = idPart.split("?")[0];
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+
+  if (video.includes("youtube.com/watch?v=")) {
+    const url = new URL(video);
+    const videoId = url.searchParams.get("v");
+    if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+  }
+
+  return video;
+}
+
+function renderCharacterPage(slug, playDefaultTrack = false) {
+  const character = getCharacterBySlug(slug);
+  if (!character) return;
+
+  currentCharacterSlug = slug;
+
+  characterView.innerHTML = `
+    <div class="character-page">
+      <div class="character-hero">
+        <div class="character-cover">
+          <img src="${character.cover}" alt="${character.name}">
+        </div>
+
+        <div class="character-summary">
+          <div class="crumbs">
+            <a href="#home">Home</a> / <span>${character.category}</span> / <span>${character.name}</span>
+          </div>
+
+          <h2>${character.name}</h2>
+
+          <div class="character-meta">
+            <strong>${character.role}</strong> • ${character.fandom}<br>
+            ${character.vibe}
+          </div>
+
+          <div class="character-quote">“${character.quote}”</div>
+
+          <div class="summary-actions">
+            <button class="favorite-btn ${isFavorite(character.slug) ? "active" : ""}" id="favoriteBtn" type="button">
+              ${isFavorite(character.slug) ? "♥ Favorited" : "♡ Add to Favorites"}
+            </button>
+            <button class="soft-btn" id="playDefaultBtn" type="button">Play Character Theme</button>
+            <a class="soft-btn" href="#home">Back to Archive</a>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-box"><strong>Age</strong>${character.age}</div>
+            <div class="info-box"><strong>Birthday</strong>${character.birthday}</div>
+            <div class="info-box"><strong>Origin</strong>${character.origin}</div>
+            <div class="info-box"><strong>Status</strong>${character.status}</div>
+            <div class="info-box"><strong>Species</strong>${character.species}</div>
+            <div class="info-box"><strong>Color Theme</strong>${character.color}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="character-tabs" id="characterTabs">
+        <button class="tab-btn active" data-tab="overview" type="button">Overview</button>
+        <button class="tab-btn" data-tab="music" type="button">Music</button>
+        <button class="tab-btn" data-tab="gallery" type="button">Gallery</button>
+        <button class="tab-btn" data-tab="videos" type="button">Videos</button>
+        <button class="tab-btn" data-tab="quotes" type="button">Quotes</button>
+        <button class="tab-btn" data-tab="relationships" type="button">Relationships</button>
+        <button class="tab-btn" data-tab="extras" type="button">Extras</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-overview">
+        <div class="content-grid">
+          <div class="stack">
+            <div class="box">
+              <h3>Story / Lore</h3>
+              <p>${character.story}</p>
+            </div>
+            <div class="box">
+              <h3>Personality</h3>
+              <p>${character.personality}</p>
+            </div>
+          </div>
+
+          <div class="stack">
+            <div class="box">
+              <h3>Favorites</h3>
+              <p>${character.favorites}</p>
+            </div>
+            <div class="box">
+              <h3>Aesthetic</h3>
+              <p>${character.aesthetics}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-music">
+        <div class="box">
+          <h3>Music</h3>
+          <div class="track-list">
+            ${character.music.map((track, index) => `
+              <div class="track">
+                <div class="track-info">
+                  <strong>${index + 1}. ${track.title}</strong>
+                  <span>${track.artist}</span>
+                </div>
+                <button class="track-btn play-track-btn" data-slug="${character.slug}" data-index="${index}" type="button">
+                  Play
+                </button>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-gallery">
+        <div class="box">
+          <h3>Gallery</h3>
+          <div class="gallery-grid">
+            ${character.gallery.map(img => `
+              <div class="gallery-item">
+                <img src="${img}" alt="${character.name}">
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-videos">
+        <div class="box">
+          <h3>Videos</h3>
+          <div class="gallery-grid">
+            ${
+              character.videos && character.videos.length
+                ? character.videos.map(video => {
+                    const normalized = normalizeVideoUrl(video);
+
+                    if (normalized.includes("youtube.com/embed")) {
+                      return `
+                        <div class="gallery-item">
+                          <iframe
+                            src="${normalized}"
+                            allowfullscreen
+                            loading="lazy"
+                            referrerpolicy="strict-origin-when-cross-origin">
+                          </iframe>
+                        </div>
+                      `;
+                    }
+
+                    return `
+                      <div class="gallery-item">
+                        <video controls preload="metadata">
+                          <source src="${video}" type="video/mp4">
+                        </video>
+                      </div>
+                    `;
+                  }).join("")
+                : `<p class="small">No videos yet.</p>`
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-quotes">
+        <div class="box">
+          <h3>Quotes</h3>
+          <div class="quote-list">
+            ${character.quotes.map(q => `<div class="quote-item">“${q}”</div>`).join("")}
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-relationships">
+        <div class="box">
+          <h3>Relationships</h3>
+          <div class="relationships">
+            ${character.relationships.map(r => `
+              <div class="relation">
+                <strong>${r.name}</strong>
+                <span>${r.type}</span>
+                <p>${r.detail}</p>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-extras">
+        <div class="content-grid">
+          <div class="box">
+            <h3>Facts</h3>
+            <ul>
+              ${character.facts.map(f => `<li>${f}</li>`).join("")}
+            </ul>
+          </div>
+          <div class="box">
+            <h3>Tags</h3>
+            <div class="tags">
+              ${character.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  setupCharacterTabs();
+  setupCharacterButtons(character);
+
+  if (playDefaultTrack) {
+    playCharacterTrack(character.slug, character.defaultTrack);
+  }
+}
+
+function setupCharacterTabs() {
+  const tabsWrap = document.getElementById("characterTabs");
+  if (!tabsWrap) return;
+
+  const buttons = tabsWrap.querySelectorAll(".tab-btn");
+  const panels = characterView.querySelectorAll(".tab-panel");
+
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+      buttons.forEach(btn => btn.classList.remove("active"));
+      panels.forEach(panel => panel.classList.remove("active"));
+
+      button.classList.add("active");
+      const panel = document.getElementById(`tab-${button.dataset.tab}`);
+      if (panel) panel.classList.add("active");
+    });
+  });
+}
+
+function setupCharacterButtons(character) {
+  const favoriteBtn = document.getElementById("favoriteBtn");
+  const playDefaultBtn = document.getElementById("playDefaultBtn");
+  const playTrackButtons = characterView.querySelectorAll(".play-track-btn");
+
+  if (favoriteBtn) {
+    favoriteBtn.addEventListener("click", () => toggleFavorite(character.slug));
+  }
+
+  if (playDefaultBtn) {
+    playDefaultBtn.addEventListener("click", () => playCharacterTrack(character.slug, character.defaultTrack));
+  }
+
+  playTrackButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const slug = btn.dataset.slug;
+      const index = Number(btn.dataset.index);
+      playCharacterTrack(slug, index);
+    });
+  });
+}
+
+function showView(viewName) {
+  homeView.classList.remove("active");
+  characterView.classList.remove("active");
+
+  if (viewName === "character") {
+    characterView.classList.add("active");
+  } else {
+    homeView.classList.add("active");
+  }
+}
+
+function route() {
+  const hash = window.location.hash || "#home";
+
+  if (hash.startsWith("#character/")) {
+    const slug = hash.replace("#character/", "").trim();
+    const character = getCharacterBySlug(slug);
+
+    if (character) {
+      showView("character");
+      renderCharacterPage(slug, false);
+    } else {
+      window.location.hash = "#home";
+    }
+  } else {
+    showView("home");
+  }
+
+  closeSidebarOnMobile();
+}
+
+function openCharacter(slug, playDefault = true) {
+  const character = getCharacterBySlug(slug);
+  if (!character) return;
+
+  if (playDefault) {
+    playCharacterTrack(slug, character.defaultTrack ?? 0);
+  }
+
+  window.location.hash = `#character/${slug}`;
+}
+
+function stopMainMusic() {
+  mainMusic.pause();
+  mainMusic.currentTime = 0;
+  mainMusicPlaying = false;
+  toggleMainMusicBtn.textContent = "Play Main Music";
+}
+
+async function toggleMainMusic() {
+  try {
+    if (!mainMusicPlaying) {
+      audioPlayer.pause();
+      await mainMusic.play();
+      mainMusicPlaying = true;
+      toggleMainMusicBtn.textContent = "Pause Main Music";
+      playerTrackTitle.textContent = "Main Page Theme";
+      playerTrackMeta.textContent = "Dream Archive";
+      playPauseBtn.textContent = "❚❚";
+    } else {
+      stopMainMusic();
+      playPauseBtn.textContent = "▶";
+    }
+  } catch (err) {
+    alert("The browser blocked music. Click again after interacting with the page.");
+  }
+}
+
+async function playCharacterTrack(slug, trackIndex) {
+  const character = getCharacterBySlug(slug);
+  if (!character || !character.music[trackIndex]) return;
+
+  stopMainMusic();
+
+  currentPlaylist = character.music;
+  currentPlaylistOwner = character.name;
+  currentTrackIndex = trackIndex;
+  currentCharacterSlug = slug;
+
+  const track = currentPlaylist[currentTrackIndex];
+  audioPlayer.src = track.url;
+  audioPlayer.volume = Number(volumeBar.value);
+
+  try {
+    await audioPlayer.play();
+    updatePlayerInfo(track.title, `${character.name} • ${track.artist}`);
+    playPauseBtn.textContent = "❚❚";
+  } catch (err) {
+    updatePlayerInfo(track.title, `${character.name} • ${track.artist}`);
+    playPauseBtn.textContent = "▶";
+  }
+}
+
+function updatePlayerInfo(title, meta) {
+  playerTrackTitle.textContent = title || "Nothing playing";
+  playerTrackMeta.textContent = meta || "Choose a profile or a song";
+}
+
+function getSlugByOwner(name) {
+  const character = characters.find(c => c.name === name);
+  return character ? character.slug : null;
+}
+
+function playNextTrack() {
+  if (!currentPlaylist.length || currentTrackIndex === null) return;
+  const nextIndex = (currentTrackIndex + 1) % currentPlaylist.length;
+  const slug = currentCharacterSlug || getSlugByOwner(currentPlaylistOwner);
+  if (slug) playCharacterTrack(slug, nextIndex);
+}
+
+function playPrevTrack() {
+  if (!currentPlaylist.length || currentTrackIndex === null) return;
+  const prevIndex = (currentTrackIndex - 1 + currentPlaylist.length) % currentPlaylist.length;
+  const slug = currentCharacterSlug || getSlugByOwner(currentPlaylistOwner);
+  if (slug) playCharacterTrack(slug, prevIndex);
+}
+
+function openRandomCharacter() {
+  if (!characters.length) return;
+  const randomIndex = Math.floor(Math.random() * characters.length);
+  openCharacter(characters[randomIndex].slug, true);
+}
+
+playPauseBtn.addEventListener("click", async () => {
+  if (!audioPlayer.src && !mainMusicPlaying) return;
+
+  if (mainMusicPlaying) {
+    if (mainMusic.paused) {
+      await mainMusic.play();
+      playPauseBtn.textContent = "❚❚";
+    } else {
+      mainMusic.pause();
+      playPauseBtn.textContent = "▶";
+    }
+    return;
+  }
+
+  if (audioPlayer.paused) {
+    try {
+      await audioPlayer.play();
+      playPauseBtn.textContent = "❚❚";
+    } catch (err) {}
+  } else {
+    audioPlayer.pause();
+    playPauseBtn.textContent = "▶";
+  }
+});
+
+prevBtn.addEventListener("click", playPrevTrack);
+nextBtn.addEventListener("click", playNextTrack);
+
+stopBtn.addEventListener("click", () => {
+  audioPlayer.pause();
+  audioPlayer.currentTime = 0;
+  stopMainMusic();
+  playPauseBtn.textContent = "▶";
+  progressBar.value = 0;
+  currentTime.textContent = "0:00";
+  duration.textContent = "0:00";
+  updatePlayerInfo("Nothing playing", "Choose a profile or a song");
+});
+
+progressBar.addEventListener("input", () => {
+  if (mainMusicPlaying) {
+    if (isFinite(mainMusic.duration)) {
+      mainMusic.currentTime = (progressBar.value / 100) * mainMusic.duration;
+    }
+  } else if (isFinite(audioPlayer.duration)) {
+    audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
+  }
+});
+
+volumeBar.addEventListener("input", () => {
+  const volume = Number(volumeBar.value);
+  audioPlayer.volume = volume;
+  mainMusic.volume = volume;
+});
+
+toggleMainMusicBtn.addEventListener("click", toggleMainMusic);
+
+audioPlayer.addEventListener("timeupdate", () => {
+  if (!isFinite(audioPlayer.duration)) return;
+  currentTime.textContent = formatTime(audioPlayer.currentTime);
+  duration.textContent = formatTime(audioPlayer.duration);
+  progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+});
+
+mainMusic.addEventListener("timeupdate", () => {
+  if (!mainMusicPlaying || !isFinite(mainMusic.duration)) return;
+  currentTime.textContent = formatTime(mainMusic.currentTime);
+  duration.textContent = formatTime(mainMusic.duration);
+  progressBar.value = (mainMusic.currentTime / mainMusic.duration) * 100;
+});
+
+audioPlayer.addEventListener("play", () => {
+  playPauseBtn.textContent = "❚❚";
+});
+
+audioPlayer.addEventListener("pause", () => {
+  if (!audioPlayer.ended) playPauseBtn.textContent = "▶";
+});
+
+audioPlayer.addEventListener("ended", () => {
+  playNextTrack();
+});
+
+mainMusic.addEventListener("play", () => {
+  playPauseBtn.textContent = "❚❚";
+});
+
+mainMusic.addEventListener("pause", () => {
+  if (!audioPlayer.paused) return;
+  playPauseBtn.textContent = "▶";
+});
+
+searchInput.addEventListener("input", () => {
+  setActiveSidebarButton("all");
+  favoritesOnly = false;
+  renderCards();
+});
+
+filterChips.addEventListener("click", e => {
+  const button = e.target.closest(".chip");
+  if (!button) return;
+
+  document.querySelectorAll(".chip").forEach(btn => btn.classList.remove("active"));
+  button.classList.add("active");
+
+  currentFilter = button.dataset.filter;
+  favoritesOnly = false;
+  setActiveSidebarButton("all");
+  renderCards();
+});
+
+goHomeBtn.addEventListener("click", () => {
+  if (window.location.hash.startsWith("#character/")) {
+    window.location.hash = "#home";
+    setTimeout(scrollToHero, 100);
+  } else {
+    scrollToHero();
+  }
+  setActiveSidebarButton("home");
+});
+
+showAllBtn.addEventListener("click", () => {
+  if (window.location.hash.startsWith("#character/")) {
+    window.location.hash = "#home";
+    setTimeout(() => {
+      resetToAllProfiles();
+      scrollToProfiles();
+    }, 100);
+  } else {
+    resetToAllProfiles();
+    scrollToProfiles();
+  }
+  closeSidebarOnMobile();
+});
+
+showFavoritesBtn.addEventListener("click", () => {
+  if (window.location.hash.startsWith("#character/")) {
+    window.location.hash = "#home";
+    setTimeout(() => {
+      showOnlyFavorites();
+      scrollToProfiles();
+    }, 100);
+  } else {
+    showOnlyFavorites();
+    scrollToProfiles();
+  }
+  closeSidebarOnMobile();
+});
+
+browseArchiveBtn.addEventListener("click", () => {
+  if (window.location.hash.startsWith("#character/")) {
+    window.location.hash = "#home";
+    setTimeout(() => {
+      resetToAllProfiles();
+      scrollToProfiles();
+    }, 100);
+  } else {
+    resetToAllProfiles();
+    scrollToProfiles();
+  }
+});
+
+surpriseMeBtn.addEventListener("click", openRandomCharacter);
+
+sidebarToggle.addEventListener("click", () => {
+  sidebar.classList.toggle("open");
+});
+
+document.addEventListener("click", e => {
+  if (window.innerWidth <= 900) {
+    const insideSidebar = sidebar.contains(e.target);
+    const onToggle = sidebarToggle.contains(e.target);
+    if (!insideSidebar && !onToggle) {
+      sidebar.classList.remove("open");
+    }
+  }
+});
+
+function buildSparkles() {
+  for (let i = 0; i < 26; i++) {
+    const el = document.createElement("div");
+    el.className = "sparkle";
+    el.style.left = `${Math.random() * 100}%`;
+    el.style.animationDuration = `${8 + Math.random() * 12}s`;
+    el.style.animationDelay = `${Math.random() * 10}s`;
+    el.style.opacity = `${0.35 + Math.random() * 0.6}`;
+    el.style.transform = `scale(${0.55 + Math.random() * 1.2})`;
+    sparkles.appendChild(el);
+  }
+}
+
+function buildPetals() {
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement("div");
+    el.className = "petal";
+    el.style.left = `${Math.random() * 100}%`;
+    el.style.animationDuration = `${12 + Math.random() * 12}s`;
+    el.style.animationDelay = `${Math.random() * 12}s`;
+    el.style.opacity = `${0.4 + Math.random() * 0.5}`;
+    el.style.transform = `scale(${0.7 + Math.random() * 1.2}) rotate(${Math.random() * 360}deg)`;
+    petals.appendChild(el);
+  }
+}
+
+document.addEventListener("mousemove", e => {
+  cursorGlow.style.left = `${e.clientX}px`;
+  cursorGlow.style.top = `${e.clientY}px`;
+});
+
+function init() {
+  buildSparkles();
+  buildPetals();
+  renderCards();
+  renderFavorites();
+  route();
+
+  audioPlayer.volume = Number(volumeBar.value);
+  mainMusic.volume = Number(volumeBar.value);
+
+  if (window.location.hash.startsWith("#character/")) {
+    const slug = window.location.hash.replace("#character/", "");
+    if (getCharacterBySlug(slug)) {
+      renderCharacterPage(slug, false);
+    }
+  }
+}
+
+window.addEventListener("hashchange", route);
+init();
