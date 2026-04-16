@@ -21,18 +21,20 @@
       </div>
 
       <div class="sidebar-group">
-        <h3>Navigate</h3>
+        <h3>Explore</h3>
         <div class="side-links">
           <button class="side-link active-link" id="goHomeBtn" type="button">Home</button>
-          <button class="side-link" id="showAllBtn" type="button">All Profiles</button>
           <button class="side-link" id="showFavoritesBtn" type="button">Favorites</button>
+          <button class="side-link" id="showRecentBtn" type="button">Recently Viewed</button>
+          <button class="side-link" id="surpriseSidebarBtn" type="button">Surprise Me</button>
         </div>
       </div>
 
       <div class="sidebar-group">
-        <h3>Main Page Music</h3>
+        <h3>Quick Actions</h3>
         <div class="side-links">
           <button class="side-link" id="toggleMainMusicBtn" type="button">Play Main Music</button>
+          <button class="side-link" id="copyPageBtn" type="button">Copy Current Link</button>
         </div>
       </div>
 
@@ -63,6 +65,11 @@
           </div>
         </div>
 
+        <div class="panel featured-panel">
+          <h3>Featured Profile</h3>
+          <div id="featuredProfile"></div>
+        </div>
+
         <div class="controls" id="controlsSection">
           <div class="panel">
             <input
@@ -74,6 +81,16 @@
           </div>
 
           <div class="panel">
+            <select class="sort-select" id="sortSelect">
+              <option value="default">Sort: Default</option>
+              <option value="name-asc">Name A–Z</option>
+              <option value="name-desc">Name Z–A</option>
+              <option value="favorites">Favorites First</option>
+              <option value="category">Category</option>
+            </select>
+          </div>
+
+          <div class="panel controls-wide">
             <div class="chips" id="filterChips">
               <button class="chip active" data-filter="all" type="button">All</button>
               <button class="chip" data-filter="Fictional" type="button">Fictional</button>
@@ -130,6 +147,11 @@
       <button class="mini-btn" id="stopBtn" type="button">Stop</button>
       <input type="range" min="0" max="1" step="0.01" value="0.8" class="volume" id="volumeBar">
     </div>
+  </div>
+
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose" type="button">✕</button>
+    <img id="lightboxImage" alt="Expanded image">
   </div>
 
   <script type="module" src="app.js"></script>
