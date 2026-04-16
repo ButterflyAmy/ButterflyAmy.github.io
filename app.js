@@ -12,7 +12,6 @@ const sidebar = document.getElementById("sidebar");
 const sidebarToggle = document.getElementById("sidebarToggle");
 const cursorGlow = document.getElementById("cursorGlow");
 const sparkles = document.getElementById("sparkles");
-const petals = document.getElementById("petals");
 
 const goHomeBtn = document.getElementById("goHomeBtn");
 const showFavoritesBtn = document.getElementById("showFavoritesBtn");
@@ -25,6 +24,7 @@ const homeHero = document.getElementById("homeHero");
 const profilesSection = document.getElementById("profilesSection");
 const featuredProfile = document.getElementById("featuredProfile");
 const sortSelect = document.getElementById("sortSelect");
+const profileCount = document.getElementById("profileCount");
 
 const mainMusic = document.getElementById("mainMusic");
 const toggleMainMusicBtn = document.getElementById("toggleMainMusicBtn");
@@ -891,7 +891,7 @@ lightbox?.addEventListener("click", e => {
 });
 
 function buildSparkles() {
-  for (let i = 0; i < 26; i++) {
+  for (let i = 0; i < 22; i++) {
     const el = document.createElement("div");
     el.className = "sparkle";
     el.style.left = `${Math.random() * 100}%`;
@@ -903,19 +903,6 @@ function buildSparkles() {
   }
 }
 
-function buildPetals() {
-  for (let i = 0; i < 18; i++) {
-    const el = document.createElement("div");
-    el.className = "petal";
-    el.style.left = `${Math.random() * 100}%`;
-    el.style.animationDuration = `${12 + Math.random() * 12}s`;
-    el.style.animationDelay = `${Math.random() * 12}s`;
-    el.style.opacity = `${0.4 + Math.random() * 0.5}`;
-    el.style.transform = `scale(${0.7 + Math.random() * 1.2}) rotate(${Math.random() * 360}deg)`;
-    petals.appendChild(el);
-  }
-}
-
 document.addEventListener("mousemove", e => {
   cursorGlow.style.left = `${e.clientX}px`;
   cursorGlow.style.top = `${e.clientY}px`;
@@ -923,11 +910,14 @@ document.addEventListener("mousemove", e => {
 
 function init() {
   buildSparkles();
-  buildPetals();
   renderCards();
   renderFavorites();
   renderFeaturedProfile();
   route();
+
+  if (profileCount) {
+    profileCount.textContent = String(characters.length);
+  }
 
   audioPlayer.volume = Number(volumeBar.value);
   mainMusic.volume = Number(volumeBar.value);
