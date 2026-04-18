@@ -63,30 +63,34 @@ const themeKey = "dreamArchiveTheme";
 
 const themes = [
   {
-    id: "glossy-night",
-    name: "Glossy Night",
-    palette: "black cherry / blush / chrome"
+    id: "pink-glitter-dream",
+    name: "Pink Glitter Dream",
+    palette: "cutecore / glossy / glitter angel",
+    sparkles: 34
   },
   {
-    id: "pink-dream",
-    name: "Pink Dream",
-    palette: "rose pink / candy glow / pearl"
+    id: "neon-pink-night",
+    name: "Neon Pink Night",
+    palette: "city lights / blurry pink / nostalgic night",
+    sparkles: 18
   },
   {
-    id: "silver-moon",
-    name: "Silver Moon",
-    palette: "silver / moonlight / soft graphite"
+    id: "cyber-cold-neon",
+    name: "Cyber Cold Neon",
+    palette: "retro blue / cold neon / future street",
+    sparkles: 12
   },
   {
-    id: "blue-neon",
-    name: "Blue Neon",
-    palette: "midnight blue / neon mist / icy chrome"
+    id: "deep-siren",
+    name: "Deep Siren",
+    palette: "ocean glow / sirencore / drowned dream",
+    sparkles: 22
   }
 ];
 
 let favorites = JSON.parse(localStorage.getItem(favoriteKey) || "[]");
 let recentViewed = JSON.parse(localStorage.getItem(recentKey) || "[]");
-let currentTheme = localStorage.getItem(themeKey) || "glossy-night";
+let currentTheme = localStorage.getItem(themeKey) || "pink-glitter-dream";
 
 function formatTime(seconds) {
   if (!isFinite(seconds)) return "0:00";
@@ -202,28 +206,10 @@ function createCard(character) {
     </div>
     <div class="card-body">
       <div class="small"><strong>${character.role}</strong> • ${character.fandom}</div>
-
-      <div class="card-tags-wrap">
-        <button class="tag-toggle-btn" type="button">Show Tags</button>
-        <div class="tags is-hidden">
-          ${character.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
-        </div>
-      </div>
     </div>
   `;
 
   article.addEventListener("click", () => openCharacter(character.slug, true));
-
-  const tagToggleBtn = article.querySelector(".tag-toggle-btn");
-  const tagsWrap = article.querySelector(".tags");
-
-  tagToggleBtn?.addEventListener("click", e => {
-    e.stopPropagation();
-    const isHidden = tagsWrap.classList.contains("is-hidden");
-    tagsWrap.classList.toggle("is-hidden");
-    tagToggleBtn.textContent = isHidden ? "Hide Tags" : "Show Tags";
-  });
-
   return article;
 }
 
@@ -670,6 +656,8 @@ async function toggleMainMusic() {
   try {
     if (!mainMusicPlaying) {
       audioPlayer.pause();
+      audioPlayer.currentTime = 0;
+
       await mainMusic.play();
       mainMusicPlaying = true;
       toggleMainMusicBtn.textContent = "Pause Main Music";
@@ -678,6 +666,7 @@ async function toggleMainMusic() {
       playPauseBtn.textContent = "❚❚";
     } else {
       stopMainMusic();
+      updatePlayerInfo("Nothing playing", "Choose a profile or a song");
       playPauseBtn.textContent = "▶";
     }
   } catch (err) {
@@ -766,14 +755,38 @@ function openRandomCharacter() {
   openCharacter(characters[randomIndex].slug, true);
 }
 
+function clearSparkles() {
+  if (sparkles) {
+    sparkles.innerHTML = "";
+  }
+}
+
+function buildSparkles(count = 20) {
+  clearSparkles();
+
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("div");
+    el.className = "sparkle";
+    el.style.left = `${Math.random() * 100}%`;
+    el.style.animationDuration = `${8 + Math.random() * 12}s`;
+    el.style.animationDelay = `${Math.random() * 10}s`;
+    el.style.opacity = `${0.35 + Math.random() * 0.6}`;
+    el.style.transform = `scale(${0.55 + Math.random() * 1.2})`;
+    sparkles.appendChild(el);
+  }
+}
+
 function applyTheme(themeId) {
   const theme = themes.find(item => item.id === themeId) || themes[0];
+
   currentTheme = theme.id;
   document.body.setAttribute("data-theme", theme.id);
   saveTheme();
 
   if (themeName) themeName.textContent = theme.name;
   if (themePalette) themePalette.textContent = theme.palette;
+
+  buildSparkles(theme.sparkles);
 }
 
 function cycleTheme() {
@@ -787,8 +800,10 @@ playPauseBtn.addEventListener("click", async () => {
 
   if (mainMusicPlaying) {
     if (mainMusic.paused) {
-      await mainMusic.play();
-      playPauseBtn.textContent = "❚❚";
+      try {
+        await mainMusic.play();
+        playPauseBtn.textContent = "❚❚";
+      } catch (err) {}
     } else {
       mainMusic.pause();
       playPauseBtn.textContent = "▶";
@@ -831,7 +846,7 @@ volumeBar.addEventListener("input", () => {
   mainMusic.volume = volume;
 });
 
-toggleMainMusicBtn.addEventListener("click", toggleMainMusic);
+toggleMainMusicBtn?.addEventListener("click", toggleMainMusic);
 shuffleAllMusicBtn?.addEventListener("click", shuffleAllMusic);
 changeThemeBtn?.addEventListener("click", cycleTheme);
 themeCycleCard?.addEventListener("click", cycleTheme);
@@ -851,6 +866,9 @@ mainMusic.addEventListener("timeupdate", () => {
 });
 
 audioPlayer.addEventListener("play", () => {
+  mainMusic.pause();
+  mainMusicPlaying = false;
+  toggleMainMusicBtn.textContent = "Play Main Music";
   playPauseBtn.textContent = "❚❚";
 });
 
@@ -863,10 +881,12 @@ audioPlayer.addEventListener("ended", () => {
 });
 
 mainMusic.addEventListener("play", () => {
+  mainMusicPlaying = true;
   playPauseBtn.textContent = "❚❚";
 });
 
 mainMusic.addEventListener("pause", () => {
+  mainMusicPlaying = false;
   if (!audioPlayer.paused) return;
   playPauseBtn.textContent = "▶";
 });
@@ -916,6 +936,7 @@ showFavoritesBtn.addEventListener("click", () => {
     showOnlyFavorites();
     scrollToProfiles();
   }
+
   closeSidebarOnMobile();
 });
 
@@ -968,6 +989,7 @@ document.addEventListener("click", e => {
   if (window.innerWidth <= 900) {
     const insideSidebar = sidebar.contains(e.target);
     const onToggle = sidebarToggle.contains(e.target);
+
     if (!insideSidebar && !onToggle) {
       sidebar.classList.remove("open");
     }
@@ -984,19 +1006,6 @@ lightbox?.addEventListener("click", e => {
   }
 });
 
-function buildSparkles() {
-  for (let i = 0; i < 22; i++) {
-    const el = document.createElement("div");
-    el.className = "sparkle";
-    el.style.left = `${Math.random() * 100}%`;
-    el.style.animationDuration = `${8 + Math.random() * 12}s`;
-    el.style.animationDelay = `${Math.random() * 10}s`;
-    el.style.opacity = `${0.35 + Math.random() * 0.6}`;
-    el.style.transform = `scale(${0.55 + Math.random() * 1.2})`;
-    sparkles.appendChild(el);
-  }
-}
-
 document.addEventListener("mousemove", e => {
   cursorGlow.style.left = `${e.clientX}px`;
   cursorGlow.style.top = `${e.clientY}px`;
@@ -1004,7 +1013,6 @@ document.addEventListener("mousemove", e => {
 
 function init() {
   applyTheme(currentTheme);
-  buildSparkles();
   renderCards();
   renderFavorites();
   renderFeaturedProfile();
