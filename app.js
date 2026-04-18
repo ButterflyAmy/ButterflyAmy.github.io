@@ -13,6 +13,11 @@ const sidebarToggle = document.getElementById("sidebarToggle");
 const cursorGlow = document.getElementById("cursorGlow");
 const sparkles = document.getElementById("sparkles");
 
+const themeFxHearts = document.getElementById("themeFxHearts");
+const themeFxStreaks = document.getElementById("themeFxStreaks");
+const themeFxGrid = document.getElementById("themeFxGrid");
+const themeFxBubbles = document.getElementById("themeFxBubbles");
+
 const goHomeBtn = document.getElementById("goHomeBtn");
 const showFavoritesBtn = document.getElementById("showFavoritesBtn");
 const showRecentBtn = document.getElementById("showRecentBtn");
@@ -66,25 +71,29 @@ const themes = [
     id: "pink-glitter-dream",
     name: "Pink Glitter Dream",
     palette: "cutecore / glossy / glitter angel",
-    sparkles: 34
+    sparkles: 34,
+    effect: "hearts"
   },
   {
     id: "neon-pink-night",
     name: "Neon Pink Night",
     palette: "city lights / blurry pink / nostalgic night",
-    sparkles: 18
+    sparkles: 18,
+    effect: "streaks"
   },
   {
     id: "cyber-cold-neon",
     name: "Cyber Cold Neon",
     palette: "retro blue / cold neon / future street",
-    sparkles: 12
+    sparkles: 12,
+    effect: "grid"
   },
   {
     id: "deep-siren",
     name: "Deep Siren",
     palette: "ocean glow / sirencore / drowned dream",
-    sparkles: 22
+    sparkles: 22,
+    effect: "bubbles"
   }
 ];
 
@@ -176,7 +185,9 @@ function resetToAllProfiles() {
   currentFilter = "all";
   searchInput.value = "";
   currentSort = "default";
+
   if (sortSelect) sortSelect.value = "default";
+
   setChipActive("all");
   renderCards();
   setActiveSidebarButton("home");
@@ -284,6 +295,7 @@ function renderFavorites() {
 
 function renderFeaturedProfile() {
   if (!featuredProfile || !characters.length) return;
+
   const featured = characters[0];
 
   featuredProfile.innerHTML = `
@@ -550,6 +562,7 @@ function setupCharacterTabs() {
 
 function setupGalleryLightbox() {
   const galleryImages = characterView.querySelectorAll(".gallery-item img");
+
   galleryImages.forEach(img => {
     img.addEventListener("click", () => {
       lightboxImage.src = img.src;
@@ -776,6 +789,96 @@ function buildSparkles(count = 20) {
   }
 }
 
+function clearThemeEffects() {
+  if (themeFxHearts) themeFxHearts.innerHTML = "";
+  if (themeFxStreaks) themeFxStreaks.innerHTML = "";
+  if (themeFxGrid) themeFxGrid.innerHTML = "";
+  if (themeFxBubbles) themeFxBubbles.innerHTML = "";
+}
+
+function buildHeartsEffect() {
+  if (!themeFxHearts) return;
+
+  for (let i = 0; i < 14; i++) {
+    const el = document.createElement("div");
+    el.className = "fx-heart";
+    el.textContent = Math.random() > 0.5 ? "♡" : "✦";
+    el.style.left = `${Math.random() * 100}%`;
+    el.style.top = `${Math.random() * 100}%`;
+    el.style.animationDelay = `${Math.random() * 8}s`;
+    el.style.animationDuration = `${8 + Math.random() * 8}s`;
+    el.style.fontSize = `${14 + Math.random() * 18}px`;
+    el.style.opacity = `${0.2 + Math.random() * 0.45}`;
+    themeFxHearts.appendChild(el);
+  }
+}
+
+function buildStreaksEffect() {
+  if (!themeFxStreaks) return;
+
+  for (let i = 0; i < 10; i++) {
+    const el = document.createElement("div");
+    el.className = "fx-streak";
+    el.style.top = `${Math.random() * 100}%`;
+    el.style.left = `${-10 + Math.random() * 30}%`;
+    el.style.width = `${120 + Math.random() * 260}px`;
+    el.style.animationDelay = `${Math.random() * 6}s`;
+    el.style.animationDuration = `${6 + Math.random() * 6}s`;
+    el.style.opacity = `${0.08 + Math.random() * 0.14}`;
+    themeFxStreaks.appendChild(el);
+  }
+}
+
+function buildGridEffect() {
+  if (!themeFxGrid) return;
+
+  const floor = document.createElement("div");
+  floor.className = "fx-grid-floor";
+
+  const glow = document.createElement("div");
+  glow.className = "fx-grid-glow";
+
+  themeFxGrid.appendChild(floor);
+  themeFxGrid.appendChild(glow);
+}
+
+function buildBubblesEffect() {
+  if (!themeFxBubbles) return;
+
+  for (let i = 0; i < 16; i++) {
+    const el = document.createElement("div");
+    el.className = "fx-bubble";
+    el.style.left = `${Math.random() * 100}%`;
+    el.style.bottom = `${-10 + Math.random() * 20}%`;
+    el.style.width = `${10 + Math.random() * 34}px`;
+    el.style.height = el.style.width;
+    el.style.animationDelay = `${Math.random() * 10}s`;
+    el.style.animationDuration = `${9 + Math.random() * 10}s`;
+    el.style.opacity = `${0.08 + Math.random() * 0.2}`;
+    themeFxBubbles.appendChild(el);
+  }
+}
+
+function buildThemeEffects(themeId) {
+  clearThemeEffects();
+
+  if (themeId === "pink-glitter-dream") {
+    buildHeartsEffect();
+  }
+
+  if (themeId === "neon-pink-night") {
+    buildStreaksEffect();
+  }
+
+  if (themeId === "cyber-cold-neon") {
+    buildGridEffect();
+  }
+
+  if (themeId === "deep-siren") {
+    buildBubblesEffect();
+  }
+}
+
 function applyTheme(themeId) {
   const theme = themes.find(item => item.id === themeId) || themes[0];
 
@@ -787,6 +890,7 @@ function applyTheme(themeId) {
   if (themePalette) themePalette.textContent = theme.palette;
 
   buildSparkles(theme.sparkles);
+  buildThemeEffects(theme.id);
 }
 
 function cycleTheme() {
@@ -922,6 +1026,7 @@ goHomeBtn.addEventListener("click", () => {
   } else {
     scrollToHero();
   }
+
   setActiveSidebarButton("home");
 });
 
@@ -1007,6 +1112,7 @@ lightbox?.addEventListener("click", e => {
 });
 
 document.addEventListener("mousemove", e => {
+  if (!cursorGlow) return;
   cursorGlow.style.left = `${e.clientX}px`;
   cursorGlow.style.top = `${e.clientY}px`;
 });
