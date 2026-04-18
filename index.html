@@ -41,7 +41,7 @@
         <div class="side-links">
           <button class="side-link" id="toggleMainMusicBtn" type="button">Play Main Music</button>
           <button class="side-link" id="shuffleAllMusicBtn" type="button">Shuffle All Music</button>
-          <button class="side-link" id="changeThemeBtn" type="button">Change Theme</button>
+          <button class="side-link" id="changeThemeBtn" type="button">Next Theme</button>
         </div>
       </div>
 
@@ -90,13 +90,33 @@
           </div>
         </div>
 
-        <div class="panel">
-          <h3 class="section-title" style="margin-top:0;">Themes</h3>
-          <div class="chips">
-            <button class="chip" type="button">Pink Dream</button>
-            <button class="chip" type="button">Neon Pink Night</button>
-            <button class="chip" type="button">Cyber Cold Neon</button>
-            <button class="chip" type="button">Deep Siren</button>
+        <div class="panel" id="themeSelectorPanel">
+          <h3 class="section-title" style="margin-top:0;">Choose Your Theme</h3>
+
+          <div class="cards-grid" id="themePreviewGrid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+            <button class="theme-preview-card theme-preview-active" data-theme-preview="pink-glitter-dream" type="button">
+              <span class="theme-preview-kicker">cute glossy</span>
+              <strong>Pink Dream</strong>
+              <span>hearts / stars / soft pink glass</span>
+            </button>
+
+            <button class="theme-preview-card" data-theme-preview="neon-pink-night" type="button">
+              <span class="theme-preview-kicker">night neon</span>
+              <strong>Neon Pink Night</strong>
+              <span>light streaks / city glow / dark pink</span>
+            </button>
+
+            <button class="theme-preview-card" data-theme-preview="cyber-cold-neon" type="button">
+              <span class="theme-preview-kicker">future sharp</span>
+              <strong>Cyber Cold Neon</strong>
+              <span>scanlines / hologrid / cold blue tech</span>
+            </button>
+
+            <button class="theme-preview-card" data-theme-preview="deep-siren" type="button">
+              <span class="theme-preview-kicker">water dream</span>
+              <strong>Deep Siren</strong>
+              <span>bubbles / sea glass / soft ocean glow</span>
+            </button>
           </div>
         </div>
 
