@@ -70,29 +70,33 @@ const themes = [
     id: "pink-glitter-dream",
     name: "Pink Dream",
     palette: "soft glam / hearts / dreamy glow",
-    sparkles: 34,
-    effect: "hearts"
+    sparkles: 36,
+    effect: "hearts",
+    cursorMix: "screen"
   },
   {
     id: "neon-pink-night",
     name: "Neon Pink Night",
     palette: "night city / light streaks / glossy neon",
-    sparkles: 16,
-    effect: "streaks"
+    sparkles: 18,
+    effect: "streaks",
+    cursorMix: "screen"
   },
   {
     id: "cyber-cold-neon",
     name: "Cyber Cold Neon",
     palette: "hologrid / scanlines / sharp future",
-    sparkles: 10,
-    effect: "grid"
+    sparkles: 12,
+    effect: "grid",
+    cursorMix: "screen"
   },
   {
     id: "deep-siren",
     name: "Deep Siren",
     palette: "water glow / bubbles / sea glass dream",
-    sparkles: 20,
-    effect: "bubbles"
+    sparkles: 22,
+    effect: "bubbles",
+    cursorMix: "screen"
   }
 ];
 
@@ -551,7 +555,7 @@ function setupGalleryLightbox() {
 
 function copyCurrentLink() {
   navigator.clipboard.writeText(window.location.href)
-    .then(() => alert("Link copied!"))
+    .then(() => alert("Link copied ✨"))
     .catch(() => alert("Could not copy link."));
 }
 
@@ -661,7 +665,7 @@ async function toggleMainMusic() {
       playPauseBtn.textContent = "▶";
     }
   } catch (err) {
-    alert("The browser blocked music. Click again after interacting with the page.");
+    alert("Browser blocked music. Click again after interacting with the page.");
   }
 }
 
@@ -747,9 +751,7 @@ function openRandomCharacter() {
 }
 
 function clearSparkles() {
-  if (sparkles) {
-    sparkles.innerHTML = "";
-  }
+  if (sparkles) sparkles.innerHTML = "";
 }
 
 function buildSparkles(count = 20) {
@@ -758,38 +760,39 @@ function buildSparkles(count = 20) {
   for (let i = 0; i < count; i++) {
     const el = document.createElement("div");
     el.className = "sparkle";
+    el.style.left = `${Math.random() * 100}%`;
+    el.style.animationDuration = `${8 + Math.random() * 12}s`;
+    el.style.animationDelay = `${Math.random() * 10}s`;
+    el.style.opacity = `${0.35 + Math.random() * 0.6}`;
 
-    const activeTheme = currentTheme;
-
-    if (activeTheme === "pink-glitter-dream") {
+    if (currentTheme === "pink-glitter-dream") {
       el.style.width = `${6 + Math.random() * 8}px`;
       el.style.height = el.style.width;
-      el.style.borderRadius = Math.random() > 0.45 ? "50%" : "40% 60% 65% 35% / 35% 45% 55% 65%";
+      el.style.borderRadius = Math.random() > 0.5
+        ? "50%"
+        : "40% 60% 65% 35% / 35% 45% 55% 65%";
     }
 
-    if (activeTheme === "neon-pink-night") {
-      el.style.width = `${16 + Math.random() * 22}px`;
+    if (currentTheme === "neon-pink-night") {
+      el.style.width = `${14 + Math.random() * 28}px`;
       el.style.height = `${1 + Math.random() * 2}px`;
       el.style.borderRadius = "999px";
-      el.style.transform = `rotate(${-20 + Math.random() * 12}deg)`;
+      el.style.transform = `rotate(${-16 + Math.random() * 12}deg)`;
     }
 
-    if (activeTheme === "cyber-cold-neon") {
+    if (currentTheme === "cyber-cold-neon") {
       el.style.width = `${10 + Math.random() * 18}px`;
       el.style.height = `${1.5 + Math.random() * 2}px`;
       el.style.borderRadius = `${1 + Math.random() * 2}px`;
     }
 
-    if (activeTheme === "deep-siren") {
-      el.style.width = `${5 + Math.random() * 10}px`;
-      el.style.height = el.style.width;
+    if (currentTheme === "deep-siren") {
+      const size = 5 + Math.random() * 10;
+      el.style.width = `${size}px`;
+      el.style.height = `${size}px`;
       el.style.borderRadius = "50%";
     }
 
-    el.style.left = `${Math.random() * 100}%`;
-    el.style.animationDuration = `${8 + Math.random() * 12}s`;
-    el.style.animationDelay = `${Math.random() * 10}s`;
-    el.style.opacity = `${0.35 + Math.random() * 0.6}`;
     sparkles.appendChild(el);
   }
 }
@@ -804,10 +807,10 @@ function clearThemeEffects() {
 function buildHeartsEffect() {
   if (!themeFxHearts) return;
 
-  for (let i = 0; i < 16; i++) {
+  for (let i = 0; i < 18; i++) {
     const el = document.createElement("div");
     el.className = "fx-heart";
-    el.textContent = Math.random() > 0.45 ? "♡" : "✦";
+    el.textContent = Math.random() > 0.42 ? "♡" : "✦";
     el.style.left = `${Math.random() * 100}%`;
     el.style.top = `${Math.random() * 100}%`;
     el.style.animationDelay = `${Math.random() * 8}s`;
@@ -821,14 +824,14 @@ function buildHeartsEffect() {
 function buildStreaksEffect() {
   if (!themeFxStreaks) return;
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 12; i++) {
     const el = document.createElement("div");
     el.className = "fx-streak";
     el.style.top = `${Math.random() * 100}%`;
     el.style.left = `${-10 + Math.random() * 30}%`;
-    el.style.width = `${120 + Math.random() * 260}px`;
+    el.style.width = `${120 + Math.random() * 280}px`;
     el.style.animationDelay = `${Math.random() * 6}s`;
-    el.style.animationDuration = `${6 + Math.random() * 6}s`;
+    el.style.animationDuration = `${5 + Math.random() * 5}s`;
     el.style.opacity = `${0.08 + Math.random() * 0.14}`;
     themeFxStreaks.appendChild(el);
   }
@@ -850,15 +853,18 @@ function buildGridEffect() {
 function buildBubblesEffect() {
   if (!themeFxBubbles) return;
 
-  for (let i = 0; i < 16; i++) {
+  for (let i = 0; i < 18; i++) {
     const el = document.createElement("div");
     el.className = "fx-bubble";
     el.style.left = `${Math.random() * 100}%`;
     el.style.bottom = `${-10 + Math.random() * 20}%`;
-    el.style.width = `${10 + Math.random() * 34}px`;
-    el.style.height = el.style.width;
+
+    const size = 10 + Math.random() * 34;
+    el.style.width = `${size}px`;
+    el.style.height = `${size}px`;
+
     el.style.animationDelay = `${Math.random() * 10}s`;
-    el.style.animationDuration = `${9 + Math.random() * 10}s`;
+    el.style.animationDuration = `${8 + Math.random() * 10}s`;
     el.style.opacity = `${0.08 + Math.random() * 0.2}`;
     themeFxBubbles.appendChild(el);
   }
@@ -867,21 +873,10 @@ function buildBubblesEffect() {
 function buildThemeEffects(themeId) {
   clearThemeEffects();
 
-  if (themeId === "pink-glitter-dream") {
-    buildHeartsEffect();
-  }
-
-  if (themeId === "neon-pink-night") {
-    buildStreaksEffect();
-  }
-
-  if (themeId === "cyber-cold-neon") {
-    buildGridEffect();
-  }
-
-  if (themeId === "deep-siren") {
-    buildBubblesEffect();
-  }
+  if (themeId === "pink-glitter-dream") buildHeartsEffect();
+  if (themeId === "neon-pink-night") buildStreaksEffect();
+  if (themeId === "cyber-cold-neon") buildGridEffect();
+  if (themeId === "deep-siren") buildBubblesEffect();
 }
 
 function applyTheme(themeId) {
@@ -893,6 +888,7 @@ function applyTheme(themeId) {
 
   if (themeName) themeName.textContent = theme.name;
   if (themePalette) themePalette.textContent = theme.palette;
+  if (cursorGlow) cursorGlow.style.mixBlendMode = theme.cursorMix || "screen";
 
   buildSparkles(theme.sparkles);
   buildThemeEffects(theme.id);
