@@ -19,7 +19,11 @@ const showRecentBtn = document.getElementById("showRecentBtn");
 const surpriseSidebarBtn = document.getElementById("surpriseSidebarBtn");
 const browseArchiveBtn = document.getElementById("browseArchiveBtn");
 const surpriseMeBtn = document.getElementById("surpriseMeBtn");
-const copyPageBtn = document.getElementById("copyPageBtn");
+const shuffleAllMusicBtn = document.getElementById("shuffleAllMusicBtn");
+const changeThemeBtn = document.getElementById("changeThemeBtn");
+const themeCycleCard = document.getElementById("themeCycleCard");
+const themeName = document.getElementById("themeName");
+const themePalette = document.getElementById("themePalette");
 const homeHero = document.getElementById("homeHero");
 const profilesSection = document.getElementById("profilesSection");
 const featuredProfile = document.getElementById("featuredProfile");
@@ -50,15 +54,39 @@ let favoritesOnly = false;
 let currentCharacterSlug = null;
 let currentTrackIndex = null;
 let currentPlaylist = [];
-let currentPlaylistOwner = "";
 let mainMusicPlaying = false;
 let currentSort = "default";
 
 const favoriteKey = "dreamArchiveFavorites";
 const recentKey = "dreamArchiveRecent";
+const themeKey = "dreamArchiveTheme";
+
+const themes = [
+  {
+    id: "glossy-night",
+    name: "Glossy Night",
+    palette: "black cherry / blush / chrome"
+  },
+  {
+    id: "pink-dream",
+    name: "Pink Dream",
+    palette: "rose pink / candy glow / pearl"
+  },
+  {
+    id: "silver-moon",
+    name: "Silver Moon",
+    palette: "silver / moonlight / soft graphite"
+  },
+  {
+    id: "blue-neon",
+    name: "Blue Neon",
+    palette: "midnight blue / neon mist / icy chrome"
+  }
+];
 
 let favorites = JSON.parse(localStorage.getItem(favoriteKey) || "[]");
 let recentViewed = JSON.parse(localStorage.getItem(recentKey) || "[]");
+let currentTheme = localStorage.getItem(themeKey) || "glossy-night";
 
 function formatTime(seconds) {
   if (!isFinite(seconds)) return "0:00";
@@ -73,6 +101,10 @@ function saveFavorites() {
 
 function saveRecent() {
   localStorage.setItem(recentKey, JSON.stringify(recentViewed));
+}
+
+function saveTheme() {
+  localStorage.setItem(themeKey, currentTheme);
 }
 
 function isFavorite(slug) {
@@ -170,13 +202,28 @@ function createCard(character) {
     </div>
     <div class="card-body">
       <div class="small"><strong>${character.role}</strong> • ${character.fandom}</div>
-      <div class="tags">
-        ${character.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+
+      <div class="card-tags-wrap">
+        <button class="tag-toggle-btn" type="button">Show Tags</button>
+        <div class="tags is-hidden">
+          ${character.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+        </div>
       </div>
     </div>
   `;
 
   article.addEventListener("click", () => openCharacter(character.slug, true));
+
+  const tagToggleBtn = article.querySelector(".tag-toggle-btn");
+  const tagsWrap = article.querySelector(".tags");
+
+  tagToggleBtn?.addEventListener("click", e => {
+    e.stopPropagation();
+    const isHidden = tagsWrap.classList.contains("is-hidden");
+    tagsWrap.classList.toggle("is-hidden");
+    tagToggleBtn.textContent = isHidden ? "Hide Tags" : "Show Tags";
+  });
+
   return article;
 }
 
@@ -609,6 +656,16 @@ function stopMainMusic() {
   toggleMainMusicBtn.textContent = "Play Main Music";
 }
 
+function stopEverything() {
+  audioPlayer.pause();
+  audioPlayer.currentTime = 0;
+  stopMainMusic();
+  playPauseBtn.textContent = "▶";
+  progressBar.value = 0;
+  currentTime.textContent = "0:00";
+  duration.textContent = "0:00";
+}
+
 async function toggleMainMusic() {
   try {
     if (!mainMusicPlaying) {
@@ -628,53 +685,78 @@ async function toggleMainMusic() {
   }
 }
 
-async function playCharacterTrack(slug, trackIndex) {
-  const character = getCharacterBySlug(slug);
-  if (!character || !character.music[trackIndex]) return;
-
-  stopMainMusic();
-
-  currentPlaylist = character.music;
-  currentPlaylistOwner = character.name;
-  currentTrackIndex = trackIndex;
-  currentCharacterSlug = slug;
-
-  const track = currentPlaylist[currentTrackIndex];
-  audioPlayer.src = track.url;
-  audioPlayer.volume = Number(volumeBar.value);
-
-  try {
-    await audioPlayer.play();
-    updatePlayerInfo(track.title, `${character.name} • ${track.artist}`);
-    playPauseBtn.textContent = "❚❚";
-  } catch (err) {
-    updatePlayerInfo(track.title, `${character.name} • ${track.artist}`);
-    playPauseBtn.textContent = "▶";
-  }
-}
-
 function updatePlayerInfo(title, meta) {
   playerTrackTitle.textContent = title || "Nothing playing";
   playerTrackMeta.textContent = meta || "Choose a profile or a song";
 }
 
-function getSlugByOwner(name) {
-  const character = characters.find(c => c.name === name);
-  return character ? character.slug : null;
+function buildCharacterPlaylist(character) {
+  return character.music.map(track => ({
+    ...track,
+    slug: character.slug,
+    ownerName: character.name
+  }));
+}
+
+function buildAllTracksPlaylist() {
+  return characters.flatMap(character =>
+    character.music.map(track => ({
+      ...track,
+      slug: character.slug,
+      ownerName: character.name
+    }))
+  );
+}
+
+async function playFromPlaylist(index) {
+  if (!currentPlaylist.length || !currentPlaylist[index]) return;
+
+  stopMainMusic();
+
+  currentTrackIndex = index;
+  const track = currentPlaylist[currentTrackIndex];
+  currentCharacterSlug = track.slug;
+
+  audioPlayer.src = track.url;
+  audioPlayer.volume = Number(volumeBar.value);
+
+  try {
+    await audioPlayer.play();
+    updatePlayerInfo(track.title, `${track.ownerName} • ${track.artist}`);
+    playPauseBtn.textContent = "❚❚";
+  } catch (err) {
+    updatePlayerInfo(track.title, `${track.ownerName} • ${track.artist}`);
+    playPauseBtn.textContent = "▶";
+  }
+}
+
+function playCharacterTrack(slug, trackIndex) {
+  const character = getCharacterBySlug(slug);
+  if (!character || !character.music[trackIndex]) return;
+
+  currentPlaylist = buildCharacterPlaylist(character);
+  playFromPlaylist(trackIndex);
+}
+
+function shuffleAllMusic() {
+  const allTracks = buildAllTracksPlaylist();
+  if (!allTracks.length) return;
+
+  const randomIndex = Math.floor(Math.random() * allTracks.length);
+  currentPlaylist = allTracks;
+  playFromPlaylist(randomIndex);
 }
 
 function playNextTrack() {
   if (!currentPlaylist.length || currentTrackIndex === null) return;
   const nextIndex = (currentTrackIndex + 1) % currentPlaylist.length;
-  const slug = currentCharacterSlug || getSlugByOwner(currentPlaylistOwner);
-  if (slug) playCharacterTrack(slug, nextIndex);
+  playFromPlaylist(nextIndex);
 }
 
 function playPrevTrack() {
   if (!currentPlaylist.length || currentTrackIndex === null) return;
   const prevIndex = (currentTrackIndex - 1 + currentPlaylist.length) % currentPlaylist.length;
-  const slug = currentCharacterSlug || getSlugByOwner(currentPlaylistOwner);
-  if (slug) playCharacterTrack(slug, prevIndex);
+  playFromPlaylist(prevIndex);
 }
 
 function openRandomCharacter() {
@@ -682,6 +764,22 @@ function openRandomCharacter() {
   const randomIndex = Math.floor(Math.random() * characters.length);
   setActiveSidebarButton("random");
   openCharacter(characters[randomIndex].slug, true);
+}
+
+function applyTheme(themeId) {
+  const theme = themes.find(item => item.id === themeId) || themes[0];
+  currentTheme = theme.id;
+  document.body.setAttribute("data-theme", theme.id);
+  saveTheme();
+
+  if (themeName) themeName.textContent = theme.name;
+  if (themePalette) themePalette.textContent = theme.palette;
+}
+
+function cycleTheme() {
+  const currentIndex = themes.findIndex(theme => theme.id === currentTheme);
+  const nextIndex = (currentIndex + 1) % themes.length;
+  applyTheme(themes[nextIndex].id);
 }
 
 playPauseBtn.addEventListener("click", async () => {
@@ -713,13 +811,7 @@ prevBtn.addEventListener("click", playPrevTrack);
 nextBtn.addEventListener("click", playNextTrack);
 
 stopBtn.addEventListener("click", () => {
-  audioPlayer.pause();
-  audioPlayer.currentTime = 0;
-  stopMainMusic();
-  playPauseBtn.textContent = "▶";
-  progressBar.value = 0;
-  currentTime.textContent = "0:00";
-  duration.textContent = "0:00";
+  stopEverything();
   updatePlayerInfo("Nothing playing", "Choose a profile or a song");
 });
 
@@ -740,6 +832,9 @@ volumeBar.addEventListener("input", () => {
 });
 
 toggleMainMusicBtn.addEventListener("click", toggleMainMusic);
+shuffleAllMusicBtn?.addEventListener("click", shuffleAllMusic);
+changeThemeBtn?.addEventListener("click", cycleTheme);
+themeCycleCard?.addEventListener("click", cycleTheme);
 
 audioPlayer.addEventListener("timeupdate", () => {
   if (!isFinite(audioPlayer.duration)) return;
@@ -864,7 +959,6 @@ browseArchiveBtn.addEventListener("click", () => {
 });
 
 surpriseMeBtn.addEventListener("click", openRandomCharacter);
-copyPageBtn?.addEventListener("click", copyCurrentLink);
 
 sidebarToggle.addEventListener("click", () => {
   sidebar.classList.toggle("open");
@@ -909,6 +1003,7 @@ document.addEventListener("mousemove", e => {
 });
 
 function init() {
+  applyTheme(currentTheme);
   buildSparkles();
   renderCards();
   renderFavorites();
