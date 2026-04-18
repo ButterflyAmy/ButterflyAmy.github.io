@@ -33,6 +33,7 @@ const homeHero = document.getElementById("homeHero");
 const profilesSection = document.getElementById("profilesSection");
 const sortSelect = document.getElementById("sortSelect");
 const profileCount = document.getElementById("profileCount");
+const themePreviewGrid = document.getElementById("themePreviewGrid");
 
 const mainMusic = document.getElementById("mainMusic");
 const toggleMainMusicBtn = document.getElementById("toggleMainMusicBtn");
@@ -60,6 +61,7 @@ let currentTrackIndex = null;
 let currentPlaylist = [];
 let mainMusicPlaying = false;
 let currentSort = "default";
+let introHasPlayed = false;
 
 const favoriteKey = "dreamArchiveFavorites";
 const recentKey = "dreamArchiveRecent";
@@ -207,7 +209,7 @@ function showOnlyFavorites() {
 
 function createCard(character) {
   const article = document.createElement("article");
-  article.className = "card";
+  article.className = "card reveal-card";
 
   article.innerHTML = `
     <div class="card-cover">
@@ -224,6 +226,7 @@ function createCard(character) {
   `;
 
   article.addEventListener("click", () => openCharacter(character.slug, true));
+  attachCardTilt(article);
   return article;
 }
 
@@ -273,7 +276,12 @@ function renderCards() {
   const filtered = getFilteredCharacters();
 
   cardsGrid.innerHTML = "";
-  filtered.forEach(character => cardsGrid.appendChild(createCard(character)));
+  filtered.forEach((character, index) => {
+    const card = createCard(character);
+    card.style.animationDelay = `${index * 45}ms`;
+    cardsGrid.appendChild(card);
+  });
+
   emptyState.style.display = filtered.length ? "none" : "block";
 }
 
@@ -300,7 +308,12 @@ function renderRecentCards() {
   const items = recentViewed.map(slug => getCharacterBySlug(slug)).filter(Boolean);
 
   cardsGrid.innerHTML = "";
-  items.forEach(character => cardsGrid.appendChild(createCard(character)));
+  items.forEach((character, index) => {
+    const card = createCard(character);
+    card.style.animationDelay = `${index * 45}ms`;
+    cardsGrid.appendChild(card);
+  });
+
   emptyState.style.display = items.length ? "none" : "block";
 }
 
@@ -879,7 +892,27 @@ function buildThemeEffects(themeId) {
   if (themeId === "deep-siren") buildBubblesEffect();
 }
 
-function applyTheme(themeId) {
+function updateThemePreviewState() {
+  document.querySelectorAll("[data-theme-preview]").forEach(btn => {
+    btn.classList.toggle("theme-preview-active", btn.dataset.themePreview === currentTheme);
+  });
+}
+
+function flashThemeSwitch() {
+  document.body.animate(
+    [
+      { filter: "brightness(1)" },
+      { filter: "brightness(1.08)" },
+      { filter: "brightness(1)" }
+    ],
+    {
+      duration: 360,
+      easing: "ease"
+    }
+  );
+}
+
+function applyTheme(themeId, withFlash = false) {
   const theme = themes.find(item => item.id === themeId) || themes[0];
 
   currentTheme = theme.id;
@@ -892,12 +925,80 @@ function applyTheme(themeId) {
 
   buildSparkles(theme.sparkles);
   buildThemeEffects(theme.id);
+  updateThemePreviewState();
+
+  if (withFlash) {
+    flashThemeSwitch();
+  }
 }
 
 function cycleTheme() {
   const currentIndex = themes.findIndex(theme => theme.id === currentTheme);
   const nextIndex = (currentIndex + 1) % themes.length;
-  applyTheme(themes[nextIndex].id);
+  applyTheme(themes[nextIndex].id, true);
+}
+
+function attachThemePreviewEvents() {
+  if (!themePreviewGrid) return;
+
+  themePreviewGrid.addEventListener("click", e => {
+    const btn = e.target.closest("[data-theme-preview]");
+    if (!btn) return;
+    applyTheme(btn.dataset.themePreview, true);
+  });
+}
+
+function playHeroIntro() {
+  if (introHasPlayed || !homeHero) return;
+  introHasPlayed = true;
+
+  const heroParts = [
+    ...homeHero.querySelectorAll(".badge, .hero-copy h2, .hero-copy p, .hero-actions .soft-btn, .hero-stat-card")
+  ];
+
+  heroParts.forEach((el, index) => {
+    el.animate(
+      [
+        { opacity: 0, transform: "translateY(18px) scale(0.98)" },
+        { opacity: 1, transform: "translateY(0) scale(1)" }
+      ],
+      {
+        duration: 650,
+        delay: index * 90,
+        easing: "cubic-bezier(.2,.8,.2,1)",
+        fill: "both"
+      }
+    );
+  });
+}
+
+function attachCardTilt(card) {
+  const image = card.querySelector("img");
+  if (!image) return;
+
+  card.addEventListener("mousemove", e => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateY = ((x - centerX) / centerX) * 6;
+    const rotateX = -((y - centerY) / centerY) * 6;
+
+    card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
+    image.style.transform = `scale(1.08) translateX(${(x - centerX) * 0.012}px) translateY(${(y - centerY) * 0.012}px)`;
+  });
+
+  card.addEventListener("mouseleave", () => {
+    card.style.transform = "";
+    image.style.transform = "";
+  });
+}
+
+function attachAllCardTilt() {
+  document.querySelectorAll(".card").forEach(card => attachCardTilt(card));
 }
 
 playPauseBtn.addEventListener("click", async () => {
@@ -1123,6 +1224,8 @@ function init() {
   renderCards();
   renderFavorites();
   route();
+  attachThemePreviewEvents();
+  attachAllCardTilt();
 
   if (profileCount) {
     profileCount.textContent = String(characters.length);
@@ -1130,6 +1233,8 @@ function init() {
 
   audioPlayer.volume = Number(volumeBar.value);
   mainMusic.volume = Number(volumeBar.value);
+
+  playHeroIntro();
 
   if (window.location.hash.startsWith("#character/")) {
     const slug = window.location.hash.replace("#character/", "");
