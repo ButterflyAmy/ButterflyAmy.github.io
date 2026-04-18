@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Archive</title>
+  <title>Dream Archive</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body data-theme="pink-glitter-dream">
@@ -20,8 +20,10 @@
     <aside class="sidebar" id="sidebar">
       <div class="brand">
         <span class="brand-kicker">Amina Mukhtaova</span>
-        <h1>My Archive</h1>
-        <p>Anime, Games, Movies, Cartoons, Real Life, OC's etc.</p>
+        <h1>Dream Archive</h1>
+        <p>
+          Anime, games, movies, real life, comfort characters, favorite worlds and everything that feels special.
+        </p>
       </div>
 
       <div class="sidebar-group">
@@ -44,7 +46,7 @@
       </div>
 
       <div class="sidebar-group">
-        <h3>Favorites</h3>
+        <h3>Saved Favorites</h3>
         <div class="fav-list" id="favoritesList"></div>
         <div class="fav-empty" id="favoritesEmpty">No favorites yet. Press the heart on any profile.</div>
       </div>
@@ -54,20 +56,21 @@
       <section class="view active" id="homeView">
         <div class="hero" id="homeHero">
           <div class="hero-top">
-            <div class="badge">✦ my cute archive ✦</div>
+            <div class="badge">✦ my personal dream universe ✦</div>
           </div>
 
           <div class="hero-grid">
             <div class="hero-copy">
-              <h2><span>I am still standing better than I ever did</span></h2>
+              <h2><span>Collected feelings, favorite people, beautiful chaos.</span></h2>
 
               <p>
-                I am not done yet. Gotta add more stuff and make the UI better. Have mercy on me!
+                This is my little archive of characters, memories, moods, music and emotional attachments.
+                Still growing. Still dramatic. Still cute.
               </p>
 
               <div class="hero-actions">
                 <button class="soft-btn primary-glow" id="browseArchiveBtn" type="button">Browse Archive</button>
-                <button class="soft-btn" id="surpriseMeBtn" type="button">Surprise Me</button>
+                <button class="soft-btn" id="surpriseMeBtn" type="button">Show Me Something Random</button>
               </div>
             </div>
 
@@ -75,7 +78,7 @@
               <div class="hero-stat-card">
                 <small>Total Profiles</small>
                 <strong id="profileCount">0</strong>
-                <span>my universe</span>
+                <span>characters in my universe</span>
               </div>
 
               <button class="hero-stat-card theme-card-btn" id="themeCycleCard" type="button">
@@ -87,13 +90,23 @@
           </div>
         </div>
 
+        <div class="panel">
+          <h3 class="section-title" style="margin-top:0;">Themes</h3>
+          <div class="chips">
+            <button class="chip" type="button">Pink Dream</button>
+            <button class="chip" type="button">Neon Pink Night</button>
+            <button class="chip" type="button">Cyber Cold Neon</button>
+            <button class="chip" type="button">Deep Siren</button>
+          </div>
+        </div>
+
         <div class="controls" id="controlsSection">
           <div class="panel">
             <input
               type="text"
               class="search-input"
               id="searchInput"
-              placeholder="Search names, fandoms, tags, vibes, titles..."
+              placeholder="Search names, fandoms, tags, vibes, lore, titles..."
             />
           </div>
 
