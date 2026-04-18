@@ -31,7 +31,6 @@ const themeName = document.getElementById("themeName");
 const themePalette = document.getElementById("themePalette");
 const homeHero = document.getElementById("homeHero");
 const profilesSection = document.getElementById("profilesSection");
-const featuredProfile = document.getElementById("featuredProfile");
 const sortSelect = document.getElementById("sortSelect");
 const profileCount = document.getElementById("profileCount");
 
@@ -69,30 +68,30 @@ const themeKey = "dreamArchiveTheme";
 const themes = [
   {
     id: "pink-glitter-dream",
-    name: "Pink Glitter Dream",
-    palette: "cutecore / glossy / glitter angel",
+    name: "Pink Dream",
+    palette: "soft glam / hearts / dreamy glow",
     sparkles: 34,
     effect: "hearts"
   },
   {
     id: "neon-pink-night",
     name: "Neon Pink Night",
-    palette: "city lights / blurry pink / nostalgic night",
-    sparkles: 18,
+    palette: "night city / light streaks / glossy neon",
+    sparkles: 16,
     effect: "streaks"
   },
   {
     id: "cyber-cold-neon",
     name: "Cyber Cold Neon",
-    palette: "retro blue / cold neon / future street",
-    sparkles: 12,
+    palette: "hologrid / scanlines / sharp future",
+    sparkles: 10,
     effect: "grid"
   },
   {
     id: "deep-siren",
     name: "Deep Siren",
-    palette: "ocean glow / sirencore / drowned dream",
-    sparkles: 22,
+    palette: "water glow / bubbles / sea glass dream",
+    sparkles: 20,
     effect: "bubbles"
   }
 ];
@@ -291,27 +290,6 @@ function renderFavorites() {
     });
     favoritesList.appendChild(link);
   });
-}
-
-function renderFeaturedProfile() {
-  if (!featuredProfile || !characters.length) return;
-
-  const featured = characters[0];
-
-  featuredProfile.innerHTML = `
-    <div class="featured-card">
-      <img src="${featured.cover}" alt="${featured.name}">
-      <div class="featured-info">
-        <span class="card-type">${featured.category}</span>
-        <h3>${featured.name}</h3>
-        <p>${featured.story}</p>
-        <button class="soft-btn" id="openFeaturedBtn" type="button">Open Profile</button>
-      </div>
-    </div>
-  `;
-
-  const openFeaturedBtn = document.getElementById("openFeaturedBtn");
-  openFeaturedBtn?.addEventListener("click", () => openCharacter(featured.slug, true));
 }
 
 function renderRecentCards() {
@@ -780,11 +758,38 @@ function buildSparkles(count = 20) {
   for (let i = 0; i < count; i++) {
     const el = document.createElement("div");
     el.className = "sparkle";
+
+    const activeTheme = currentTheme;
+
+    if (activeTheme === "pink-glitter-dream") {
+      el.style.width = `${6 + Math.random() * 8}px`;
+      el.style.height = el.style.width;
+      el.style.borderRadius = Math.random() > 0.45 ? "50%" : "40% 60% 65% 35% / 35% 45% 55% 65%";
+    }
+
+    if (activeTheme === "neon-pink-night") {
+      el.style.width = `${16 + Math.random() * 22}px`;
+      el.style.height = `${1 + Math.random() * 2}px`;
+      el.style.borderRadius = "999px";
+      el.style.transform = `rotate(${-20 + Math.random() * 12}deg)`;
+    }
+
+    if (activeTheme === "cyber-cold-neon") {
+      el.style.width = `${10 + Math.random() * 18}px`;
+      el.style.height = `${1.5 + Math.random() * 2}px`;
+      el.style.borderRadius = `${1 + Math.random() * 2}px`;
+    }
+
+    if (activeTheme === "deep-siren") {
+      el.style.width = `${5 + Math.random() * 10}px`;
+      el.style.height = el.style.width;
+      el.style.borderRadius = "50%";
+    }
+
     el.style.left = `${Math.random() * 100}%`;
     el.style.animationDuration = `${8 + Math.random() * 12}s`;
     el.style.animationDelay = `${Math.random() * 10}s`;
     el.style.opacity = `${0.35 + Math.random() * 0.6}`;
-    el.style.transform = `scale(${0.55 + Math.random() * 1.2})`;
     sparkles.appendChild(el);
   }
 }
@@ -799,10 +804,10 @@ function clearThemeEffects() {
 function buildHeartsEffect() {
   if (!themeFxHearts) return;
 
-  for (let i = 0; i < 14; i++) {
+  for (let i = 0; i < 16; i++) {
     const el = document.createElement("div");
     el.className = "fx-heart";
-    el.textContent = Math.random() > 0.5 ? "♡" : "✦";
+    el.textContent = Math.random() > 0.45 ? "♡" : "✦";
     el.style.left = `${Math.random() * 100}%`;
     el.style.top = `${Math.random() * 100}%`;
     el.style.animationDelay = `${Math.random() * 8}s`;
@@ -1121,7 +1126,6 @@ function init() {
   applyTheme(currentTheme);
   renderCards();
   renderFavorites();
-  renderFeaturedProfile();
   route();
 
   if (profileCount) {
