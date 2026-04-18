@@ -28,6 +28,72 @@
   --radius-sm: 14px;
 }
 
+body[data-theme="pink-dream"] {
+  --bg-1: #13070f;
+  --bg-2: #2a0e1e;
+  --bg-3: #43142f;
+  --bg-4: #5b1b40;
+  --panel: rgba(255, 235, 245, 0.09);
+  --panel-2: rgba(255, 226, 240, 0.06);
+  --panel-3: rgba(255, 185, 221, 0.09);
+  --border: rgba(255, 225, 239, 0.18);
+  --border-strong: rgba(255, 235, 245, 0.28);
+  --text: #fff7fb;
+  --muted: #f0d4df;
+  --muted-2: #deb2c4;
+  --pink: #ffb6d9;
+  --pink-2: #ffd8ec;
+  --berry: #ba3a74;
+  --berry-2: #ff5da2;
+  --red-glow: #ff78b1;
+  --chrome: #fff2f7;
+  --silver: #f4d8e5;
+}
+
+body[data-theme="silver-moon"] {
+  --bg-1: #05070a;
+  --bg-2: #0c1016;
+  --bg-3: #141a22;
+  --bg-4: #1e2631;
+  --panel: rgba(255, 255, 255, 0.07);
+  --panel-2: rgba(240, 246, 255, 0.045);
+  --panel-3: rgba(226, 234, 247, 0.07);
+  --border: rgba(222, 233, 247, 0.14);
+  --border-strong: rgba(235, 242, 255, 0.24);
+  --text: #f8fbff;
+  --muted: #ced8e4;
+  --muted-2: #a7b5c7;
+  --pink: #d8e4ff;
+  --pink-2: #eef5ff;
+  --berry: #6d7d99;
+  --berry-2: #aab8d1;
+  --red-glow: #e8f0ff;
+  --chrome: #f4f8ff;
+  --silver: #d7e0ec;
+}
+
+body[data-theme="blue-neon"] {
+  --bg-1: #020611;
+  --bg-2: #05122a;
+  --bg-3: #0a1b3f;
+  --bg-4: #10265a;
+  --panel: rgba(212, 236, 255, 0.08);
+  --panel-2: rgba(184, 226, 255, 0.05);
+  --panel-3: rgba(140, 210, 255, 0.08);
+  --border: rgba(194, 233, 255, 0.16);
+  --border-strong: rgba(217, 242, 255, 0.28);
+  --text: #f3fbff;
+  --muted: #bdd4e6;
+  --muted-2: #91b3cd;
+  --pink: #8fdcff;
+  --pink-2: #d7f3ff;
+  --berry: #1a79b6;
+  --berry-2: #46b8ff;
+  --red-glow: #4de0ff;
+  --chrome: #effbff;
+  --silver: #c8e8f5;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -49,6 +115,7 @@ body {
     radial-gradient(circle at 50% 80%, rgba(163, 24, 58, 0.18), transparent 24%),
     linear-gradient(135deg, var(--bg-1), var(--bg-2), var(--bg-3), var(--bg-4));
   position: relative;
+  transition: background 0.4s ease, color 0.3s ease;
 }
 
 body::before {
@@ -261,7 +328,9 @@ button {
 .chip:hover,
 .circle-btn:hover,
 .mini-btn:hover,
-.favorite-btn:hover {
+.favorite-btn:hover,
+.tag-toggle-btn:hover,
+.theme-card-btn:hover {
   transform: translateY(-2px);
   border-color: rgba(255,255,255,0.16);
 }
@@ -412,6 +481,13 @@ button {
   box-shadow: var(--shadow-soft);
 }
 
+.theme-card-btn {
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  width: 100%;
+}
+
 .hero-stat-card small {
   display: block;
   color: var(--pink-2);
@@ -433,7 +509,7 @@ button {
   line-height: 1.6;
 }
 
-.soft-btn, .chip, .tab-btn, .track-btn, .favorite-btn, .mini-btn {
+.soft-btn, .chip, .tab-btn, .track-btn, .favorite-btn, .mini-btn, .tag-toggle-btn {
   cursor: pointer;
   color: var(--text);
   border: 1px solid rgba(255,255,255,0.14);
@@ -660,11 +736,25 @@ button {
   font-size: 0.94rem;
 }
 
+.card-tags-wrap {
+  margin-top: 12px;
+}
+
+.tag-toggle-btn {
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-size: 0.82rem;
+}
+
 .tags {
   margin-top: 12px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.tags.is-hidden {
+  display: none;
 }
 
 .tag {
