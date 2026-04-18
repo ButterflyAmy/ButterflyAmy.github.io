@@ -2394,3 +2394,35 @@ body[data-theme="deep-siren"] .character-summary h2 {
     padding:16px;
   }
 }
+.premium-theme-switcher{
+  cursor:pointer;
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease,
+    border-color .35s ease;
+}
+
+.premium-theme-switcher:hover{
+  transform:translateY(-6px) scale(1.02);
+  border-color:var(--border-strong);
+  box-shadow:
+    var(--shadow),
+    0 0 26px rgba(255,255,255,.08);
+}
+
+.premium-theme-switcher strong{
+  font-size:1.7rem;
+}
+
+.premium-theme-switcher small{
+  opacity:.8;
+}
+
+.premium-theme-switcher::after{
+  content:"↻";
+  position:absolute;
+  right:18px;
+  top:18px;
+  font-size:1.1rem;
+  opacity:.7;
+}
