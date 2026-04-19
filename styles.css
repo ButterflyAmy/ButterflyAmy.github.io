@@ -622,6 +622,134 @@ body[data-theme="deep-siren"] {
   --tag-bg: rgba(255,255,255,0.05);
   --soft-sheen: inset 0 1px 0 rgba(255,255,255,0.05);
 }
+/* =========================
+   DREAMCORE
+   ========================= */
+body[data-theme="dreamcore"] {
+  --bg-1: #161320;
+  --bg-2: #2a2236;
+  --bg-3: #4a3f62;
+  --bg-4: #7a6f92;
+
+  --panel: rgba(255, 244, 250, 0.11);
+  --panel-2: rgba(246, 236, 255, 0.07);
+  --panel-3: rgba(255, 247, 205, 0.08);
+
+  --border: rgba(255, 245, 252, 0.2);
+  --border-strong: rgba(255, 251, 255, 0.34);
+
+  --text: #fffafc;
+  --muted: #eadfed;
+  --muted-2: #c7b7d0;
+
+  --pink: #f3c7df;
+  --pink-2: #fff4c9;
+  --berry: #bba7eb;
+  --berry-2: #d8c8ff;
+  --accent: #c8f3df;
+
+  --chrome: #fffefc;
+  --silver: #f1e9f7;
+
+  --shadow: 0 24px 70px rgba(20, 14, 33, 0.42);
+  --shadow-soft: 0 12px 35px rgba(20, 14, 33, 0.24);
+  --hover-shadow: 0 14px 38px rgba(239, 220, 255, 0.12);
+  --hero-shadow:
+    0 24px 70px rgba(20, 14, 33, 0.42),
+    0 0 36px rgba(255, 246, 210, 0.05);
+
+  --body-overlay-1: radial-gradient(circle at 18% 18%, rgba(255, 214, 234, 0.18), transparent 18%);
+  --body-overlay-2: radial-gradient(circle at 82% 16%, rgba(219, 205, 255, 0.14), transparent 18%);
+  --body-overlay-3: radial-gradient(circle at 52% 82%, rgba(199, 244, 222, 0.1), transparent 24%);
+  --body-main: linear-gradient(145deg, #161320, #2a2236, #4a3f62, #7a6f92);
+
+  --grid-opacity: 0;
+  --vignette-opacity: 0.24;
+  --scanline-opacity: 0.02;
+  --water-opacity: 0;
+  --aurora-opacity: 0.03;
+
+  --cursor-glow: radial-gradient(circle, rgba(255, 222, 240, 0.26), rgba(214, 203, 255, 0.14), transparent 72%);
+  --cursor-size: 320px;
+  --cursor-blur: 26px;
+
+  --sparkle-bg: radial-gradient(circle, rgba(255,255,255,0.95), rgba(255,244,201,0.78), transparent 72%);
+  --sparkle-size: 5px;
+  --sparkle-radius: 50%;
+
+  --hero-bg:
+    radial-gradient(circle at 76% 16%, rgba(255, 249, 214, 0.14), transparent 22%),
+    radial-gradient(circle at 18% 82%, rgba(245, 214, 232, 0.16), transparent 26%),
+    linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+
+  --panel-bg: linear-gradient(180deg, rgba(255,255,255,0.13), rgba(255,255,255,0.045));
+  --card-bg: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.04));
+  --box-bg: linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.04));
+  --sidebar-bg: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.035));
+  --button-bg: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.045));
+  --button-bg-hover: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06));
+
+  --active-bg: linear-gradient(135deg, rgba(236, 216, 255, 0.34), rgba(255, 246, 206, 0.12));
+  --primary-bg: linear-gradient(135deg, rgba(244, 216, 233, 0.34), rgba(210, 242, 224, 0.12));
+
+  --card-overlay-bg: linear-gradient(to top, rgba(19, 15, 31, 0.86), rgba(19, 15, 31, 0.1));
+  --player-bg: rgba(27, 20, 39, 0.88);
+
+  --card-image-filter: saturate(0.92) brightness(0.98) contrast(1.01);
+  --image-hover-filter: saturate(1) brightness(1.02) contrast(1.04) blur(0.2px);
+  --card-hover-scale: 1.03;
+
+  --button-radius: 999px;
+  --chip-radius: 999px;
+  --panel-radius: 30px;
+  --card-radius: 34px;
+  --hero-radius: 42px;
+  --sidebar-radius: 28px;
+  --mini-radius: 18px;
+
+  --texture-opacity: 0.06;
+  --float-speed: 1.35;
+
+  --font-body: "Quicksand", Arial, sans-serif;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+
+  --panel-blur: 24px;
+  --glass-saturation: 135%;
+  --panel-border-style: solid;
+  --panel-border-width: 1px;
+
+  --button-letter-spacing: 0.03em;
+  --button-transform: none;
+  --button-hover-lift: -2px;
+  --button-hover-scale: 1.015;
+
+  --card-border-style: solid;
+  --card-border-width: 1px;
+  --card-title-weight: 700;
+  --heading-spacing: -0.03em;
+
+  --panel-texture:
+    radial-gradient(circle at 20% 18%, rgba(255,255,255,0.06), transparent 18%),
+    radial-gradient(circle at 78% 30%, rgba(255,244,201,0.05), transparent 18%),
+    linear-gradient(145deg, rgba(255,255,255,0.06), transparent 32%, transparent 72%, rgba(255,255,255,0.025));
+  --card-texture:
+    radial-gradient(circle at 24% 20%, rgba(255,255,255,0.06), transparent 18%),
+    radial-gradient(circle at 72% 36%, rgba(220,209,255,0.05), transparent 18%),
+    linear-gradient(145deg, rgba(255,255,255,0.05), transparent 32%, transparent 72%, rgba(255,255,255,0.02));
+  --hero-texture:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.07), transparent 18%),
+    linear-gradient(130deg, rgba(255,255,255,0.08), transparent 30%, transparent 70%, rgba(255,255,255,0.025));
+
+  --selection-bg: rgba(235, 215, 255, 0.32);
+
+  --hero-accent-ring:
+    inset 0 0 0 1px rgba(255,255,255,0.03),
+    0 0 0 1px rgba(255,250,224,0.03);
+  --card-outline-glow: 0 0 18px rgba(239, 230, 255, 0.06);
+  --button-outline-glow: 0 8px 18px rgba(239, 230, 255, 0.05);
+  --tag-bg: rgba(255,255,255,0.05);
+  --soft-sheen: inset 0 1px 0 rgba(255,255,255,0.07);
+}
 
 * {
   box-sizing: border-box;
@@ -885,6 +1013,44 @@ body[data-theme="deep-siren"] .hero-stat-card {
     0 0 24px rgba(180, 245, 255, 0.04),
     var(--soft-sheen);
 }
+body[data-theme="dreamcore"] .hero,
+body[data-theme="dreamcore"] .brand,
+body[data-theme="dreamcore"] .card,
+body[data-theme="dreamcore"] .box,
+body[data-theme="dreamcore"] .panel,
+body[data-theme="dreamcore"] .character-summary,
+body[data-theme="dreamcore"] .player,
+body[data-theme="dreamcore"] .hero-stat-card {
+  box-shadow:
+    var(--shadow),
+    0 0 24px rgba(255, 245, 208, 0.04),
+    var(--soft-sheen);
+}
+
+body[data-theme="dreamcore"] .hero::after,
+body[data-theme="dreamcore"] .panel::after,
+body[data-theme="dreamcore"] .card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(255,255,255,0.045), transparent 16%),
+    radial-gradient(circle at 78% 34%, rgba(255,244,201,0.04), transparent 18%),
+    radial-gradient(circle at 55% 78%, rgba(221,210,255,0.04), transparent 16%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+body[data-theme="dreamcore"] .hero-copy h2,
+body[data-theme="dreamcore"] .character-summary h2 {
+  font-style: italic;
+}
+
+body[data-theme="dreamcore"] .card:hover {
+  box-shadow:
+    var(--shadow),
+    0 0 26px rgba(255, 245, 208, 0.06);
+}
 
 body[data-theme="pink-glitter-dream"] .brand::after,
 body[data-theme="pink-glitter-dream"] .hero::after,
@@ -940,6 +1106,32 @@ body[data-theme="deep-siren"] .card::after {
     radial-gradient(circle at 75% 35%, rgba(196, 245, 255, 0.04), transparent 24%);
   filter: blur(12px);
   pointer-events: none;
+}
+/* =========================
+   DREAMCORE CURSOR
+   soft star / memory glow
+   ========================= */
+body[data-theme="dreamcore"] .theme-cursor {
+  filter: drop-shadow(0 0 10px rgba(255, 244, 201, 0.45));
+}
+
+body[data-theme="dreamcore"] .theme-cursor::before {
+  content: "✦";
+  inset: auto;
+  font-size: 22px;
+  line-height: 1;
+  color: #fff7cf;
+  text-shadow:
+    0 0 8px rgba(255, 244, 201, 0.7),
+    0 0 18px rgba(220, 209, 255, 0.35);
+}
+
+body[data-theme="dreamcore"] .theme-cursor::after {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 250, 231, 0.28);
+  box-shadow: 0 0 16px rgba(255, 244, 201, 0.14);
 }
 
 .brand-kicker {
