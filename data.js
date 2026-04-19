@@ -267,7 +267,7 @@ export const characters = [
       "prrrt?? meoww."
     ],
     music: [
-      { title: "Meow", artist: "Meow", url: "./music/rallysong.mp3" },
+      { title: "Meow", artist: "Meow", url: "/music/rallysong.mp3" },
       { title: "Tsukiyomi", artist: "Kurosagi", url: "music/kurosagi.mp3" }
     ],
     defaultTrack: 0,
@@ -315,7 +315,7 @@ export const characters = [
       "prrrt?? meoww."
     ],
     music: [
-      { title: "Meow", artist: "Meow", url: "./music/rallysong.mp3" },
+      { title: "Meow", artist: "Meow", url: "/music/rallysong.mp3" },
       { title: "Tsukiyomi", artist: "Kurosagi", url: "music/kurosagi.mp3" }
     ],
     defaultTrack: 0,
@@ -363,7 +363,7 @@ export const characters = [
       "prrrt?? meoww."
     ],
     music: [
-      { title: "Meow", artist: "Meow", url: "./music/rallysong.mp3" },
+      { title: "Meow", artist: "Meow", url: "/music/rallysong.mp3" },
       { title: "Tsukiyomi", artist: "Kurosagi", url: "music/kurosagi.mp3" }
     ],
     defaultTrack: 0,
@@ -411,7 +411,7 @@ export const characters = [
       "prrrt?? meoww."
     ],
     music: [
-      { title: "Meow", artist: "Meow", url: "./music/rallysong.mp3" },
+      { title: "Meow", artist: "Meow", url: "/music/rallysong.mp3" },
       { title: "Tsukiyomi", artist: "Kurosagi", url: "music/kurosagi.mp3" }
     ],
     defaultTrack: 0,
