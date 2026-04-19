@@ -22,22 +22,41 @@ export const characters = [
     origin: "Xianle Kingdom",
     status: "Active",
     species: "God",
-    color: "White / Gold / Red",
+    color: "White / Gold ",
     favorites: "Helping people, peace, small kindnesses",
     personality: "Kind, patient, selfless, emotionally restrained, stubborn in a gentle way.",
-    story: "A long-suffering god who lost almost everything but never lost his kindness.",
+    story: "Xie Lian was once the beloved Crown Prince of the prosperous kingdom of Xianle. Known for his kindness, talent, and idealism, he was admired by his people and believed he could save everyone. At a young age, he ascended to the heavens and became a god. However, after war, famine, and the fall of Xianle, Xie Lian’s life changed drastically. Unable to protect his kingdom or the people he cared for, he was blamed and cast down from the heavens. Over the centuries, he ascended two more times, only to be banished again, earning a reputation as the “laughingstock of the three realms.”Despite endless hardship, ridicule, and loneliness, Xie Lian never completely loses his compassion or sense of justice. Eight hundred years later, he ascends for the third time and begins a new journey that uncovers long-buried truths, past tragedies, and his connection with Hua Cheng, a powerful ghost king devoted to him.",
     facts: [
-      "Ascended more than once.",
+      "Ascended more three times.",
       "Has very bad luck.",
-      "Still helps others anyway."
+      "Still helps others anyway.",
+      "Known as the “Scrap Collecting God” because he gathers and reuses junk.",
+      "Skilled in swordsmanship and martial arts.",
+      "His spiritual weapon is Ruoye, a white silk bandage/ribbon.",
+      "Has a habit of smiling calmly in difficult situations.",
+      "Habit of cooking bad.",
+      "Experienced profound hopelessness after the fall of Xianle and considered ending his life."
     ],
     aesthetics: "White robes, bandages, moonlight, shrines, drifting petals.",
     relationships: [
-      { name: "Hua Cheng", type: "Devotion", detail: "Loves him completely and without judgment." }
+      { name: "Hua Cheng", type: "Devotion", detail: "Likes him completely and without judgment." },
+      {name: "Feng Xin", type: "Loyality" , detail: "His former bodyguard and longtime companion who remains protective despite years of conflict and distance"},
+      {name: "Mu Qing", type: "Complicated Past", detail: "A former servant turned fellow cultivator whose bond with Xie Lian is shaped by pride, resentment, and buried care." },
+      { name: "Shi Qingxuan", type: "Friendship", detail: "One of the few heavenly officials who treats him warmly and without prejudice." },
+      { name: "Qi Rong", type: "Family Conflict", detail: "His unstable relative whose bitterness and cruelty contrast Xie Lian’s compassion." },
+      { name: "Jun Wu", type: "Mentor / Antagonist", detail: "Once a respected heavenly figure to Xie Lian, later revealed to have a far darker connection to his fate." },
+      { name: "White No-Face", type: "Trauma / Obsession", detail: "A mysterious masked figure tied to Xie Lian’s darkest suffering, repeatedly appearing during pivotal moments of his life." }
     ],
     quotes: [
       "Body in abyss, heart in paradise.",
-      "If I can help, then I will."
+      "If I can help, then I will.",
+      "The one basking in infinite glory is you. The one fallen from grace is also you. What matters is you and not the state of you.",
+      "I won't change. Even if it hurts I won't change. Even if I die I won't change.",
+      "you sure you want to fuck their families if they look like that?",
+      "He didn't know whether to laugh or cry",
+      "Only after having met you did I rediscover that it's such a simple thing to be happy",
+      "If you kill one person, you need to bury ten. Too much trouble"
+      
     ],
     music: [
       { title: "Yes To Heaven", artist: "Lana Del Rey", url: "music/Yes To Heaven (I've got my eye on you) - Lana del rey - [edit audio].mp3" },
