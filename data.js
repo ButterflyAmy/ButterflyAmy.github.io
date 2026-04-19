@@ -189,7 +189,6 @@ export const characters = [
     defaultTrack: 0,
     tags: ["real person", "dreamy", "emotional", "ambitious"]
   },
-  
   {
     id: 5,
     slug: "rally",
@@ -213,22 +212,22 @@ export const characters = [
     birthday: "January 1st",
     origin: "Austria",
     status: "still glowing",
-    species: " Cat",
+    species: "Cat",
     color: "gray",
-    favorites: "music, memories, pretty things, comfort characters, late-night thoughts",
-    personality: "Sensitive, expressive, passionate, sometimes chaotic, but full of love and ambition.",
-    story: "A girl trying to build a beautiful life while carrying a thousand feelings at once. She overthinks, dreams too much, gets attached deeply, and still keeps going.",
+    favorites: "sleeping, exploring, cuddles, tiny chaos",
+    personality: "Playful, curious, tiny, silly, adorable.",
+    story: "A tiny little cat full of chaos, softness, and cute moments.",
     facts: [
-      "Wants to pass MedAT.",
-      "Gets attached to fictional characters and emotions very deeply.",
-      "Can be dramatic but also very sincere."
+      "Very small.",
+      "Very cute.",
+      "Probably runs the whole house already."
     ],
-    aesthetics: "pink glow, night sky, edits, nostalgia, roses, soft chaos, playlists, dreamcore",
+    aesthetics: "soft fur, sleepy eyes, cozy blankets, tiny paws",
     relationships: [
-      { name: "Lee", type: "Inspiration", detail: "A source of strength and motivation when giving up feels easy." }
+      { name: "Sunnita", type: "Companion", detail: "A tiny emotional support baby." }
     ],
     quotes: [
-      "Meow meow meow meow meow! meow? meow. ",
+      "Meow meow meow meow meow! meow? meow.",
       "prrrt?? meoww."
     ],
     music: [
@@ -236,7 +235,7 @@ export const characters = [
       { title: "Tsukiyomi", artist: "Kurosagi", url: "music/kurosagi.mp3" }
     ],
     defaultTrack: 0,
-    tags: ["real person", "dreamy", "emotional", "ambitious"]
+    tags: ["cat", "cute", "playful", "soft"]
   },
   {
     id: 6,
@@ -261,22 +260,22 @@ export const characters = [
     birthday: "January 1st",
     origin: "Austria",
     status: "dead",
-    species: " Cat",
+    species: "Cat",
     color: "dark gray",
-    favorites: "music, memories, pretty things, comfort characters, late-night thoughts",
-    personality: "Sensitive, expressive, passionate, sometimes chaotic, but full of love and ambition.",
-    story: "A girl trying to build a beautiful life while carrying a thousand feelings at once. She overthinks, dreams too much, gets attached deeply, and still keeps going.",
+    favorites: "warm places, comfort, soft moments",
+    personality: "Gentle, quiet, sweet, unforgettable.",
+    story: "A deeply loved little cat whose memory still stays close.",
     facts: [
-      "Wants to pass MedAT.",
-      "Gets attached to fictional characters and emotions very deeply.",
-      "Can be dramatic but also very sincere."
+      "Very loved.",
+      "Very precious.",
+      "Will always matter."
     ],
-    aesthetics: "pink glow, night sky, edits, nostalgia, roses, soft chaos, playlists, dreamcore",
+    aesthetics: "memory, softness, moonlight, quiet love",
     relationships: [
-      { name: "Lee", type: "Inspiration", detail: "A source of strength and motivation when giving up feels easy." }
+      { name: "Sunnita", type: "Loved deeply", detail: "A cat remembered with a lot of love." }
     ],
     quotes: [
-      "Meow meow meow meow meow! meow? meow. ",
+      "Meow meow meow meow meow! meow? meow.",
       "prrrt?? meoww."
     ],
     music: [
@@ -284,7 +283,7 @@ export const characters = [
       { title: "Tsukiyomi", artist: "Kurosagi", url: "music/kurosagi.mp3" }
     ],
     defaultTrack: 0,
-    tags: ["real person", "dreamy", "emotional", "ambitious"]
+    tags: ["cat", "memory", "soft", "loved"]
   },
   {
     id: 7,
@@ -309,22 +308,22 @@ export const characters = [
     birthday: "January 1st",
     origin: "Austria",
     status: "alive",
-    species: " Cat",
+    species: "Cat",
     color: "white- gray",
-    favorites: "music, memories, pretty things, comfort characters, late-night thoughts",
-    personality: "Sensitive, expressive, passionate, sometimes chaotic, but full of love and ambition.",
-    story: "A girl trying to build a beautiful life while carrying a thousand feelings at once. She overthinks, dreams too much, gets attached deeply, and still keeps going.",
+    favorites: "playing, running around, attention, naps",
+    personality: "Playful, energetic, cute, affectionate.",
+    story: "A sweet little cat bringing joy, energy, and chaos.",
     facts: [
-      "Wants to pass MedAT.",
-      "Gets attached to fictional characters and emotions very deeply.",
-      "Can be dramatic but also very sincere."
+      "Tiny and cute.",
+      "Probably playful all day.",
+      "Very lovable."
     ],
-    aesthetics: "pink glow, night sky, edits, nostalgia, roses, soft chaos, playlists, dreamcore",
+    aesthetics: "tiny paws, bright eyes, soft fur, happy chaos",
     relationships: [
-      { name: "Lee", type: "Inspiration", detail: "A source of strength and motivation when giving up feels easy." }
+      { name: "Sunnita", type: "Companion", detail: "A beloved little cat full of life." }
     ],
     quotes: [
-      "Meow meow meow meow meow! meow? meow. ",
+      "Meow meow meow meow meow! meow? meow.",
       "prrrt?? meoww."
     ],
     music: [
@@ -332,13 +331,13 @@ export const characters = [
       { title: "Tsukiyomi", artist: "Kurosagi", url: "music/kurosagi.mp3" }
     ],
     defaultTrack: 0,
-    tags: ["real person", "dreamy", "emotional", "ambitious"]
+    tags: ["cat", "cute", "alive", "playful"]
   },
   {
     id: 8,
     slug: "maryam",
     name: "Maryam",
-    category: "Person",
+    category: "Real Person",
     fandom: "real life",
     role: "ordinary girl",
     vibe: "relaxed, cute, playful",
@@ -353,26 +352,26 @@ export const characters = [
       "videos/marv.mp4",
       "videos/sunvid.mp4"
     ],
-    age: "3 months",
+    age: "Unknown",
     birthday: "January 1st",
     origin: "Austria",
     status: "alive",
-    species: " Cat",
+    species: "Human",
     color: "white- gray",
     favorites: "music, memories, pretty things, comfort characters, late-night thoughts",
     personality: "Sensitive, expressive, passionate, sometimes chaotic, but full of love and ambition.",
-    story: "A girl trying to build a beautiful life while carrying a thousand feelings at once. She overthinks, dreams too much, gets attached deeply, and still keeps going.",
+    story: "A person connected to this little archive and its emotional world.",
     facts: [
-      "Wants to pass MedAT.",
-      "Gets attached to fictional characters and emotions very deeply.",
-      "Can be dramatic but also very sincere."
+      "Important person in real life.",
+      "Part of the archive universe.",
+      "Connected to many memories."
     ],
     aesthetics: "pink glow, night sky, edits, nostalgia, roses, soft chaos, playlists, dreamcore",
     relationships: [
-      { name: "Lee", type: "Inspiration", detail: "A source of strength and motivation when giving up feels easy." }
+      { name: "Sunnita", type: "Connection", detail: "Part of the personal universe behind the archive." }
     ],
     quotes: [
-      "Meow meow meow meow meow! meow? meow. ",
+      "Meow meow meow meow meow! meow? meow.",
       "prrrt?? meoww."
     ],
     music: [
@@ -380,6 +379,6 @@ export const characters = [
       { title: "Tsukiyomi", artist: "Kurosagi", url: "music/kurosagi.mp3" }
     ],
     defaultTrack: 0,
-    tags: ["real person", "dreamy", "emotional", "ambitious"]
+    tags: ["real person", "dreamy", "emotional", "important"]
   }
 ];
