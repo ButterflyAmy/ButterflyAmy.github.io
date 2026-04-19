@@ -117,12 +117,12 @@ export const characters = [
     quotes: [
       "I pray to never rest in peace.",
       "Your Highness, I understand your everything.",
-      "I only live for one person."
+      "I only live for one person.",
       "I might not be able to decide whether the road is easy or not, but whether I walk it is entirely up to me.",
       "If your dream is to save the common people, then my dream, is only you.",
       "There is no banquet in this world that doesn’t come to an end. But I will never leave you",
       "I don't know if any of you missed me... but I haven't thought about any of you at all",
-      "To die in a battle for you is my greatest honor.",
+      "To die in a battle for you is my greatest honor."
     ],
     music: [
       { title: "Mary on a Cross", artist: "Ghost", url: "music/mary on a cross(bestpart!slowed) [edit audio].mp3" },
