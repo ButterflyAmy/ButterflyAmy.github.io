@@ -153,21 +153,32 @@ export const characters = [
     origin: "Tokyo",
     status: "Active",
     species: "Half-ghoul",
-    color: "Hide",
+    color: "red, white",
     favorites: "Books, coffee, silence",
-    personality: "Sensitive, conflicted, intelligent, self-sacrificing, unstable under pressure.",
-    story: "A boy forced into a world of violence and identity crisis after becoming part ghoul.",
+    personality: "protecting, conflicted, intelligent, self-sacrificing, unstable under pressure.",
+    story: "Ken Kaneki begins life as a shy, intelligent university student who loves books and lives a quiet, lonely existence. Raised with emotional hardship and loss, he grows into a gentle person who avoids conflict and values kindness. His closest friend is Hideyoshi Nagachika, one of the few people who truly understands him. Everything changes when Kaneki goes on a date with Rize Kamishiro, a beautiful woman who is secretly a ghoul—a species that looks human but survives by eating human flesh. Rize attacks him, but before she can kill him, an accident crushes her. Kaneki is critically injured, and doctors transplant Rize’s organs into him to save his life. Because of this surgery, Kaneki becomes a **half-ghoul**: part human, part monster. He can no longer eat normal food, suffers intense hunger, and is horrified by what he is becoming. Desperate and confused, he is taken in by the members of Anteiku, a café run by peaceful ghouls who teach him how to survive without losing his morality. There he meets Touka Kirishima and others who become his new family. Kaneki tries to live between two worlds—human and ghoul—but violence from both sides drags him deeper into conflict. He wants to protect everyone, yet his kindness often leads him to suffer alone. Eventually he is captured and brutally tortured by Yakumo Oomori (Jason). The experience shatters his old self. After surviving, Kaneki emerges transformed: white-haired, hardened, and far more ruthless. He decides that instead of being weak and relying on others, he will become strong enough to protect those he loves. He forms his own group, investigates the hidden powers controlling the ghoul world, and grows into one of its most feared fighters. As the story continues, Kaneki loses memories and lives under a new identity as Haise Sasaki, an investigator working for the very organization that hunts ghouls. Haise is gentler and more stable, but fragments of Kaneki’s past slowly return. This creates another identity struggle: Is he Haise, Kaneki, or both? When his memories fully resurface, Kaneki is forced to confront everything he has been—victim, monster, hero, killer. He becomes a leader trying to end the endless hatred between humans and ghouls. Rather than choosing one side, he chooses coexistence. By the end of his journey, Kaneki evolves from a frightened boy who wanted an ordinary life into someone who carries pain, responsibility, and hope for two worlds. His story is ultimately about **identity, trauma, resilience, and finding humanity even after becoming something feared.**",
     facts: [
-      "Loves books.",
+      "His white hair symbolizes trauma and transformation after extreme torture (Marie Antoinette syndrome)",
       "Struggles with identity.",
-      "One of the most tragic anime leads."
+      "the first artificial one-eyed ghoul, created through a transplant of Rize Kamishiro's kakuhou"
     ],
-    aesthetics: "Rain, masks, blood, white hair, city lights, broken glass.",
+    aesthetics: "Rain, masks, blood, white hair, city lights",
     relationships: [
       { name: "Hide", type: "Best friend", detail: "One of the most important people in his life." }
     ],
     quotes: [
       "What's wrong isn't me. What's wrong is this world.",
+      "If you were to write a story with me in the lead role, it would certainly be... a tragedy",
+      "But you know what the best thing about pain is? It tells you you're not dead yet!",
+      "Human relationships are chemical reactions...",
+      "Before you save anybody else… I want you to save yourself.",
+      "Goodnight Haise. I’m done dreaming",
+      " I will press forward, like a centipede",
+      "All the liabilities in this world are due to the inadequacies of the person involved",
+      "Do you think that after all I've been through, something like that would hurt?",
+      "You were my teacher, and my father. I was so happy...",
+      "You had a choice. Why didn't you choose me?",
+      "I wanted you to live for me.",
       "I can no longer tell the difference between dream and reality."
     ],
     music: [
