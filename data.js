@@ -285,6 +285,54 @@ export const characters = [
     ],
     defaultTrack: 0,
     tags: ["real person", "dreamy", "emotional", "ambitious"]
+  },
+  {
+    id: 7,
+    slug: "sina",
+    name: "Sina",
+    category: "Animal",
+    fandom: "real life",
+    role: "cat",
+    vibe: "relaxed, cute, playful",
+    quote: "meow meow meow meow meow meow.",
+    cover: "images/sina1.png",
+    gallery: [
+      "images/sina2.png",
+      "images/sina3.png",
+      "images/sina4.png"
+    ],
+    videos: [
+      "videos/Bildschirmaufnahme 2026-04-15 234630.mp4",
+      "videos/sunvid.mp4"
+    ],
+    age: "3 months",
+    birthday: "January 1st",
+    origin: "Austria",
+    status: "alive",
+    species: " Cat",
+    color: "white- gray",
+    favorites: "music, memories, pretty things, comfort characters, late-night thoughts",
+    personality: "Sensitive, expressive, passionate, sometimes chaotic, but full of love and ambition.",
+    story: "A girl trying to build a beautiful life while carrying a thousand feelings at once. She overthinks, dreams too much, gets attached deeply, and still keeps going.",
+    facts: [
+      "Wants to pass MedAT.",
+      "Gets attached to fictional characters and emotions very deeply.",
+      "Can be dramatic but also very sincere."
+    ],
+    aesthetics: "pink glow, night sky, edits, nostalgia, roses, soft chaos, playlists, dreamcore",
+    relationships: [
+      { name: "Lee", type: "Inspiration", detail: "A source of strength and motivation when giving up feels easy." }
+    ],
+    quotes: [
+      "Meow meow meow meow meow! meow? meow. ",
+      "prrrt?? meoww."
+    ],
+    music: [
+      { title: "Meow", artist: "Meow", url: "./music/rallysong.mp3" },
+      { title: "Tsukiyomi", artist: "Kurosagi", url: "music/kurosagi.mp3" }
+    ],
+    defaultTrack: 0,
+    tags: ["real person", "dreamy", "emotional", "ambitious"]
   }
   
 ];
