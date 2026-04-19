@@ -345,9 +345,9 @@ export const characters = [
     quote: "meow meow meow meow meow meow.",
     cover: "images/mar1.png",
     gallery: [
-      "images/mar22.png",
-      "images/mar33.png",
-      "images/mar44.png"
+      "images/mar2.png",
+      "images/mar3.png",
+      "images/mar4.png"
     ],
     videos: [
       "videos/marV.mp4",
