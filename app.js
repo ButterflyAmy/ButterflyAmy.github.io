@@ -12,10 +12,8 @@ const sidebar = document.getElementById("sidebar");
 const sidebarToggle = document.getElementById("sidebarToggle");
 const cursorGlow = document.getElementById("cursorGlow");
 const sparkles = document.getElementById("sparkles");
+const clickSound = document.getElementById("clickSound");
 
-/* =========================
-   NEW CUSTOM CURSOR
-   ========================= */
 const themeCursor = document.createElement("div");
 themeCursor.className = "theme-cursor";
 document.body.appendChild(themeCursor);
@@ -74,8 +72,7 @@ const themeKey = "dreamArchiveTheme";
 
 let favorites = JSON.parse(localStorage.getItem(favoriteKey) || "[]");
 let recentViewed = JSON.parse(localStorage.getItem(recentKey) || "[]");
-let currentTheme =
-  localStorage.getItem(themeKey) || "pink-glitter-dream";
+let currentTheme = localStorage.getItem(themeKey) || "pink-glitter-dream";
 
 const themes = [
   {
@@ -103,10 +100,10 @@ const themes = [
     sparkles: 22
   },
   {
-  id: "dreamcore",
-  name: "Dreamcore",
-  palette: "liminal glow / soft nostalgia / blurry memory",
-  sparkles: 14
+    id: "dreamcore",
+    name: "Dreamcore",
+    palette: "liminal glow / soft nostalgia / blurry memory",
+    sparkles: 14
   }
 ];
 
@@ -131,10 +128,7 @@ function isFavorite(slug) {
 }
 
 function addRecent(slug) {
-  recentViewed = [slug, ...recentViewed.filter(x => x !== slug)].slice(
-    0,
-    8
-  );
+  recentViewed = [slug, ...recentViewed.filter(x => x !== slug)].slice(0, 8);
   saveRecent();
 }
 
@@ -164,10 +158,7 @@ function formatTime(seconds) {
 function renderFavorites() {
   favoritesList.innerHTML = "";
 
-  const items = favorites
-    .map(slug => getCharacterBySlug(slug))
-    .filter(Boolean);
-
+  const items = favorites.map(slug => getCharacterBySlug(slug)).filter(Boolean);
   favoritesEmpty.style.display = items.length ? "none" : "block";
 
   items.forEach(character => {
@@ -190,11 +181,9 @@ function getFilteredCharacters() {
   let filtered = characters.filter(character => {
     const filterPass =
       currentFilter === "all" ||
-      character.category.toLowerCase() ===
-        currentFilter.toLowerCase();
+      character.category.toLowerCase() === currentFilter.toLowerCase();
 
-    const favPass =
-      !favoritesOnly || isFavorite(character.slug);
+    const favPass = !favoritesOnly || isFavorite(character.slug);
 
     const text = `
       ${character.name}
@@ -210,15 +199,11 @@ function getFilteredCharacters() {
   });
 
   if (currentSort === "name-asc") {
-    filtered.sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
+    filtered.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   if (currentSort === "name-desc") {
-    filtered.sort((a, b) =>
-      b.name.localeCompare(a.name)
-    );
+    filtered.sort((a, b) => b.name.localeCompare(a.name));
   }
 
   return filtered;
@@ -260,8 +245,7 @@ function renderCards() {
     cardsGrid.appendChild(createCard(character));
   });
 
-  emptyState.style.display =
-    filtered.length ? "none" : "block";
+  emptyState.style.display = filtered.length ? "none" : "block";
 }
 
 function showView(name) {
@@ -307,16 +291,8 @@ function renderCharacterPage(slug) {
           </div>
 
           <div class="summary-actions">
-            <button class="favorite-btn ${
-              isFavorite(character.slug)
-                ? "active"
-                : ""
-            }" id="favoriteBtn">
-              ${
-                isFavorite(character.slug)
-                  ? "♥ Favorited"
-                  : "♡ Add to Favorites"
-              }
+            <button class="favorite-btn ${isFavorite(character.slug) ? "active" : ""}" id="favoriteBtn">
+              ${isFavorite(character.slug) ? "♥ Favorited" : "♡ Add to Favorites"}
             </button>
 
             <button class="soft-btn" id="playDefaultBtn">
@@ -332,20 +308,11 @@ function renderCharacterPage(slug) {
     </div>
   `;
 
-  document
-    .getElementById("favoriteBtn")
-    ?.addEventListener("click", () =>
-      toggleFavorite(character.slug)
-    );
+  document.getElementById("favoriteBtn")?.addEventListener("click", () => toggleFavorite(character.slug));
 
-  document
-    .getElementById("playDefaultBtn")
-    ?.addEventListener("click", () =>
-      playCharacterTrack(
-        character.slug,
-        character.defaultTrack || 0
-      )
-    );
+  document.getElementById("playDefaultBtn")?.addEventListener("click", () =>
+    playCharacterTrack(character.slug, character.defaultTrack || 0)
+  );
 }
 
 function route() {
@@ -391,11 +358,7 @@ async function playFromPlaylist(index) {
     await audioPlayer.play();
   } catch {}
 
-  updatePlayerInfo(
-    track.title,
-    `${track.ownerName} • ${track.artist}`
-  );
-
+  updatePlayerInfo(track.title, `${track.ownerName} • ${track.artist}`);
   playPauseBtn.textContent = "❚❚";
 }
 
@@ -408,16 +371,10 @@ function playCharacterTrack(slug, index = 0) {
 }
 
 function applyTheme(themeId) {
-  const theme =
-    themes.find(t => t.id === themeId) || themes[0];
+  const theme = themes.find(t => t.id === themeId) || themes[0];
 
   currentTheme = theme.id;
-
-  document.body.setAttribute(
-    "data-theme",
-    currentTheme
-  );
-
+  document.body.setAttribute("data-theme", currentTheme);
   saveTheme();
 
   themeName.textContent = theme.name;
@@ -425,19 +382,11 @@ function applyTheme(themeId) {
 }
 
 function cycleTheme() {
-  const currentIndex = themes.findIndex(
-    t => t.id === currentTheme
-  );
-
-  const nextIndex =
-    (currentIndex + 1) % themes.length;
-
+  const currentIndex = themes.findIndex(t => t.id === currentTheme);
+  const nextIndex = (currentIndex + 1) % themes.length;
   applyTheme(themes[nextIndex].id);
 }
 
-/* =========================
-   CUSTOM CURSOR MOVEMENT
-   ========================= */
 document.addEventListener("mousemove", e => {
   if (cursorGlow) {
     cursorGlow.style.left = `${e.clientX}px`;
@@ -452,6 +401,11 @@ document.addEventListener("mousemove", e => {
 
 document.addEventListener("mousedown", () => {
   themeCursor.classList.add("cursor-click");
+
+  if (clickSound) {
+    clickSound.currentTime = 0;
+    clickSound.play().catch(() => {});
+  }
 });
 
 document.addEventListener("mouseup", () => {
@@ -463,25 +417,16 @@ document.addEventListener("mouseover", e => {
     "a, button, input, select, textarea, .card, .gallery-item, .chip, .tab-btn, .track-btn, .favorite-btn, .side-link, .fav-item, .soft-btn, .circle-btn, .mini-btn, .theme-card-btn"
   );
 
-  themeCursor.classList.toggle(
-    "cursor-hover",
-    Boolean(hoverTarget)
-  );
+  themeCursor.classList.toggle("cursor-hover", Boolean(hoverTarget));
 });
 
-/* events */
 searchInput.addEventListener("input", renderCards);
 
 filterChips.addEventListener("click", e => {
   const btn = e.target.closest(".chip");
   if (!btn) return;
 
-  document
-    .querySelectorAll(".chip")
-    .forEach(x =>
-      x.classList.remove("active")
-    );
-
+  document.querySelectorAll(".chip").forEach(x => x.classList.remove("active"));
   btn.classList.add("active");
 
   currentFilter = btn.dataset.filter;
@@ -504,83 +449,44 @@ goHomeBtn?.addEventListener("click", () => {
   window.location.hash = "#home";
 });
 
-changeThemeBtn?.addEventListener(
-  "click",
-  cycleTheme
-);
+changeThemeBtn?.addEventListener("click", cycleTheme);
+themeCycleCard?.addEventListener("click", cycleTheme);
 
-themeCycleCard?.addEventListener(
-  "click",
-  cycleTheme
-);
+playPauseBtn.addEventListener("click", async () => {
+  if (!audioPlayer.src) return;
 
-playPauseBtn.addEventListener(
-  "click",
-  async () => {
-    if (!audioPlayer.src) return;
-
-    if (audioPlayer.paused) {
-      await audioPlayer.play();
-      playPauseBtn.textContent = "❚❚";
-    } else {
-      audioPlayer.pause();
-      playPauseBtn.textContent = "▶";
-    }
+  if (audioPlayer.paused) {
+    await audioPlayer.play();
+    playPauseBtn.textContent = "❚❚";
+  } else {
+    audioPlayer.pause();
+    playPauseBtn.textContent = "▶";
   }
-);
+});
 
-audioPlayer.addEventListener(
-  "timeupdate",
-  () => {
-    if (!isFinite(audioPlayer.duration))
-      return;
+audioPlayer.addEventListener("timeupdate", () => {
+  if (!isFinite(audioPlayer.duration)) return;
 
-    currentTime.textContent = formatTime(
-      audioPlayer.currentTime
-    );
+  currentTime.textContent = formatTime(audioPlayer.currentTime);
+  duration.textContent = formatTime(audioPlayer.duration);
+  progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+});
 
-    duration.textContent = formatTime(
-      audioPlayer.duration
-    );
+progressBar.addEventListener("input", () => {
+  if (!isFinite(audioPlayer.duration)) return;
 
-    progressBar.value =
-      (audioPlayer.currentTime /
-        audioPlayer.duration) *
-      100;
-  }
-);
+  audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
+});
 
-progressBar.addEventListener(
-  "input",
-  () => {
-    if (!isFinite(audioPlayer.duration))
-      return;
+volumeBar.addEventListener("input", () => {
+  audioPlayer.volume = Number(volumeBar.value);
+});
 
-    audioPlayer.currentTime =
-      (progressBar.value / 100) *
-      audioPlayer.duration;
-  }
-);
+lightboxClose?.addEventListener("click", () => {
+  lightbox.classList.remove("open");
+});
 
-volumeBar.addEventListener(
-  "input",
-  () => {
-    audioPlayer.volume =
-      Number(volumeBar.value);
-  }
-);
-
-lightboxClose?.addEventListener(
-  "click",
-  () => {
-    lightbox.classList.remove("open");
-  }
-);
-
-window.addEventListener(
-  "hashchange",
-  route
-);
+window.addEventListener("hashchange", route);
 
 function init() {
   applyTheme(currentTheme);
@@ -588,8 +494,7 @@ function init() {
   renderFavorites();
   route();
 
-  profileCount.textContent =
-    characters.length;
+  profileCount.textContent = characters.length;
 }
 
 init();
