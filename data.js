@@ -158,7 +158,7 @@ export const characters = [
     ],
     videos: [
       "videos/Bildschirmaufnahme 2026-04-15 234630.mp4",
-      "videos/sunvid.mp4"
+      "videos/Bildschirmaufnahme 2026-04-19 162422.mp4"
     ],
     age: "21",
     birthday: "December 20",
