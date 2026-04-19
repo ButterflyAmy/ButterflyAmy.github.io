@@ -38,7 +38,6 @@ const homeHero = document.getElementById("homeHero");
 const profilesSection = document.getElementById("profilesSection");
 const sortSelect = document.getElementById("sortSelect");
 const profileCount = document.getElementById("profileCount");
-const themePreviewGrid = document.getElementById("themePreviewGrid");
 
 const mainMusic = document.getElementById("mainMusic");
 const toggleMainMusicBtn = document.getElementById("toggleMainMusicBtn");
@@ -75,32 +74,32 @@ const themeKey = "dreamArchiveTheme";
 const themes = [
   {
     id: "pink-glitter-dream",
-    name: "Pink Dream",
-    palette: "soft glam / hearts / dreamy glow",
+    name: "Sugar Bling",
+    palette: "too much pink? never heard of it.",
     sparkles: 36,
     effect: "hearts",
     cursorMix: "screen"
   },
   {
     id: "neon-pink-night",
-    name: "Neon Pink Night",
-    palette: "night city / light streaks / glossy neon",
+    name: "Pink Noir",
+    palette: "pretty things happen at night",
     sparkles: 18,
     effect: "streaks",
     cursorMix: "screen"
   },
   {
     id: "cyber-cold-neon",
-    name: "Cyber Cold Neon",
-    palette: "hologrid / scanlines / sharp future",
+    name: "Cyberpunk",
+    palette: "the future looks back at you",
     sparkles: 12,
     effect: "grid",
     cursorMix: "screen"
   },
   {
     id: "deep-siren",
-    name: "Deep Siren",
-    palette: "water glow / bubbles / sea glass dream",
+    name: "Sirencore",
+    palette: "she sings and they follow",
     sparkles: 22,
     effect: "bubbles",
     cursorMix: "screen"
@@ -108,7 +107,7 @@ const themes = [
   {
     id: "dreamcore",
     name: "Dreamcore",
-    palette: "liminal glow / soft nostalgia / blurry memory",
+    palette: "I miss a place that never existed",
     sparkles: 14,
     effect: "dreamcore",
     cursorMix: "screen"
@@ -962,12 +961,6 @@ function buildThemeEffects(themeId) {
   if (themeId === "dreamcore") buildDreamcoreEffect();
 }
 
-function updateThemePreviewState() {
-  document.querySelectorAll("[data-theme-preview]").forEach(btn => {
-    btn.classList.toggle("theme-preview-active", btn.dataset.themePreview === currentTheme);
-  });
-}
-
 function flashThemeSwitch() {
   document.body.animate(
     [
@@ -995,7 +988,6 @@ function applyTheme(themeId, withFlash = false) {
 
   buildSparkles(theme.sparkles);
   buildThemeEffects(theme.id);
-  updateThemePreviewState();
 
   if (withFlash) {
     flashThemeSwitch();
@@ -1006,16 +998,6 @@ function cycleTheme() {
   const currentIndex = themes.findIndex(theme => theme.id === currentTheme);
   const nextIndex = (currentIndex + 1) % themes.length;
   applyTheme(themes[nextIndex].id, true);
-}
-
-function attachThemePreviewEvents() {
-  if (!themePreviewGrid) return;
-
-  themePreviewGrid.addEventListener("click", e => {
-    const btn = e.target.closest("[data-theme-preview]");
-    if (!btn) return;
-    applyTheme(btn.dataset.themePreview, true);
-  });
 }
 
 function playHeroIntro() {
@@ -1314,7 +1296,6 @@ function init() {
   renderCards();
   renderFavorites();
   route();
-  attachThemePreviewEvents();
 
   if (profileCount) {
     profileCount.textContent = String(characters.length);
