@@ -101,7 +101,7 @@ export const characters = [
       "Would destroy the world for one person.",
       "Rarely shows respect to heavenly officials.",
       "His weapon is the scimitar E-Ming.",
-      "He is notorious for having the worst handwriting in the three realms",
+      "He is notorious for having the worst handwriting in the three realms"
       
     ],
     aesthetics: "Red robes, silver chains, butterflies, lantern light, night streets.",
