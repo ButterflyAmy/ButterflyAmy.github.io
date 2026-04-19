@@ -38,6 +38,7 @@ const homeHero = document.getElementById("homeHero");
 const profilesSection = document.getElementById("profilesSection");
 const sortSelect = document.getElementById("sortSelect");
 const profileCount = document.getElementById("profileCount");
+const themePreviewGrid = document.getElementById("themePreviewGrid");
 
 const mainMusic = document.getElementById("mainMusic");
 const toggleMainMusicBtn = document.getElementById("toggleMainMusicBtn");
@@ -63,48 +64,67 @@ let favoritesOnly = false;
 let currentCharacterSlug = null;
 let currentTrackIndex = null;
 let currentPlaylist = [];
+let mainMusicPlaying = false;
 let currentSort = "default";
+let introHasPlayed = false;
 
 const favoriteKey = "dreamArchiveFavorites";
 const recentKey = "dreamArchiveRecent";
 const themeKey = "dreamArchiveTheme";
-
-let favorites = JSON.parse(localStorage.getItem(favoriteKey) || "[]");
-let recentViewed = JSON.parse(localStorage.getItem(recentKey) || "[]");
-let currentTheme = localStorage.getItem(themeKey) || "pink-glitter-dream";
 
 const themes = [
   {
     id: "pink-glitter-dream",
     name: "Pink Dream",
     palette: "soft glam / hearts / dreamy glow",
-    sparkles: 36
+    sparkles: 36,
+    effect: "hearts",
+    cursorMix: "screen"
   },
   {
     id: "neon-pink-night",
     name: "Neon Pink Night",
     palette: "night city / light streaks / glossy neon",
-    sparkles: 18
+    sparkles: 18,
+    effect: "streaks",
+    cursorMix: "screen"
   },
   {
     id: "cyber-cold-neon",
     name: "Cyber Cold Neon",
     palette: "hologrid / scanlines / sharp future",
-    sparkles: 12
+    sparkles: 12,
+    effect: "grid",
+    cursorMix: "screen"
   },
   {
     id: "deep-siren",
     name: "Deep Siren",
     palette: "water glow / bubbles / sea glass dream",
-    sparkles: 22
+    sparkles: 22,
+    effect: "bubbles",
+    cursorMix: "screen"
   },
   {
     id: "dreamcore",
     name: "Dreamcore",
     palette: "liminal glow / soft nostalgia / blurry memory",
-    sparkles: 14
+    sparkles: 14,
+    effect: "dreamcore",
+    cursorMix: "screen"
   }
 ];
+
+let favorites = JSON.parse(localStorage.getItem(favoriteKey) || "[]");
+let recentViewed = JSON.parse(localStorage.getItem(recentKey) || "[]");
+let currentTheme = localStorage.getItem(themeKey) || "pink-glitter-dream";
+
+function formatTime(seconds) {
+  if (!isFinite(seconds)) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${String(secs).padStart(2, "0")}`;
+}
 
 function saveFavorites() {
   localStorage.setItem(favoriteKey, JSON.stringify(favorites));
@@ -118,22 +138,18 @@ function saveTheme() {
   localStorage.setItem(themeKey, currentTheme);
 }
 
-function getCharacterBySlug(slug) {
-  return characters.find(c => c.slug === slug);
-}
-
 function isFavorite(slug) {
   return favorites.includes(slug);
 }
 
 function addRecent(slug) {
-  recentViewed = [slug, ...recentViewed.filter(x => x !== slug)].slice(0, 8);
+  recentViewed = [slug, ...recentViewed.filter(item => item !== slug)].slice(0, 8);
   saveRecent();
 }
 
 function toggleFavorite(slug) {
   if (isFavorite(slug)) {
-    favorites = favorites.filter(x => x !== slug);
+    favorites = favorites.filter(item => item !== slug);
   } else {
     favorites.push(slug);
   }
@@ -143,82 +159,68 @@ function toggleFavorite(slug) {
   renderCards();
 
   if (currentCharacterSlug === slug) {
-    renderCharacterPage(slug);
+    renderCharacterPage(slug, false);
   }
 }
 
-function formatTime(seconds) {
-  if (!isFinite(seconds)) return "0:00";
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${String(secs).padStart(2, "0")}`;
+function getCharacterBySlug(slug) {
+  return characters.find(c => c.slug === slug);
 }
 
-function renderFavorites() {
-  favoritesList.innerHTML = "";
+function closeSidebarOnMobile() {
+  if (window.innerWidth <= 900) {
+    sidebar?.classList.remove("open");
+  }
+}
 
-  const items = favorites.map(slug => getCharacterBySlug(slug)).filter(Boolean);
-  favoritesEmpty.style.display = items.length ? "none" : "block";
+function scrollToProfiles() {
+  profilesSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
-  items.forEach(character => {
-    const btn = document.createElement("button");
-    btn.className = "fav-item";
-    btn.type = "button";
-    btn.textContent = `♡ ${character.name}`;
+function scrollToHero() {
+  homeHero?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
-    btn.addEventListener("click", () => {
-      openCharacter(character.slug);
-    });
+function setActiveSidebarButton(buttonKey) {
+  [goHomeBtn, showFavoritesBtn, showRecentBtn, surpriseSidebarBtn].forEach(btn => {
+    if (btn) btn.classList.remove("active-link");
+  });
 
-    favoritesList.appendChild(btn);
+  if (buttonKey === "home") goHomeBtn?.classList.add("active-link");
+  if (buttonKey === "favorites") showFavoritesBtn?.classList.add("active-link");
+  if (buttonKey === "recent") showRecentBtn?.classList.add("active-link");
+  if (buttonKey === "random") surpriseSidebarBtn?.classList.add("active-link");
+}
+
+function setChipActive(value) {
+  document.querySelectorAll(".chip").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.filter === value);
   });
 }
 
-function getFilteredCharacters() {
-  const query = searchInput.value.toLowerCase().trim();
+function resetToAllProfiles() {
+  favoritesOnly = false;
+  currentFilter = "all";
+  if (searchInput) searchInput.value = "";
+  currentSort = "default";
+  if (sortSelect) sortSelect.value = "default";
+  setChipActive("all");
+  renderCards();
+  setActiveSidebarButton("home");
+}
 
-  let filtered = characters.filter(character => {
-    const filterPass =
-      currentFilter === "all" ||
-      character.category.toLowerCase() === currentFilter.toLowerCase();
-
-    const favPass = !favoritesOnly || isFavorite(character.slug);
-
-    const text = `
-      ${character.name}
-      ${character.category}
-      ${character.fandom}
-      ${character.role}
-      ${character.vibe}
-      ${character.quote}
-      ${character.tags.join(" ")}
-    `.toLowerCase();
-
-    return filterPass && favPass && text.includes(query);
-  });
-
-  if (currentSort === "name-asc") {
-    filtered.sort((a, b) => a.name.localeCompare(b.name));
-  }
-
-  if (currentSort === "name-desc") {
-    filtered.sort((a, b) => b.name.localeCompare(a.name));
-  }
-
-  if (currentSort === "favorites") {
-    filtered.sort((a, b) => Number(isFavorite(b.slug)) - Number(isFavorite(a.slug)));
-  }
-
-  if (currentSort === "category") {
-    filtered.sort((a, b) => a.category.localeCompare(b.category));
-  }
-
-  return filtered;
+function showOnlyFavorites() {
+  favoritesOnly = true;
+  currentFilter = "all";
+  if (searchInput) searchInput.value = "";
+  setChipActive("all");
+  renderCards();
+  setActiveSidebarButton("favorites");
 }
 
 function createCard(character) {
   const article = document.createElement("article");
-  article.className = "card";
+  article.className = "card reveal-card";
 
   article.innerHTML = `
     <div class="card-cover">
@@ -230,134 +232,136 @@ function createCard(character) {
       </div>
     </div>
     <div class="card-body">
-      <div class="small">
-        <strong>${character.role}</strong> • ${character.fandom}
-      </div>
+      <div class="small"><strong>${character.role}</strong> • ${character.fandom}</div>
     </div>
   `;
 
-  article.addEventListener("click", () => {
-    openCharacter(character.slug);
-  });
+  article.addEventListener("click", () => openCharacter(character.slug, true));
+  attachCardTilt(article);
 
   return article;
 }
 
-function renderCards() {
-  cardsGrid.innerHTML = "";
+function getFilteredCharacters() {
+  const query = (searchInput?.value || "").toLowerCase().trim();
 
-  const filtered = getFilteredCharacters();
+  const filtered = characters.filter(character => {
+    const filterPass =
+      currentFilter === "all" ||
+      character.category.toLowerCase() === currentFilter.toLowerCase();
 
-  filtered.forEach(character => {
-    cardsGrid.appendChild(createCard(character));
+    const favoritePass = !favoritesOnly || isFavorite(character.slug);
+
+    const text = `
+      ${character.name}
+      ${character.category}
+      ${character.fandom}
+      ${character.role}
+      ${character.vibe}
+      ${character.quote}
+      ${character.personality}
+      ${character.story}
+      ${character.facts.join(" ")}
+      ${character.aesthetics}
+      ${character.relationships.map(r => `${r.name} ${r.type} ${r.detail}`).join(" ")}
+      ${character.quotes.join(" ")}
+      ${character.tags.join(" ")}
+    `.toLowerCase();
+
+    return filterPass && favoritePass && text.includes(query);
   });
 
-  emptyState.style.display = filtered.length ? "none" : "block";
+  if (currentSort === "name-asc") {
+    filtered.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (currentSort === "name-desc") {
+    filtered.sort((a, b) => b.name.localeCompare(a.name));
+  } else if (currentSort === "favorites") {
+    filtered.sort((a, b) => Number(isFavorite(b.slug)) - Number(isFavorite(a.slug)));
+  } else if (currentSort === "category") {
+    filtered.sort((a, b) => a.category.localeCompare(b.category));
+  }
+
+  return filtered;
 }
 
-function showView(name) {
-  homeView.classList.remove("active");
-  characterView.classList.remove("active");
+function renderCards() {
+  if (!cardsGrid) return;
 
-  if (name === "character") {
-    characterView.classList.add("active");
-  } else {
-    homeView.classList.add("active");
+  const filtered = getFilteredCharacters();
+  cardsGrid.innerHTML = "";
+
+  filtered.forEach((character, index) => {
+    const card = createCard(character);
+    card.style.animationDelay = `${index * 45}ms`;
+    cardsGrid.appendChild(card);
+  });
+
+  if (emptyState) {
+    emptyState.style.display = filtered.length ? "none" : "block";
   }
 }
 
-function convertYoutubeToEmbed(url) {
-  if (url.includes("youtu.be/")) {
-    const id = url.split("youtu.be/")[1].split("?")[0];
-    return `https://www.youtube.com/embed/${id}`;
-  }
+function renderFavorites() {
+  if (!favoritesList || !favoritesEmpty) return;
 
-  if (url.includes("watch?v=")) {
-    const id = url.split("watch?v=")[1].split("&")[0];
-    return `https://www.youtube.com/embed/${id}`;
-  }
+  favoritesList.innerHTML = "";
 
-  return url;
+  const items = favorites.map(slug => getCharacterBySlug(slug)).filter(Boolean);
+  favoritesEmpty.style.display = items.length ? "none" : "block";
+
+  items.forEach(character => {
+    const link = document.createElement("button");
+    link.type = "button";
+    link.className = "fav-item";
+    link.textContent = `♡ ${character.name}`;
+
+    link.addEventListener("click", () => {
+      openCharacter(character.slug, false);
+      closeSidebarOnMobile();
+    });
+
+    favoritesList.appendChild(link);
+  });
 }
 
-function renderCharacterPage(slug) {
+function renderRecentCards() {
+  if (!cardsGrid || !emptyState) return;
+
+  const items = recentViewed.map(slug => getCharacterBySlug(slug)).filter(Boolean);
+  cardsGrid.innerHTML = "";
+
+  items.forEach((character, index) => {
+    const card = createCard(character);
+    card.style.animationDelay = `${index * 45}ms`;
+    cardsGrid.appendChild(card);
+  });
+
+  emptyState.style.display = items.length ? "none" : "block";
+}
+
+function normalizeVideoUrl(video) {
+  if (video.includes("youtube.com/embed")) return video;
+
+  if (video.includes("youtu.be/")) {
+    const idPart = video.split("youtu.be/")[1] || "";
+    const videoId = idPart.split("?")[0];
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+
+  if (video.includes("youtube.com/watch?v=")) {
+    const url = new URL(video);
+    const videoId = url.searchParams.get("v");
+    if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+  }
+
+  return video;
+}
+
+function renderCharacterPage(slug, playDefaultTrack = false) {
   const character = getCharacterBySlug(slug);
-  if (!character) return;
+  if (!character || !characterView) return;
 
   currentCharacterSlug = slug;
-
-  const musicHtml = (character.music || [])
-    .map(
-      (track, index) => `
-        <div class="track">
-          <div class="track-info">
-            <strong>${track.title}</strong>
-            <span>${track.artist}</span>
-          </div>
-          <button class="track-btn" type="button" data-track-index="${index}">
-            Play
-          </button>
-        </div>
-      `
-    )
-    .join("");
-
-  const galleryImagesHtml = (character.gallery || [])
-    .map(
-      image => `
-        <button class="gallery-item gallery-open" type="button" data-image="${image}">
-          <img src="${image}" alt="${character.name}">
-        </button>
-      `
-    )
-    .join("");
-
-  const videosHtml = (character.videos || [])
-    .map(video => {
-      const isYoutube = video.includes("youtube.com") || video.includes("youtu.be");
-
-      if (isYoutube) {
-        return `
-          <div class="gallery-item">
-            <iframe
-              src="${convertYoutubeToEmbed(video)}"
-              title="${character.name} video"
-              allowfullscreen
-              loading="lazy"
-            ></iframe>
-          </div>
-        `;
-      }
-
-      return `
-        <div class="gallery-item">
-          <video controls preload="metadata">
-            <source src="${video}">
-          </video>
-        </div>
-      `;
-    })
-    .join("");
-
-  const quotesHtml = (character.quotes || [])
-    .map(q => `<div class="quote-item">“${q}”</div>`)
-    .join("");
-
-  const relationshipsHtml = (character.relationships || [])
-    .map(
-      rel => `
-        <div class="relation">
-          <strong>${rel.name}</strong>
-          <span>${rel.type}</span>
-          <p>${rel.detail}</p>
-        </div>
-      `
-    )
-    .join("");
-
-  const factsHtml = (character.facts || [])
-    .map(fact => `<li>${fact}</li>`)
-    .join("");
 
   characterView.innerHTML = `
     <div class="character-page">
@@ -380,109 +384,169 @@ function renderCharacterPage(slug) {
             ${character.vibe}
           </div>
 
-          <div class="character-quote">
-            “${character.quote}”
-          </div>
+          <div class="character-quote">“${character.quote}”</div>
 
           <div class="summary-actions">
             <button class="favorite-btn ${isFavorite(character.slug) ? "active" : ""}" id="favoriteBtn" type="button">
               ${isFavorite(character.slug) ? "♥ Favorited" : "♡ Add to Favorites"}
             </button>
 
-            <button class="soft-btn" id="playDefaultBtn" type="button">
-              Play Character Theme
-            </button>
-
-            <a class="soft-btn" href="#home">
-              Back to Archive
-            </a>
+            <button class="soft-btn" id="playDefaultBtn" type="button">Play Character Theme</button>
+            <button class="soft-btn" id="copyCharacterLinkBtn" type="button">Copy Profile Link</button>
+            <a class="soft-btn" href="#home">Back to Archive</a>
           </div>
 
           <div class="info-grid">
-            <div class="info-box">
-              <strong>Age</strong>
-              <span>${character.age || "—"}</span>
+            <div class="info-box"><strong>Age</strong>${character.age}</div>
+            <div class="info-box"><strong>Birthday</strong>${character.birthday}</div>
+            <div class="info-box"><strong>Origin</strong>${character.origin}</div>
+            <div class="info-box"><strong>Status</strong>${character.status}</div>
+            <div class="info-box"><strong>Species</strong>${character.species}</div>
+            <div class="info-box"><strong>Color Theme</strong>${character.color}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="character-tabs" id="characterTabs">
+        <button class="tab-btn active" data-tab="overview" type="button">Overview</button>
+        <button class="tab-btn" data-tab="media" type="button">Gallery</button>
+        <button class="tab-btn" data-tab="music" type="button">Music</button>
+        <button class="tab-btn" data-tab="details" type="button">Extra</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-overview">
+        <div class="content-grid">
+          <div class="stack">
+            <div class="box">
+              <h3>Story / Lore</h3>
+              <p>${character.story}</p>
             </div>
-            <div class="info-box">
-              <strong>Birthday</strong>
-              <span>${character.birthday || "—"}</span>
+
+            <div class="box">
+              <h3>Personality</h3>
+              <p>${character.personality}</p>
             </div>
-            <div class="info-box">
-              <strong>Origin</strong>
-              <span>${character.origin || "—"}</span>
+          </div>
+
+          <div class="stack">
+            <div class="box">
+              <h3>Favorites</h3>
+              <p>${character.favorites}</p>
             </div>
-            <div class="info-box">
-              <strong>Status</strong>
-              <span>${character.status || "—"}</span>
-            </div>
-            <div class="info-box">
-              <strong>Species</strong>
-              <span>${character.species || "—"}</span>
-            </div>
-            <div class="info-box">
-              <strong>Color</strong>
-              <span>${character.color || "—"}</span>
+
+            <div class="box">
+              <h3>Aesthetic</h3>
+              <p>${character.aesthetics}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="content-grid">
-        <div class="stack">
-          <div class="box">
-            <h3>Story</h3>
-            <p>${character.story || "No story yet."}</p>
-            <br>
-            <h3>Personality</h3>
-            <p>${character.personality || "No personality yet."}</p>
-          </div>
-
-          <div class="box">
-            <h3>Music</h3>
-            <div class="track-list">
-              ${musicHtml || `<div class="track"><div class="track-info"><strong>No music yet.</strong></div></div>`}
-            </div>
-          </div>
-        </div>
-
+      <div class="tab-panel" id="tab-media">
         <div class="stack">
           <div class="box">
             <h3>Gallery</h3>
             <div class="gallery-grid">
-              ${galleryImagesHtml || ""}
+              ${character.gallery.map(img => `
+                <div class="gallery-item">
+                  <img src="${img}" alt="${character.name}">
+                </div>
+              `).join("")}
             </div>
-            <br>
+          </div>
+
+          <div class="box">
             <h3>Videos</h3>
             <div class="gallery-grid">
-              ${videosHtml || `<p class="small">No videos yet.</p>`}
+              ${
+                character.videos && character.videos.length
+                  ? character.videos.map(video => {
+                      const normalized = normalizeVideoUrl(video);
+
+                      if (normalized.includes("youtube.com/embed")) {
+                        return `
+                          <div class="gallery-item">
+                            <iframe
+                              src="${normalized}"
+                              allowfullscreen
+                              loading="lazy"
+                              referrerpolicy="strict-origin-when-cross-origin">
+                            </iframe>
+                          </div>
+                        `;
+                      }
+
+                      return `
+                        <div class="gallery-item">
+                          <video controls preload="metadata">
+                            <source src="${video}" type="video/mp4">
+                          </video>
+                        </div>
+                      `;
+                    }).join("")
+                  : `<p class="small">No videos yet.</p>`
+              }
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="stack">
-          <div class="box">
-            <h3>Extra</h3>
-            <p><strong>Favorites:</strong> ${character.favorites || "—"}</p>
-            <p><strong>Aesthetics:</strong> ${character.aesthetics || "—"}</p>
-            <br>
+      <div class="tab-panel" id="tab-music">
+        <div class="box">
+          <h3>Music</h3>
+          <div class="track-list">
+            ${character.music.map((track, index) => `
+              <div class="track">
+                <div class="track-info">
+                  <strong>${index + 1}. ${track.title}</strong>
+                  <span>${track.artist}</span>
+                </div>
+                <button class="track-btn play-track-btn" data-slug="${character.slug}" data-index="${index}" type="button">
+                  Play
+                </button>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      </div>
 
-            <h3>Facts</h3>
-            <ul>
-              ${factsHtml || "<li>No facts yet.</li>"}
-            </ul>
-
-            <br>
-
-            <h3>Quotes</h3>
-            <div class="quote-list">
-              ${quotesHtml || `<div class="quote-item">No quotes yet.</div>`}
+      <div class="tab-panel" id="tab-details">
+        <div class="content-grid">
+          <div class="stack">
+            <div class="box">
+              <h3>Quotes</h3>
+              <div class="quote-list">
+                ${character.quotes.map(q => `<div class="quote-item">“${q}”</div>`).join("")}
+              </div>
             </div>
 
-            <br>
+            <div class="box">
+              <h3>Facts</h3>
+              <ul>
+                ${character.facts.map(f => `<li>${f}</li>`).join("")}
+              </ul>
+            </div>
+          </div>
 
-            <h3>Relationships</h3>
-            <div class="relationships">
-              ${relationshipsHtml || `<div class="relation"><strong>No relationships yet.</strong></div>`}
+          <div class="stack">
+            <div class="box">
+              <h3>Relationships</h3>
+              <div class="relationships">
+                ${character.relationships.map(r => `
+                  <div class="relation">
+                    <strong>${r.name}</strong>
+                    <span>${r.type}</span>
+                    <p>${r.detail}</p>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+
+            <div class="box">
+              <h3>Tags</h3>
+              <div class="tags">
+                ${character.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+              </div>
             </div>
           </div>
         </div>
@@ -490,171 +554,696 @@ function renderCharacterPage(slug) {
     </div>
   `;
 
-  document.getElementById("favoriteBtn")?.addEventListener("click", () => {
-    toggleFavorite(character.slug);
-  });
+  setupCharacterTabs();
+  setupCharacterButtons(character);
+  setupGalleryLightbox();
 
-  document.getElementById("playDefaultBtn")?.addEventListener("click", () => {
-    playCharacterTrack(character.slug, character.defaultTrack || 0);
-  });
+  if (playDefaultTrack) {
+    playCharacterTrack(character.slug, character.defaultTrack ?? 0);
+  }
+}
 
-  document.querySelectorAll("[data-track-index]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const index = Number(btn.dataset.trackIndex);
-      playCharacterTrack(character.slug, index);
+function setupCharacterTabs() {
+  const tabsWrap = document.getElementById("characterTabs");
+  if (!tabsWrap) return;
+
+  const buttons = tabsWrap.querySelectorAll(".tab-btn");
+  const panels = characterView.querySelectorAll(".tab-panel");
+
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+      buttons.forEach(btn => btn.classList.remove("active"));
+      panels.forEach(panel => panel.classList.remove("active"));
+
+      button.classList.add("active");
+      const panel = document.getElementById(`tab-${button.dataset.tab}`);
+      if (panel) panel.classList.add("active");
     });
   });
+}
 
-  document.querySelectorAll(".gallery-open").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const image = btn.dataset.image;
-      if (!image) return;
-      lightboxImage.src = image;
+function setupGalleryLightbox() {
+  const galleryImages = characterView.querySelectorAll(".gallery-item img");
+
+  galleryImages.forEach(img => {
+    img.addEventListener("click", () => {
+      if (!lightbox || !lightboxImage) return;
+      lightboxImage.src = img.src;
       lightbox.classList.add("open");
     });
   });
+}
 
-  playCharacterTrack(character.slug, character.defaultTrack || 0);
+function copyCurrentLink() {
+  navigator.clipboard
+    .writeText(window.location.href)
+    .then(() => alert("Link copied ✨"))
+    .catch(() => alert("Could not copy link."));
+}
+
+function setupCharacterButtons(character) {
+  const favoriteBtn = document.getElementById("favoriteBtn");
+  const playDefaultBtn = document.getElementById("playDefaultBtn");
+  const copyCharacterLinkBtn = document.getElementById("copyCharacterLinkBtn");
+  const playTrackButtons = characterView.querySelectorAll(".play-track-btn");
+
+  if (favoriteBtn) {
+    favoriteBtn.addEventListener("click", () => toggleFavorite(character.slug));
+  }
+
+  if (playDefaultBtn) {
+    playDefaultBtn.addEventListener("click", () =>
+      playCharacterTrack(character.slug, character.defaultTrack ?? 0)
+    );
+  }
+
+  if (copyCharacterLinkBtn) {
+    copyCharacterLinkBtn.addEventListener("click", copyCurrentLink);
+  }
+
+  playTrackButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const slug = btn.dataset.slug;
+      const index = Number(btn.dataset.index);
+      playCharacterTrack(slug, index);
+    });
+  });
+}
+
+function showView(viewName) {
+  homeView?.classList.remove("active");
+  characterView?.classList.remove("active");
+
+  if (viewName === "character") {
+    characterView?.classList.add("active");
+  } else {
+    homeView?.classList.add("active");
+  }
 }
 
 function route() {
   const hash = window.location.hash || "#home";
 
   if (hash.startsWith("#character/")) {
-    const slug = hash.replace("#character/", "");
-    showView("character");
-    renderCharacterPage(slug);
+    const slug = hash.replace("#character/", "").trim();
+    const character = getCharacterBySlug(slug);
+
+    if (character) {
+      showView("character");
+      renderCharacterPage(slug, false);
+    } else {
+      window.location.hash = "#home";
+    }
   } else {
     showView("home");
   }
+
+  closeSidebarOnMobile();
 }
 
-function openCharacter(slug) {
+function openCharacter(slug, playDefault = true) {
+  const character = getCharacterBySlug(slug);
+  if (!character) return;
+
   addRecent(slug);
+
+  if (playDefault) {
+    playCharacterTrack(slug, character.defaultTrack ?? 0);
+  }
+
   window.location.hash = `#character/${slug}`;
 }
 
+function stopMainMusic() {
+  if (!mainMusic) return;
+  mainMusic.pause();
+  mainMusic.currentTime = 0;
+  mainMusicPlaying = false;
+  if (toggleMainMusicBtn) toggleMainMusicBtn.textContent = "Play Main Music";
+}
+
+function stopEverything() {
+  if (audioPlayer) {
+    audioPlayer.pause();
+    audioPlayer.currentTime = 0;
+  }
+  stopMainMusic();
+  if (playPauseBtn) playPauseBtn.textContent = "▶";
+  if (progressBar) progressBar.value = 0;
+  if (currentTime) currentTime.textContent = "0:00";
+  if (duration) duration.textContent = "0:00";
+}
+
+async function toggleMainMusic() {
+  if (!mainMusic) return;
+
+  try {
+    if (!mainMusicPlaying) {
+      audioPlayer?.pause();
+      if (audioPlayer) audioPlayer.currentTime = 0;
+      await mainMusic.play();
+      mainMusicPlaying = true;
+      if (toggleMainMusicBtn) toggleMainMusicBtn.textContent = "Pause Main Music";
+      if (playerTrackTitle) playerTrackTitle.textContent = "Main Page Theme";
+      if (playerTrackMeta) playerTrackMeta.textContent = "Dream Archive";
+      if (playPauseBtn) playPauseBtn.textContent = "❚❚";
+    } else {
+      stopMainMusic();
+      updatePlayerInfo("Nothing playing", "Choose a profile or a song");
+      if (playPauseBtn) playPauseBtn.textContent = "▶";
+    }
+  } catch {
+    alert("Browser blocked music. Click again after interacting with the page.");
+  }
+}
+
 function updatePlayerInfo(title, meta) {
-  playerTrackTitle.textContent = title;
-  playerTrackMeta.textContent = meta;
+  if (playerTrackTitle) playerTrackTitle.textContent = title || "Nothing playing";
+  if (playerTrackMeta) playerTrackMeta.textContent = meta || "Choose a profile or a song";
 }
 
 function buildCharacterPlaylist(character) {
-  return (character.music || []).map(track => ({
+  return character.music.map(track => ({
     ...track,
-    ownerName: character.name,
-    slug: character.slug
+    slug: character.slug,
+    ownerName: character.name
   }));
 }
 
-async function playFromPlaylist(index) {
-  if (!currentPlaylist[index]) return;
+function buildAllTracksPlaylist() {
+  return characters.flatMap(character =>
+    character.music.map(track => ({
+      ...track,
+      slug: character.slug,
+      ownerName: character.name
+    }))
+  );
+}
 
-  const track = currentPlaylist[index];
+async function playFromPlaylist(index) {
+  if (!currentPlaylist.length || !currentPlaylist[index] || !audioPlayer) return;
+
+  stopMainMusic();
   currentTrackIndex = index;
 
+  const track = currentPlaylist[currentTrackIndex];
+  currentCharacterSlug = track.slug;
+
   audioPlayer.src = track.url;
-  audioPlayer.volume = Number(volumeBar.value);
+  audioPlayer.volume = Number(volumeBar?.value ?? 0.8);
 
   try {
     await audioPlayer.play();
-  } catch {}
-
-  updatePlayerInfo(track.title, `${track.ownerName} • ${track.artist}`);
-  playPauseBtn.textContent = "❚❚";
+    updatePlayerInfo(track.title, `${track.ownerName} • ${track.artist}`);
+    if (playPauseBtn) playPauseBtn.textContent = "❚❚";
+  } catch {
+    updatePlayerInfo(track.title, `${track.ownerName} • ${track.artist}`);
+    if (playPauseBtn) playPauseBtn.textContent = "▶";
+  }
 }
 
-function playCharacterTrack(slug, index = 0) {
+function playCharacterTrack(slug, trackIndex) {
   const character = getCharacterBySlug(slug);
-  if (!character || !character.music?.length) return;
+  if (!character || !character.music[trackIndex]) return;
 
   currentPlaylist = buildCharacterPlaylist(character);
-  playFromPlaylist(index);
+  playFromPlaylist(trackIndex);
+}
+
+function shuffleAllMusic() {
+  const allTracks = buildAllTracksPlaylist();
+  if (!allTracks.length) return;
+
+  const randomIndex = Math.floor(Math.random() * allTracks.length);
+  currentPlaylist = allTracks;
+  playFromPlaylist(randomIndex);
 }
 
 function playNextTrack() {
-  if (!currentPlaylist.length) return;
-  const nextIndex =
-    currentTrackIndex === null
-      ? 0
-      : (currentTrackIndex + 1) % currentPlaylist.length;
-
+  if (!currentPlaylist.length || currentTrackIndex === null) return;
+  const nextIndex = (currentTrackIndex + 1) % currentPlaylist.length;
   playFromPlaylist(nextIndex);
 }
 
 function playPrevTrack() {
-  if (!currentPlaylist.length) return;
-  const prevIndex =
-    currentTrackIndex === null
-      ? 0
-      : (currentTrackIndex - 1 + currentPlaylist.length) % currentPlaylist.length;
-
+  if (!currentPlaylist.length || currentTrackIndex === null) return;
+  const prevIndex = (currentTrackIndex - 1 + currentPlaylist.length) % currentPlaylist.length;
   playFromPlaylist(prevIndex);
 }
 
-function applyTheme(themeId) {
-  const theme = themes.find(t => t.id === themeId) || themes[0];
-
-  currentTheme = theme.id;
-  document.body.setAttribute("data-theme", currentTheme);
-  saveTheme();
-
-  themeName.textContent = theme.name;
-  themePalette.textContent = theme.palette;
-}
-
-function cycleTheme() {
-  const currentIndex = themes.findIndex(t => t.id === currentTheme);
-  const nextIndex = (currentIndex + 1) % themes.length;
-  applyTheme(themes[nextIndex].id);
-}
-
-function playClickSound() {
-  if (!clickSound) return;
-  clickSound.currentTime = 0;
-  clickSound.play().catch(() => {});
-}
-
-function showRandomCharacter() {
+function openRandomCharacter() {
   if (!characters.length) return;
-  const random = characters[Math.floor(Math.random() * characters.length)];
-  openCharacter(random.slug);
+  const randomIndex = Math.floor(Math.random() * characters.length);
+  setActiveSidebarButton("random");
+  openCharacter(characters[randomIndex].slug, true);
 }
 
-function showRecentCharacter() {
-  const slug = recentViewed[0];
-  if (!slug) return;
-  openCharacter(slug);
+function clearSparkles() {
+  if (sparkles) sparkles.innerHTML = "";
 }
 
-function toggleMainMusic() {
-  if (!mainMusic) return;
+function buildSparkles(count = 20) {
+  clearSparkles();
 
-  if (mainMusic.paused) {
-    mainMusic.volume = 0.4;
-    mainMusic.play().catch(() => {});
-    toggleMainMusicBtn.textContent = "Pause Main Music";
-  } else {
-    mainMusic.pause();
-    toggleMainMusicBtn.textContent = "Play Main Music";
+  if (!sparkles) return;
+
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("div");
+    el.className = "sparkle";
+    el.style.left = `${Math.random() * 100}%`;
+    el.style.animationDuration = `${8 + Math.random() * 12}s`;
+    el.style.animationDelay = `${Math.random() * 10}s`;
+    el.style.opacity = `${0.35 + Math.random() * 0.6}`;
+
+    if (currentTheme === "pink-glitter-dream") {
+      el.style.width = `${6 + Math.random() * 8}px`;
+      el.style.height = el.style.width;
+      el.style.borderRadius =
+        Math.random() > 0.5 ? "50%" : "40% 60% 65% 35% / 35% 45% 55% 65%";
+    }
+
+    if (currentTheme === "neon-pink-night") {
+      el.style.width = `${14 + Math.random() * 28}px`;
+      el.style.height = `${1 + Math.random() * 2}px`;
+      el.style.borderRadius = "999px";
+      el.style.transform = `rotate(${-16 + Math.random() * 12}deg)`;
+    }
+
+    if (currentTheme === "cyber-cold-neon") {
+      el.style.width = `${10 + Math.random() * 18}px`;
+      el.style.height = `${1.5 + Math.random() * 2}px`;
+      el.style.borderRadius = `${1 + Math.random() * 2}px`;
+    }
+
+    if (currentTheme === "deep-siren" || currentTheme === "dreamcore") {
+      const size = 5 + Math.random() * 10;
+      el.style.width = `${size}px`;
+      el.style.height = `${size}px`;
+      el.style.borderRadius = "50%";
+    }
+
+    sparkles.appendChild(el);
   }
 }
 
-function shuffleAllMusic() {
-  const allTracks = characters.flatMap(character =>
-    (character.music || []).map(track => ({
-      ...track,
-      ownerName: character.name,
-      slug: character.slug
-    }))
-  );
-
-  if (!allTracks.length) return;
-
-  currentPlaylist = allTracks;
-  const randomIndex = Math.floor(Math.random() * allTracks.length);
-  playFromPlaylist(randomIndex);
+function clearThemeEffects() {
+  if (themeFxHearts) themeFxHearts.innerHTML = "";
+  if (themeFxStreaks) themeFxStreaks.innerHTML = "";
+  if (themeFxGrid) themeFxGrid.innerHTML = "";
+  if (themeFxBubbles) themeFxBubbles.innerHTML = "";
 }
+
+function buildHeartsEffect() {
+  if (!themeFxHearts) return;
+
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement("div");
+    el.className = "fx-heart";
+    el.textContent = Math.random() > 0.42 ? "♡" : "✦";
+    el.style.left = `${Math.random() * 100}%`;
+    el.style.top = `${Math.random() * 100}%`;
+    el.style.animationDelay = `${Math.random() * 8}s`;
+    el.style.animationDuration = `${8 + Math.random() * 8}s`;
+    el.style.fontSize = `${14 + Math.random() * 18}px`;
+    el.style.opacity = `${0.2 + Math.random() * 0.45}`;
+    themeFxHearts.appendChild(el);
+  }
+}
+
+function buildStreaksEffect() {
+  if (!themeFxStreaks) return;
+
+  for (let i = 0; i < 12; i++) {
+    const el = document.createElement("div");
+    el.className = "fx-streak";
+    el.style.top = `${Math.random() * 100}%`;
+    el.style.left = `${-10 + Math.random() * 30}%`;
+    el.style.width = `${120 + Math.random() * 280}px`;
+    el.style.animationDelay = `${Math.random() * 6}s`;
+    el.style.animationDuration = `${5 + Math.random() * 5}s`;
+    el.style.opacity = `${0.08 + Math.random() * 0.14}`;
+    themeFxStreaks.appendChild(el);
+  }
+}
+
+function buildGridEffect() {
+  if (!themeFxGrid) return;
+
+  const floor = document.createElement("div");
+  floor.className = "fx-grid-floor";
+
+  const glow = document.createElement("div");
+  glow.className = "fx-grid-glow";
+
+  themeFxGrid.appendChild(floor);
+  themeFxGrid.appendChild(glow);
+}
+
+function buildBubblesEffect() {
+  if (!themeFxBubbles) return;
+
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement("div");
+    el.className = "fx-bubble";
+    el.style.left = `${Math.random() * 100}%`;
+    el.style.bottom = `${-10 + Math.random() * 20}%`;
+    const size = 10 + Math.random() * 34;
+    el.style.width = `${size}px`;
+    el.style.height = `${size}px`;
+    el.style.animationDelay = `${Math.random() * 10}s`;
+    el.style.animationDuration = `${8 + Math.random() * 10}s`;
+    el.style.opacity = `${0.08 + Math.random() * 0.2}`;
+    themeFxBubbles.appendChild(el);
+  }
+}
+
+function buildThemeEffects(themeId) {
+  clearThemeEffects();
+
+  if (themeId === "pink-glitter-dream") buildHeartsEffect();
+  if (themeId === "neon-pink-night") buildStreaksEffect();
+  if (themeId === "cyber-cold-neon") buildGridEffect();
+  if (themeId === "deep-siren") buildBubblesEffect();
+  if (themeId === "dreamcore") buildBubblesEffect();
+}
+
+function updateThemePreviewState() {
+  document.querySelectorAll("[data-theme-preview]").forEach(btn => {
+    btn.classList.toggle("theme-preview-active", btn.dataset.themePreview === currentTheme);
+  });
+}
+
+function flashThemeSwitch() {
+  document.body.animate(
+    [
+      { filter: "brightness(1)" },
+      { filter: "brightness(1.08)" },
+      { filter: "brightness(1)" }
+    ],
+    {
+      duration: 360,
+      easing: "ease"
+    }
+  );
+}
+
+function applyTheme(themeId, withFlash = false) {
+  const theme = themes.find(item => item.id === themeId) || themes[0];
+  currentTheme = theme.id;
+
+  document.body.setAttribute("data-theme", theme.id);
+  saveTheme();
+
+  if (themeName) themeName.textContent = theme.name;
+  if (themePalette) themePalette.textContent = theme.palette;
+  if (cursorGlow) cursorGlow.style.mixBlendMode = theme.cursorMix || "screen";
+
+  buildSparkles(theme.sparkles);
+  buildThemeEffects(theme.id);
+  updateThemePreviewState();
+
+  if (withFlash) {
+    flashThemeSwitch();
+  }
+}
+
+function cycleTheme() {
+  const currentIndex = themes.findIndex(theme => theme.id === currentTheme);
+  const nextIndex = (currentIndex + 1) % themes.length;
+  applyTheme(themes[nextIndex].id, true);
+}
+
+function attachThemePreviewEvents() {
+  if (!themePreviewGrid) return;
+
+  themePreviewGrid.addEventListener("click", e => {
+    const btn = e.target.closest("[data-theme-preview]");
+    if (!btn) return;
+    applyTheme(btn.dataset.themePreview, true);
+  });
+}
+
+function playHeroIntro() {
+  if (introHasPlayed || !homeHero) return;
+  introHasPlayed = true;
+
+  const heroParts = [
+    ...homeHero.querySelectorAll(".badge, .hero-copy h2, .hero-copy p, .hero-actions .soft-btn, .hero-stat-card")
+  ];
+
+  heroParts.forEach((el, index) => {
+    el.animate(
+      [
+        { opacity: 0, transform: "translateY(18px) scale(0.98)" },
+        { opacity: 1, transform: "translateY(0) scale(1)" }
+      ],
+      {
+        duration: 650,
+        delay: index * 90,
+        easing: "cubic-bezier(.2,.8,.2,1)",
+        fill: "both"
+      }
+    );
+  });
+}
+
+function attachCardTilt(card) {
+  const image = card.querySelector("img");
+  if (!image) return;
+
+  card.addEventListener("mousemove", e => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateY = ((x - centerX) / centerX) * 6;
+    const rotateX = -((y - centerY) / centerY) * 6;
+
+    card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
+    image.style.transform = `scale(1.08) translateX(${(x - centerX) * 0.012}px) translateY(${(y - centerY) * 0.012}px)`;
+  });
+
+  card.addEventListener("mouseleave", () => {
+    card.style.transform = "";
+    image.style.transform = "";
+  });
+}
+
+function attachAllCardTilt() {
+  document.querySelectorAll(".card").forEach(card => attachCardTilt(card));
+}
+
+playPauseBtn?.addEventListener("click", async () => {
+  if (!audioPlayer?.src && !mainMusicPlaying) return;
+
+  if (mainMusicPlaying) {
+    if (mainMusic.paused) {
+      try {
+        await mainMusic.play();
+        playPauseBtn.textContent = "❚❚";
+      } catch {}
+    } else {
+      mainMusic.pause();
+      playPauseBtn.textContent = "▶";
+    }
+    return;
+  }
+
+  if (audioPlayer.paused) {
+    try {
+      await audioPlayer.play();
+      playPauseBtn.textContent = "❚❚";
+    } catch {}
+  } else {
+    audioPlayer.pause();
+    playPauseBtn.textContent = "▶";
+  }
+});
+
+prevBtn?.addEventListener("click", playPrevTrack);
+nextBtn?.addEventListener("click", playNextTrack);
+
+stopBtn?.addEventListener("click", () => {
+  stopEverything();
+  updatePlayerInfo("Nothing playing", "Choose a profile or a song");
+});
+
+progressBar?.addEventListener("input", () => {
+  if (mainMusicPlaying) {
+    if (isFinite(mainMusic.duration)) {
+      mainMusic.currentTime = (progressBar.value / 100) * mainMusic.duration;
+    }
+  } else if (isFinite(audioPlayer.duration)) {
+    audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
+  }
+});
+
+volumeBar?.addEventListener("input", () => {
+  const volume = Number(volumeBar.value);
+  if (audioPlayer) audioPlayer.volume = volume;
+  if (mainMusic) mainMusic.volume = volume;
+});
+
+toggleMainMusicBtn?.addEventListener("click", toggleMainMusic);
+shuffleAllMusicBtn?.addEventListener("click", shuffleAllMusic);
+changeThemeBtn?.addEventListener("click", cycleTheme);
+themeCycleCard?.addEventListener("click", cycleTheme);
+
+audioPlayer?.addEventListener("timeupdate", () => {
+  if (!isFinite(audioPlayer.duration)) return;
+  if (currentTime) currentTime.textContent = formatTime(audioPlayer.currentTime);
+  if (duration) duration.textContent = formatTime(audioPlayer.duration);
+  if (progressBar) progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+});
+
+mainMusic?.addEventListener("timeupdate", () => {
+  if (!mainMusicPlaying || !isFinite(mainMusic.duration)) return;
+  if (currentTime) currentTime.textContent = formatTime(mainMusic.currentTime);
+  if (duration) duration.textContent = formatTime(mainMusic.duration);
+  if (progressBar) progressBar.value = (mainMusic.currentTime / mainMusic.duration) * 100;
+});
+
+audioPlayer?.addEventListener("play", () => {
+  mainMusic?.pause();
+  mainMusicPlaying = false;
+  if (toggleMainMusicBtn) toggleMainMusicBtn.textContent = "Play Main Music";
+  if (playPauseBtn) playPauseBtn.textContent = "❚❚";
+});
+
+audioPlayer?.addEventListener("pause", () => {
+  if (!audioPlayer.ended && playPauseBtn) playPauseBtn.textContent = "▶";
+});
+
+audioPlayer?.addEventListener("ended", () => {
+  playNextTrack();
+});
+
+mainMusic?.addEventListener("play", () => {
+  mainMusicPlaying = true;
+  if (playPauseBtn) playPauseBtn.textContent = "❚❚";
+});
+
+mainMusic?.addEventListener("pause", () => {
+  mainMusicPlaying = false;
+  if (!audioPlayer || !audioPlayer.paused) return;
+  if (playPauseBtn) playPauseBtn.textContent = "▶";
+});
+
+searchInput?.addEventListener("input", () => {
+  setActiveSidebarButton("home");
+  favoritesOnly = false;
+  renderCards();
+});
+
+sortSelect?.addEventListener("change", () => {
+  currentSort = sortSelect.value;
+  renderCards();
+});
+
+filterChips?.addEventListener("click", e => {
+  const button = e.target.closest(".chip");
+  if (!button) return;
+
+  document.querySelectorAll(".chip").forEach(btn => btn.classList.remove("active"));
+  button.classList.add("active");
+
+  currentFilter = button.dataset.filter;
+  favoritesOnly = false;
+  setActiveSidebarButton("home");
+  renderCards();
+});
+
+goHomeBtn?.addEventListener("click", () => {
+  if (window.location.hash.startsWith("#character/")) {
+    window.location.hash = "#home";
+    setTimeout(scrollToHero, 100);
+  } else {
+    scrollToHero();
+  }
+  setActiveSidebarButton("home");
+});
+
+showFavoritesBtn?.addEventListener("click", () => {
+  if (window.location.hash.startsWith("#character/")) {
+    window.location.hash = "#home";
+    setTimeout(() => {
+      showOnlyFavorites();
+      scrollToProfiles();
+    }, 100);
+  } else {
+    showOnlyFavorites();
+    scrollToProfiles();
+  }
+  closeSidebarOnMobile();
+});
+
+showRecentBtn?.addEventListener("click", () => {
+  favoritesOnly = false;
+  currentFilter = "all";
+  if (searchInput) searchInput.value = "";
+  setChipActive("all");
+  setActiveSidebarButton("recent");
+
+  if (window.location.hash.startsWith("#character/")) {
+    window.location.hash = "#home";
+    setTimeout(() => {
+      renderRecentCards();
+      scrollToProfiles();
+    }, 100);
+  } else {
+    renderRecentCards();
+    scrollToProfiles();
+  }
+
+  closeSidebarOnMobile();
+});
+
+surpriseSidebarBtn?.addEventListener("click", () => {
+  closeSidebarOnMobile();
+  openRandomCharacter();
+});
+
+browseArchiveBtn?.addEventListener("click", () => {
+  if (window.location.hash.startsWith("#character/")) {
+    window.location.hash = "#home";
+    setTimeout(() => {
+      resetToAllProfiles();
+      scrollToProfiles();
+    }, 100);
+  } else {
+    resetToAllProfiles();
+    scrollToProfiles();
+  }
+});
+
+surpriseMeBtn?.addEventListener("click", openRandomCharacter);
+
+sidebarToggle?.addEventListener("click", () => {
+  sidebar?.classList.toggle("open");
+});
+
+document.addEventListener("click", e => {
+  if (window.innerWidth <= 900 && sidebar && sidebarToggle) {
+    const insideSidebar = sidebar.contains(e.target);
+    const onToggle = sidebarToggle.contains(e.target);
+
+    if (!insideSidebar && !onToggle) {
+      sidebar.classList.remove("open");
+    }
+  }
+});
+
+lightboxClose?.addEventListener("click", () => {
+  lightbox?.classList.remove("open");
+});
+
+lightbox?.addEventListener("click", e => {
+  if (e.target === lightbox) {
+    lightbox.classList.remove("open");
+  }
+});
 
 document.addEventListener("mousemove", e => {
   if (cursorGlow) {
@@ -670,7 +1259,11 @@ document.addEventListener("mousemove", e => {
 
 document.addEventListener("mousedown", () => {
   themeCursor.classList.add("cursor-click");
-  playClickSound();
+
+  if (clickSound) {
+    clickSound.currentTime = 0;
+    clickSound.play().catch(() => {});
+  }
 });
 
 document.addEventListener("mouseup", () => {
@@ -685,136 +1278,36 @@ document.addEventListener("mouseover", e => {
   themeCursor.classList.toggle("cursor-hover", Boolean(hoverTarget));
 });
 
-searchInput?.addEventListener("input", renderCards);
-
-filterChips?.addEventListener("click", e => {
-  const btn = e.target.closest(".chip");
-  if (!btn) return;
-
-  document.querySelectorAll(".chip").forEach(x => x.classList.remove("active"));
-  btn.classList.add("active");
-
-  currentFilter = btn.dataset.filter;
-  favoritesOnly = false;
-  renderCards();
-});
-
-sortSelect?.addEventListener("change", () => {
-  currentSort = sortSelect.value;
-  renderCards();
-});
-
-showFavoritesBtn?.addEventListener("click", () => {
-  favoritesOnly = true;
-  window.location.hash = "#home";
-  renderCards();
-});
-
-showRecentBtn?.addEventListener("click", () => {
-  showRecentCharacter();
-});
-
-surpriseSidebarBtn?.addEventListener("click", () => {
-  showRandomCharacter();
-});
-
-browseArchiveBtn?.addEventListener("click", () => {
-  window.location.hash = "#home";
-  profilesSection?.scrollIntoView({ behavior: "smooth" });
-});
-
-surpriseMeBtn?.addEventListener("click", () => {
-  showRandomCharacter();
-});
-
-shuffleAllMusicBtn?.addEventListener("click", () => {
-  shuffleAllMusic();
-});
-
-toggleMainMusicBtn?.addEventListener("click", () => {
-  toggleMainMusic();
-});
-
-goHomeBtn?.addEventListener("click", () => {
-  window.location.hash = "#home";
-});
-
-changeThemeBtn?.addEventListener("click", cycleTheme);
-themeCycleCard?.addEventListener("click", cycleTheme);
-
-sidebarToggle?.addEventListener("click", () => {
-  sidebar?.classList.toggle("open");
-});
-
-playPauseBtn?.addEventListener("click", async () => {
-  if (!audioPlayer.src) return;
-
-  if (audioPlayer.paused) {
-    await audioPlayer.play();
-    playPauseBtn.textContent = "❚❚";
-  } else {
-    audioPlayer.pause();
-    playPauseBtn.textContent = "▶";
-  }
-});
-
-prevBtn?.addEventListener("click", () => {
-  playPrevTrack();
-});
-
-nextBtn?.addEventListener("click", () => {
-  playNextTrack();
-});
-
-stopBtn?.addEventListener("click", () => {
-  audioPlayer.pause();
-  audioPlayer.currentTime = 0;
-  playPauseBtn.textContent = "▶";
-  progressBar.value = 0;
-  currentTime.textContent = "0:00";
-});
-
-audioPlayer?.addEventListener("timeupdate", () => {
-  if (!isFinite(audioPlayer.duration)) return;
-
-  currentTime.textContent = formatTime(audioPlayer.currentTime);
-  duration.textContent = formatTime(audioPlayer.duration);
-  progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-});
-
-audioPlayer?.addEventListener("ended", () => {
-  playNextTrack();
-});
-
-progressBar?.addEventListener("input", () => {
-  if (!isFinite(audioPlayer.duration)) return;
-  audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
-});
-
-volumeBar?.addEventListener("input", () => {
-  audioPlayer.volume = Number(volumeBar.value);
-});
-
-lightboxClose?.addEventListener("click", () => {
-  lightbox.classList.remove("open");
-});
-
-lightbox?.addEventListener("click", e => {
-  if (e.target === lightbox) {
-    lightbox.classList.remove("open");
-  }
-});
-
-window.addEventListener("hashchange", route);
-
 function init() {
   applyTheme(currentTheme);
   renderCards();
   renderFavorites();
   route();
+  attachThemePreviewEvents();
+  attachAllCardTilt();
 
-  profileCount.textContent = characters.length;
-  audioPlayer.volume = Number(volumeBar?.value || 0.8);
+  if (profileCount) {
+    profileCount.textContent = String(characters.length);
+  }
+
+  if (audioPlayer && volumeBar) {
+    audioPlayer.volume = Number(volumeBar.value);
+  }
+
+  if (mainMusic && volumeBar) {
+    mainMusic.volume = Number(volumeBar.value);
+  }
+
+  playHeroIntro();
+
+  if (window.location.hash.startsWith("#character/")) {
+    const slug = window.location.hash.replace("#character/", "");
+    if (getCharacterBySlug(slug)) {
+      renderCharacterPage(slug, false);
+    }
+  }
 }
+
+window.addEventListener("hashchange", route);
 
 init();
