@@ -350,7 +350,7 @@ export const characters = [
       "images/mar4.png"
     ],
     videos: [
-      "videos/marV.mp4",
+      "videos/marv.mp4",
       "videos/sunvid.mp4"
     ],
     age: "3 months",
