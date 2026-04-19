@@ -194,9 +194,9 @@ export const characters = [
     name: "Sunnita",
     category: "Real Person",
     fandom: "real life",
-    role: "ordinary girl",
+    role: "student",
     vibe: "emotional, dramatic, loyal, determined, soft-hearted",
-    quote: "Lee taught me to never give up- so I will not give up, and pass my MedAT exam!",
+    quote: "Lee taught me never to give up, so I’ll keep going and pass my MedAT exam!",
     cover: "images/su1.png",
     gallery: [
       "images/su2.png",
@@ -226,8 +226,9 @@ export const characters = [
       { name: "Lee", type: "Inspiration", detail: "A source of strength and motivation when giving up feels easy." }
     ],
     quotes: [
-      "Lee taught me to never give up- so I will not give up, and pass my MedAT exam!",
-      "I feel everything too much, but maybe that's also my power."
+      "Nigers stink",
+      "Everything and everyone is beautiful on their own way.",
+      
     ],
     music: [
       { title: "Fairytale", artist: "Rybak", url: "music/fairytale - alexander rybak [edit audio].mp3" },
@@ -258,10 +259,10 @@ export const characters = [
     age: "3 months",
     birthday: "January 1st",
     origin: "Austria",
-    status: "still glowing",
+    status: "still growing",
     species: "Cat",
     color: "gray",
-    favorites: "sleeping, exploring, cuddles, tiny chaos",
+    favorites: "sleeping, exploring, cuddles, eating",
     personality: "Playful, curious, tiny, silly, adorable.",
     story: "A tiny little cat full of chaos, softness, and cute moments.",
     facts: [
