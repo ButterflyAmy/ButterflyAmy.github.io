@@ -135,7 +135,7 @@ export const characters = [
       "I can no longer tell the difference between dream and reality."
     ],
     music: [
-      { title: "Unravel", artist: "TK", url: "music/unravel.mp3" },
+      { title: "Unravel", artist: "TK", url: "music/Tokyo Ghoul - Unravel (8D Audio).mp3" },
       { title: "After Dark", artist: "Mr. Kitty", url: "music/after-dark.mp3" }
     ],
     defaultTrack: 0,
@@ -146,8 +146,8 @@ export const characters = [
     slug: "sunnita-mukh",
     name: "Sunnita",
     category: "Real Person",
-    fandom: "My World",
-    role: "Dreamer / MedAT fighter",
+    fandom: "real life",
+    role: "ordinary girl",
     vibe: "emotional, dramatic, loyal, determined, soft-hearted",
     quote: "Lee taught me to never give up- so I will not give up, and pass my MedAT exam!",
     cover: "images/su1.png",
@@ -184,7 +184,7 @@ export const characters = [
     ],
     music: [
       { title: "Fairytale", artist: "Rybak", url: "music/fairytale - alexander rybak [edit audio].mp3" },
-      { title: "After Dark", artist: "Mr. Kitty", url: "music/after-dark.mp3" }
+      { title: "Tsukiyomi", artist: "Kurosagi", url: "music/kurosagi.mp3" }
     ],
     defaultTrack: 0,
     tags: ["real person", "dreamy", "emotional", "ambitious"]
