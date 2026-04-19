@@ -43,6 +43,7 @@ const mainMusic = document.getElementById("mainMusic");
 const toggleMainMusicBtn = document.getElementById("toggleMainMusicBtn");
 
 const audioPlayer = document.getElementById("audioPlayer");
+const themeSound = document.getElementById("themeSound");
 const playerTrackTitle = document.getElementById("playerTrackTitle");
 const playerTrackMeta = document.getElementById("playerTrackMeta");
 const playPauseBtn = document.getElementById("playPauseBtn");
@@ -78,7 +79,8 @@ const themes = [
     palette: "too much pink? never heard of it.",
     sparkles: 36,
     effect: "hearts",
-    cursorMix: "screen"
+    cursorMix: "screen",
+    sound: "music/sugar-bling.mp3"
   },
   {
     id: "neon-pink-night",
@@ -86,7 +88,8 @@ const themes = [
     palette: "pretty things happen at night",
     sparkles: 18,
     effect: "streaks",
-    cursorMix: "screen"
+    cursorMix: "screen",
+    sound: "music/pink-noir.mp3"
   },
   {
     id: "cyber-cold-neon",
@@ -94,7 +97,8 @@ const themes = [
     palette: "the future looks back at you",
     sparkles: 12,
     effect: "grid",
-    cursorMix: "screen"
+    cursorMix: "screen",
+    sound: "music/cyberpunk.mp3"
   },
   {
     id: "deep-siren",
@@ -102,7 +106,8 @@ const themes = [
     palette: "she sings and they follow",
     sparkles: 22,
     effect: "bubbles",
-    cursorMix: "screen"
+    cursorMix: "screen",
+    sound: "music/sirencore.mp3"
   },
   {
     id: "dreamcore",
@@ -110,7 +115,8 @@ const themes = [
     palette: "I miss a place that never existed",
     sparkles: 14,
     effect: "dreamcore",
-    cursorMix: "screen"
+    cursorMix: "screen",
+    sound: "music/dreamcore.mp3"
   }
 ];
 
@@ -686,7 +692,14 @@ function stopEverything() {
     audioPlayer.pause();
     audioPlayer.currentTime = 0;
   }
+
+  if (themeSound) {
+    themeSound.pause();
+    themeSound.currentTime = 0;
+  }
+
   stopMainMusic();
+
   if (playPauseBtn) playPauseBtn.textContent = "▶";
   if (progressBar) progressBar.value = 0;
   if (currentTime) currentTime.textContent = "0:00";
@@ -700,6 +713,12 @@ async function toggleMainMusic() {
     if (!mainMusicPlaying) {
       audioPlayer?.pause();
       if (audioPlayer) audioPlayer.currentTime = 0;
+
+      if (themeSound) {
+        themeSound.pause();
+        themeSound.currentTime = 0;
+      }
+
       await mainMusic.play();
       mainMusicPlaying = true;
       if (toggleMainMusicBtn) toggleMainMusicBtn.textContent = "Pause Main Music";
@@ -743,6 +762,12 @@ async function playFromPlaylist(index) {
   if (!currentPlaylist.length || !currentPlaylist[index] || !audioPlayer) return;
 
   stopMainMusic();
+
+  if (themeSound) {
+    themeSound.pause();
+    themeSound.currentTime = 0;
+  }
+
   currentTrackIndex = index;
 
   const track = currentPlaylist[currentTrackIndex];
@@ -975,6 +1000,28 @@ function flashThemeSwitch() {
   );
 }
 
+async function playThemeSound(soundUrl, themeLabel) {
+  if (!themeSound || !soundUrl) return;
+
+  try {
+    audioPlayer?.pause();
+    if (audioPlayer) audioPlayer.currentTime = 0;
+    stopMainMusic();
+
+    themeSound.pause();
+    themeSound.currentTime = 0;
+    themeSound.src = soundUrl;
+    themeSound.volume = Number(volumeBar?.value ?? 0.8);
+
+    await themeSound.play();
+
+    updatePlayerInfo(`${themeLabel} Theme`, "Theme sound");
+    if (playPauseBtn) playPauseBtn.textContent = "❚❚";
+  } catch {
+    // browser may block autoplay before user interaction
+  }
+}
+
 function applyTheme(themeId, withFlash = false) {
   const theme = themes.find(item => item.id === themeId) || themes[0];
   currentTheme = theme.id;
@@ -991,6 +1038,7 @@ function applyTheme(themeId, withFlash = false) {
 
   if (withFlash) {
     flashThemeSwitch();
+    playThemeSound(theme.sound, theme.name);
   }
 }
 
@@ -1049,7 +1097,7 @@ function attachCardTilt(card) {
 }
 
 playPauseBtn?.addEventListener("click", async () => {
-  if (!audioPlayer?.src && !mainMusicPlaying) return;
+  if (!audioPlayer?.src && !mainMusicPlaying && !themeSound?.src) return;
 
   if (mainMusicPlaying) {
     if (mainMusic.paused) {
@@ -1062,6 +1110,20 @@ playPauseBtn?.addEventListener("click", async () => {
       playPauseBtn.textContent = "▶";
     }
     return;
+  }
+
+  if (themeSound && !themeSound.paused && themeSound.src) {
+    themeSound.pause();
+    playPauseBtn.textContent = "▶";
+    return;
+  }
+
+  if (themeSound && themeSound.paused && themeSound.src && (!audioPlayer.src || audioPlayer.paused)) {
+    try {
+      await themeSound.play();
+      playPauseBtn.textContent = "❚❚";
+      return;
+    } catch {}
   }
 
   if (audioPlayer.paused) {
@@ -1088,6 +1150,10 @@ progressBar?.addEventListener("input", () => {
     if (isFinite(mainMusic.duration)) {
       mainMusic.currentTime = (progressBar.value / 100) * mainMusic.duration;
     }
+  } else if (themeSound && !themeSound.paused && isFinite(themeSound.duration)) {
+    themeSound.currentTime = (progressBar.value / 100) * themeSound.duration;
+  } else if (themeSound && themeSound.src && isFinite(themeSound.duration) && audioPlayer.paused) {
+    themeSound.currentTime = (progressBar.value / 100) * themeSound.duration;
   } else if (isFinite(audioPlayer.duration)) {
     audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
   }
@@ -1097,6 +1163,7 @@ volumeBar?.addEventListener("input", () => {
   const volume = Number(volumeBar.value);
   if (audioPlayer) audioPlayer.volume = volume;
   if (mainMusic) mainMusic.volume = volume;
+  if (themeSound) themeSound.volume = volume;
 });
 
 toggleMainMusicBtn?.addEventListener("click", toggleMainMusic);
@@ -1118,15 +1185,25 @@ mainMusic?.addEventListener("timeupdate", () => {
   if (progressBar) progressBar.value = (mainMusic.currentTime / mainMusic.duration) * 100;
 });
 
+themeSound?.addEventListener("timeupdate", () => {
+  if (!isFinite(themeSound.duration)) return;
+  if (currentTime) currentTime.textContent = formatTime(themeSound.currentTime);
+  if (duration) duration.textContent = formatTime(themeSound.duration);
+  if (progressBar) progressBar.value = (themeSound.currentTime / themeSound.duration) * 100;
+});
+
 audioPlayer?.addEventListener("play", () => {
   mainMusic?.pause();
+  if (themeSound) themeSound.pause();
   mainMusicPlaying = false;
   if (toggleMainMusicBtn) toggleMainMusicBtn.textContent = "Play Main Music";
   if (playPauseBtn) playPauseBtn.textContent = "❚❚";
 });
 
 audioPlayer?.addEventListener("pause", () => {
-  if (!audioPlayer.ended && playPauseBtn) playPauseBtn.textContent = "▶";
+  if (!audioPlayer.ended && playPauseBtn && (!themeSound || themeSound.paused)) {
+    playPauseBtn.textContent = "▶";
+  }
 });
 
 audioPlayer?.addEventListener("ended", () => {
@@ -1134,13 +1211,33 @@ audioPlayer?.addEventListener("ended", () => {
 });
 
 mainMusic?.addEventListener("play", () => {
+  if (themeSound) themeSound.pause();
   mainMusicPlaying = true;
   if (playPauseBtn) playPauseBtn.textContent = "❚❚";
 });
 
 mainMusic?.addEventListener("pause", () => {
   mainMusicPlaying = false;
-  if (!audioPlayer || !audioPlayer.paused) return;
+  if ((!audioPlayer || audioPlayer.paused) && (!themeSound || themeSound.paused)) {
+    if (playPauseBtn) playPauseBtn.textContent = "▶";
+  }
+});
+
+themeSound?.addEventListener("play", () => {
+  mainMusic?.pause();
+  audioPlayer?.pause();
+  mainMusicPlaying = false;
+  if (toggleMainMusicBtn) toggleMainMusicBtn.textContent = "Play Main Music";
+  if (playPauseBtn) playPauseBtn.textContent = "❚❚";
+});
+
+themeSound?.addEventListener("pause", () => {
+  if ((!audioPlayer || audioPlayer.paused) && !mainMusicPlaying) {
+    if (playPauseBtn) playPauseBtn.textContent = "▶";
+  }
+});
+
+themeSound?.addEventListener("ended", () => {
   if (playPauseBtn) playPauseBtn.textContent = "▶";
 });
 
@@ -1307,6 +1404,10 @@ function init() {
 
   if (mainMusic && volumeBar) {
     mainMusic.volume = Number(volumeBar.value);
+  }
+
+  if (themeSound && volumeBar) {
+    themeSound.volume = Number(volumeBar.value);
   }
 
   playHeroIntro();
