@@ -23,7 +23,7 @@ export const characters = [
     origin: "Xianle Kingdom",
     status: "Active",
     species: "God",
-    color: "White / Gold ",
+    color: "Hua Cheng ",
     favorites: "Helping people, peace, small kindnesses",
     personality: "Kind, patient, selfless, emotionally restrained, stubborn in a gentle way.",
     story: "Xie Lian was once the beloved Crown Prince of the prosperous kingdom of Xianle. Known for his kindness, talent, and idealism, he was admired by his people and believed he could save everyone. At a young age, he ascended to the heavens and became a god. However, after war, famine, and the fall of Xianle, Xie Lian’s life changed drastically. Unable to protect his kingdom or the people he cared for, he was blamed and cast down from the heavens. Over the centuries, he ascended two more times, only to be banished again, earning a reputation as the “laughingstock of the three realms.”Despite endless hardship, ridicule, and loneliness, Xie Lian never completely loses his compassion or sense of justice. Eight hundred years later, he ascends for the third time and begins a new journey that uncovers long-buried truths, past tragedies, and his connection with Hua Cheng, a powerful ghost king devoted to him.",
@@ -147,7 +147,7 @@ export const characters = [
       "images/ken4.jpg"
     ],
     videos: [
-      "videos/Bildschirmaufnahme 2026-04-15 215634.mp4",
+      "videos/Bildschirmaufnahme 2026-04-19 175845.mp4",
       "videos/Bildschirmaufnahme 2026-02-28 201959.mp4"
     ],
     age: "18",
@@ -155,7 +155,7 @@ export const characters = [
     origin: "Tokyo",
     status: "Active",
     species: "Half-ghoul",
-    color: "Black / White / Red",
+    color: "Hide",
     favorites: "Books, coffee, silence",
     personality: "Sensitive, conflicted, intelligent, self-sacrificing, unstable under pressure.",
     story: "A boy forced into a world of violence and identity crisis after becoming part ghoul.",
