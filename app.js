@@ -907,12 +907,47 @@ function buildBubblesEffect() {
     el.className = "fx-bubble";
     el.style.left = `${Math.random() * 100}%`;
     el.style.bottom = `${-10 + Math.random() * 20}%`;
+
     const size = 10 + Math.random() * 34;
     el.style.width = `${size}px`;
     el.style.height = `${size}px`;
+
     el.style.animationDelay = `${Math.random() * 10}s`;
     el.style.animationDuration = `${8 + Math.random() * 10}s`;
     el.style.opacity = `${0.08 + Math.random() * 0.2}`;
+
+    themeFxBubbles.appendChild(el);
+  }
+}
+
+function buildDreamcoreEffect() {
+  if (!themeFxBubbles) return;
+
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement("div");
+    el.className = "fx-dream";
+
+    const types = ["star", "orb", "shard"];
+    const type = types[Math.floor(Math.random() * types.length)];
+    el.dataset.type = type;
+
+    el.style.left = `${Math.random() * 100}%`;
+    el.style.top = `${Math.random() * 100}%`;
+    el.style.animationDelay = `${Math.random() * 8}s`;
+    el.style.animationDuration = `${7 + Math.random() * 8}s`;
+    el.style.opacity = `${0.12 + Math.random() * 0.3}`;
+
+    const size = 10 + Math.random() * 26;
+    el.style.width = `${size}px`;
+    el.style.height = `${size}px`;
+
+    if (type === "star") {
+      el.textContent = Math.random() > 0.5 ? "✦" : "⋆";
+      el.style.fontSize = `${14 + Math.random() * 16}px`;
+      el.style.width = "auto";
+      el.style.height = "auto";
+    }
+
     themeFxBubbles.appendChild(el);
   }
 }
@@ -924,7 +959,7 @@ function buildThemeEffects(themeId) {
   if (themeId === "neon-pink-night") buildStreaksEffect();
   if (themeId === "cyber-cold-neon") buildGridEffect();
   if (themeId === "deep-siren") buildBubblesEffect();
-  if (themeId === "dreamcore") buildBubblesEffect();
+  if (themeId === "dreamcore") buildDreamcoreEffect();
 }
 
 function updateThemePreviewState() {
@@ -1029,10 +1064,6 @@ function attachCardTilt(card) {
     card.style.transform = "";
     image.style.transform = "";
   });
-}
-
-function attachAllCardTilt() {
-  document.querySelectorAll(".card").forEach(card => attachCardTilt(card));
 }
 
 playPauseBtn?.addEventListener("click", async () => {
@@ -1284,7 +1315,6 @@ function init() {
   renderFavorites();
   route();
   attachThemePreviewEvents();
-  attachAllCardTilt();
 
   if (profileCount) {
     profileCount.textContent = String(characters.length);
