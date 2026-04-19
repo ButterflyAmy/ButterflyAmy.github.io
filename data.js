@@ -142,9 +142,9 @@ export const characters = [
     quote: "1000-7",
     cover: "images/Kaneki Ken _ Tokyo Ghoul.jpg",
     gallery: [
-      "images/kaneki-1.jpg",
-      "images/kaneki-2.jpg",
-      "images/kaneki-3.jpg"
+      "images/ken2.jpg",
+      "images/ken3.jpg",
+      "images/ken4.jpg"
     ],
     videos: [
       "videos/Bildschirmaufnahme 2026-04-15 215634.mp4",
