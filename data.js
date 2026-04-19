@@ -15,7 +15,8 @@ export const characters = [
       "images/xl4.png"
     ],
     videos: [
-      "https://youtu.be/EuTohhhZysQ?si=kPzugA52ovi7PrDH"
+      "videos/Bildschirmaufnahme 2026-04-19 172033.mp4",
+      "videos/Bildschirmaufnahme 2026-04-19 172322.mp4"
     ],
     age: "800+",
     birthday: "June 15",
