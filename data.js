@@ -471,7 +471,7 @@ export const characters = [
       "Teachers can’t be trusted."
     ],
     music: [
-      { title: "Meow", artist: "Meow", url: "/music/rallysong.mp3" },
+      { title: "Feel your breeze", artist: "V6", url: "music/Bildschirmaufnahme 2026-04-20 010319.mp3" },
       { title: "Tsukiyomi", artist: "Kurosagi", url: "music/kurosagi.mp3" }
     ],
     defaultTrack: 0,
