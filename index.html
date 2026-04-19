@@ -115,8 +115,46 @@
               <button class="chip" data-filter="Fictional" type="button">Fictional</button>
               <button class="chip" data-filter="Anime" type="button">Anime</button>
               <button class="chip" data-filter="Game" type="button">Game</button>
+              <button class="chip" data-filter="Movie" type="button">Movie</button>
               <button class="chip" data-filter="Real Person" type="button">Real Person</button>
+              <button class="chip" data-filter="Animal" type="button">Animal</button>
+              <button class="chip" data-filter="Book" type="button">Book</button>
             </div>
+          </div>
+        </div>
+
+        <div class="panel controls-wide" id="themeSelectorPanel">
+          <h3 class="section-title">Themes</h3>
+          <div id="themePreviewGrid">
+            <button class="theme-preview-card theme-preview-active" data-theme-preview="pink-glitter-dream" type="button">
+              <span class="theme-preview-kicker">Theme</span>
+              <strong>Pink Dream</strong>
+              <span>soft glam / hearts / dreamy glow</span>
+            </button>
+
+            <button class="theme-preview-card" data-theme-preview="neon-pink-night" type="button">
+              <span class="theme-preview-kicker">Theme</span>
+              <strong>Neon Pink Night</strong>
+              <span>night city / light streaks / glossy neon</span>
+            </button>
+
+            <button class="theme-preview-card" data-theme-preview="cyber-cold-neon" type="button">
+              <span class="theme-preview-kicker">Theme</span>
+              <strong>Cyber Cold Neon</strong>
+              <span>hologrid / scanlines / sharp future</span>
+            </button>
+
+            <button class="theme-preview-card" data-theme-preview="deep-siren" type="button">
+              <span class="theme-preview-kicker">Theme</span>
+              <strong>Deep Siren</strong>
+              <span>water glow / bubbles / sea glass dream</span>
+            </button>
+
+            <button class="theme-preview-card" data-theme-preview="dreamcore" type="button">
+              <span class="theme-preview-kicker">Theme</span>
+              <strong>Dreamcore</strong>
+              <span>liminal glow / soft nostalgia / blurry memory</span>
+            </button>
           </div>
         </div>
 
@@ -125,7 +163,7 @@
         <div class="cards-grid" id="cardsGrid"></div>
 
         <div class="footer-note">
-          This Website created <strong>Amina</strong>, for  <strong>fun</strong>, so stfu <strong>cutely</strong>.
+          This Website created <strong>Amina</strong>, for <strong>fun</strong>, so stfu <strong>cutely</strong>.
         </div>
       </section>
 
@@ -138,8 +176,9 @@
   </audio>
 
   <audio id="audioPlayer"></audio>
+
   <audio id="clickSound" preload="auto">
-  <source src="music/click.mp3" type="audio/mpeg" />
+    <source src="music/click.mp3" type="audio/mpeg" />
   </audio>
 
   <div class="player" id="player">
