@@ -206,6 +206,14 @@ function getFilteredCharacters() {
     filtered.sort((a, b) => b.name.localeCompare(a.name));
   }
 
+  if (currentSort === "favorites") {
+    filtered.sort((a, b) => Number(isFavorite(b.slug)) - Number(isFavorite(a.slug)));
+  }
+
+  if (currentSort === "category") {
+    filtered.sort((a, b) => a.category.localeCompare(b.category));
+  }
+
   return filtered;
 }
 
@@ -225,6 +233,9 @@ function createCard(character) {
     <div class="card-body">
       <div class="small">
         <strong>${character.role}</strong> • ${character.fandom}
+      </div>
+      <div class="tags">
+        ${(character.tags || []).slice(0, 4).map(tag => `<span class="tag">${tag}</span>`).join("")}
       </div>
     </div>
   `;
@@ -259,11 +270,99 @@ function showView(name) {
   }
 }
 
+function createInfoBox(label, value) {
+  return `
+    <div class="info-box">
+      <strong>${label}</strong>
+      <span>${value || "—"}</span>
+    </div>
+  `;
+}
+
 function renderCharacterPage(slug) {
   const character = getCharacterBySlug(slug);
   if (!character) return;
 
   currentCharacterSlug = slug;
+
+  const factsHtml = (character.facts || [])
+    .map(fact => `<li>${fact}</li>`)
+    .join("");
+
+  const relationshipsHtml = (character.relationships || [])
+    .map(
+      rel => `
+        <div class="relation">
+          <strong>${rel.name}</strong>
+          <span>${rel.type}</span>
+          <p>${rel.detail}</p>
+        </div>
+      `
+    )
+    .join("");
+
+  const quotesHtml = (character.quotes || [])
+    .map(
+      q => `
+        <div class="quote-item">
+          “${q}”
+        </div>
+      `
+    )
+    .join("");
+
+  const tracksHtml = (character.music || [])
+    .map(
+      (track, index) => `
+        <div class="track">
+          <div class="track-info">
+            <strong>${track.title}</strong>
+            <span>${track.artist}</span>
+          </div>
+          <button class="track-btn" type="button" data-track-index="${index}">
+            Play
+          </button>
+        </div>
+      `
+    )
+    .join("");
+
+  const galleryImagesHtml = (character.gallery || [])
+    .map(
+      img => `
+        <button class="gallery-item gallery-open" type="button" data-image="${img}">
+          <img src="${img}" alt="${character.name}">
+        </button>
+      `
+    )
+    .join("");
+
+  const videosHtml = (character.videos || [])
+    .map(video => {
+      const isYoutube = video.includes("youtube.com") || video.includes("youtu.be");
+
+      if (isYoutube) {
+        return `
+          <div class="gallery-item">
+            <iframe
+              src="${convertYoutubeToEmbed(video)}"
+              title="${character.name} video"
+              allowfullscreen
+              loading="lazy"
+            ></iframe>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="gallery-item">
+          <video controls preload="metadata">
+            <source src="${video}">
+          </video>
+        </div>
+      `;
+    })
+    .join("");
 
   characterView.innerHTML = `
     <div class="character-page">
@@ -291,11 +390,11 @@ function renderCharacterPage(slug) {
           </div>
 
           <div class="summary-actions">
-            <button class="favorite-btn ${isFavorite(character.slug) ? "active" : ""}" id="favoriteBtn">
+            <button class="favorite-btn ${isFavorite(character.slug) ? "active" : ""}" id="favoriteBtn" type="button">
               ${isFavorite(character.slug) ? "♥ Favorited" : "♡ Add to Favorites"}
             </button>
 
-            <button class="soft-btn" id="playDefaultBtn">
+            <button class="soft-btn" id="playDefaultBtn" type="button">
               Play Character Theme
             </button>
 
@@ -303,16 +402,119 @@ function renderCharacterPage(slug) {
               Back to Archive
             </a>
           </div>
+
+          <div class="info-grid">
+            ${createInfoBox("Age", character.age)}
+            ${createInfoBox("Birthday", character.birthday)}
+            ${createInfoBox("Origin", character.origin)}
+            ${createInfoBox("Status", character.status)}
+            ${createInfoBox("Species", character.species)}
+            ${createInfoBox("Color", character.color)}
+          </div>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <div class="stack">
+          <div class="box">
+            <h3>Story</h3>
+            <p>${character.story || "No story yet."}</p>
+          </div>
+
+          <div class="box">
+            <h3>Personality</h3>
+            <p>${character.personality || "No personality text yet."}</p>
+          </div>
+
+          <div class="box">
+            <h3>Favorites</h3>
+            <p>${character.favorites || "No favorites yet."}</p>
+          </div>
+
+          <div class="box">
+            <h3>Aesthetics</h3>
+            <p>${character.aesthetics || "No aesthetics yet."}</p>
+          </div>
+
+          <div class="box">
+            <h3>Facts</h3>
+            <ul>
+              ${factsHtml || "<li>No facts yet.</li>"}
+            </ul>
+          </div>
+
+          <div class="box">
+            <h3>Quotes</h3>
+            <div class="quote-list">
+              ${quotesHtml || `<div class="quote-item">No quotes yet.</div>`}
+            </div>
+          </div>
+        </div>
+
+        <div class="stack">
+          <div class="box">
+            <h3>Relationships</h3>
+            <div class="relationships">
+              ${relationshipsHtml || `<div class="relation"><strong>No relationships yet.</strong></div>`}
+            </div>
+          </div>
+
+          <div class="box">
+            <h3>Music</h3>
+            <div class="track-list">
+              ${tracksHtml || `<div class="track"><div class="track-info"><strong>No tracks yet.</strong></div></div>`}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="box">
+        <h3>Gallery</h3>
+        <div class="gallery-grid">
+          ${galleryImagesHtml || ""}
+          ${videosHtml || ""}
         </div>
       </div>
     </div>
   `;
 
-  document.getElementById("favoriteBtn")?.addEventListener("click", () => toggleFavorite(character.slug));
+  document.getElementById("favoriteBtn")?.addEventListener("click", () => {
+    toggleFavorite(character.slug);
+  });
 
-  document.getElementById("playDefaultBtn")?.addEventListener("click", () =>
-    playCharacterTrack(character.slug, character.defaultTrack || 0)
-  );
+  document.getElementById("playDefaultBtn")?.addEventListener("click", () => {
+    playCharacterTrack(character.slug, character.defaultTrack || 0);
+  });
+
+  document.querySelectorAll("[data-track-index]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const index = Number(btn.dataset.trackIndex);
+      playCharacterTrack(character.slug, index);
+    });
+  });
+
+  document.querySelectorAll(".gallery-open").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const img = btn.dataset.image;
+      if (!img) return;
+      lightboxImage.src = img;
+      lightbox.classList.add("open");
+    });
+  });
+}
+
+function convertYoutubeToEmbed(url) {
+  if (url.includes("youtu.be/")) {
+    const id = url.split("youtu.be/")[1].split("?")[0];
+    return `https://www.youtube.com/embed/${id}`;
+  }
+
+  if (url.includes("watch?v=")) {
+    const id = url.split("watch?v=")[1].split("&")[0];
+    return `https://www.youtube.com/embed/${id}`;
+  }
+
+  return url;
 }
 
 function route() {
@@ -338,7 +540,7 @@ function updatePlayerInfo(title, meta) {
 }
 
 function buildCharacterPlaylist(character) {
-  return character.music.map(track => ({
+  return (character.music || []).map(track => ({
     ...track,
     ownerName: character.name,
     slug: character.slug
@@ -364,10 +566,26 @@ async function playFromPlaylist(index) {
 
 function playCharacterTrack(slug, index = 0) {
   const character = getCharacterBySlug(slug);
-  if (!character) return;
+  if (!character || !character.music?.length) return;
 
   currentPlaylist = buildCharacterPlaylist(character);
   playFromPlaylist(index);
+}
+
+function playNextTrack() {
+  if (!currentPlaylist.length) return;
+  const nextIndex = currentTrackIndex === null
+    ? 0
+    : (currentTrackIndex + 1) % currentPlaylist.length;
+  playFromPlaylist(nextIndex);
+}
+
+function playPrevTrack() {
+  if (!currentPlaylist.length) return;
+  const prevIndex = currentTrackIndex === null
+    ? 0
+    : (currentTrackIndex - 1 + currentPlaylist.length) % currentPlaylist.length;
+  playFromPlaylist(prevIndex);
 }
 
 function applyTheme(themeId) {
@@ -387,6 +605,59 @@ function cycleTheme() {
   applyTheme(themes[nextIndex].id);
 }
 
+function playClickSound() {
+  if (!clickSound) return;
+  clickSound.currentTime = 0;
+  clickSound.play().catch(() => {});
+}
+
+function goHome() {
+  window.location.hash = "#home";
+}
+
+function showRecentCharacter() {
+  const slug = recentViewed[0];
+  if (!slug) return;
+  openCharacter(slug);
+}
+
+function showRandomCharacter() {
+  if (!characters.length) return;
+  const random = characters[Math.floor(Math.random() * characters.length)];
+  openCharacter(random.slug);
+}
+
+function toggleMainMusic() {
+  if (!mainMusic) return;
+
+  if (mainMusic.paused) {
+    mainMusic.volume = 0.4;
+    mainMusic.play().catch(() => {});
+    mainMusicPlaying = true;
+    if (toggleMainMusicBtn) toggleMainMusicBtn.textContent = "Pause Main Music";
+  } else {
+    mainMusic.pause();
+    mainMusicPlaying = false;
+    if (toggleMainMusicBtn) toggleMainMusicBtn.textContent = "Play Main Music";
+  }
+}
+
+function shuffleAllMusic() {
+  const allTracks = characters.flatMap(character =>
+    (character.music || []).map(track => ({
+      ...track,
+      ownerName: character.name,
+      slug: character.slug
+    }))
+  );
+
+  if (!allTracks.length) return;
+
+  currentPlaylist = allTracks;
+  const randomIndex = Math.floor(Math.random() * currentPlaylist.length);
+  playFromPlaylist(randomIndex);
+}
+
 document.addEventListener("mousemove", e => {
   if (cursorGlow) {
     cursorGlow.style.left = `${e.clientX}px`;
@@ -401,11 +672,7 @@ document.addEventListener("mousemove", e => {
 
 document.addEventListener("mousedown", () => {
   themeCursor.classList.add("cursor-click");
-
-  if (clickSound) {
-    clickSound.currentTime = 0;
-    clickSound.play().catch(() => {});
-  }
+  playClickSound();
 });
 
 document.addEventListener("mouseup", () => {
@@ -420,9 +687,9 @@ document.addEventListener("mouseover", e => {
   themeCursor.classList.toggle("cursor-hover", Boolean(hoverTarget));
 });
 
-searchInput.addEventListener("input", renderCards);
+searchInput?.addEventListener("input", renderCards);
 
-filterChips.addEventListener("click", e => {
+filterChips?.addEventListener("click", e => {
   const btn = e.target.closest(".chip");
   if (!btn) return;
 
@@ -442,17 +709,47 @@ sortSelect?.addEventListener("change", () => {
 
 showFavoritesBtn?.addEventListener("click", () => {
   favoritesOnly = true;
+  goHome();
   renderCards();
 });
 
+showRecentBtn?.addEventListener("click", () => {
+  showRecentCharacter();
+});
+
+surpriseSidebarBtn?.addEventListener("click", () => {
+  showRandomCharacter();
+});
+
+browseArchiveBtn?.addEventListener("click", () => {
+  goHome();
+  document.getElementById("profilesSection")?.scrollIntoView({ behavior: "smooth" });
+});
+
+surpriseMeBtn?.addEventListener("click", () => {
+  showRandomCharacter();
+});
+
+shuffleAllMusicBtn?.addEventListener("click", () => {
+  shuffleAllMusic();
+});
+
+toggleMainMusicBtn?.addEventListener("click", () => {
+  toggleMainMusic();
+});
+
 goHomeBtn?.addEventListener("click", () => {
-  window.location.hash = "#home";
+  goHome();
 });
 
 changeThemeBtn?.addEventListener("click", cycleTheme);
 themeCycleCard?.addEventListener("click", cycleTheme);
 
-playPauseBtn.addEventListener("click", async () => {
+sidebarToggle?.addEventListener("click", () => {
+  sidebar?.classList.toggle("open");
+});
+
+playPauseBtn?.addEventListener("click", async () => {
   if (!audioPlayer.src) return;
 
   if (audioPlayer.paused) {
@@ -464,7 +761,23 @@ playPauseBtn.addEventListener("click", async () => {
   }
 });
 
-audioPlayer.addEventListener("timeupdate", () => {
+prevBtn?.addEventListener("click", () => {
+  playPrevTrack();
+});
+
+nextBtn?.addEventListener("click", () => {
+  playNextTrack();
+});
+
+stopBtn?.addEventListener("click", () => {
+  audioPlayer.pause();
+  audioPlayer.currentTime = 0;
+  playPauseBtn.textContent = "▶";
+  progressBar.value = 0;
+  currentTime.textContent = "0:00";
+});
+
+audioPlayer?.addEventListener("timeupdate", () => {
   if (!isFinite(audioPlayer.duration)) return;
 
   currentTime.textContent = formatTime(audioPlayer.currentTime);
@@ -472,18 +785,27 @@ audioPlayer.addEventListener("timeupdate", () => {
   progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
 });
 
-progressBar.addEventListener("input", () => {
-  if (!isFinite(audioPlayer.duration)) return;
+audioPlayer?.addEventListener("ended", () => {
+  playNextTrack();
+});
 
+progressBar?.addEventListener("input", () => {
+  if (!isFinite(audioPlayer.duration)) return;
   audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
 });
 
-volumeBar.addEventListener("input", () => {
+volumeBar?.addEventListener("input", () => {
   audioPlayer.volume = Number(volumeBar.value);
 });
 
 lightboxClose?.addEventListener("click", () => {
   lightbox.classList.remove("open");
+});
+
+lightbox?.addEventListener("click", e => {
+  if (e.target === lightbox) {
+    lightbox.classList.remove("open");
+  }
 });
 
 window.addEventListener("hashchange", route);
@@ -495,6 +817,12 @@ function init() {
   route();
 
   profileCount.textContent = characters.length;
+
+  audioPlayer.volume = Number(volumeBar?.value || 0.8);
+
+  if (toggleMainMusicBtn) {
+    toggleMainMusicBtn.textContent = "Play Main Music";
+  }
 }
 
 init();
