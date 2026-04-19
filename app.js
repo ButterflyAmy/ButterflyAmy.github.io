@@ -63,7 +63,6 @@ let favoritesOnly = false;
 let currentCharacterSlug = null;
 let currentTrackIndex = null;
 let currentPlaylist = [];
-let mainMusicPlaying = false;
 let currentSort = "default";
 
 const favoriteKey = "dreamArchiveFavorites";
@@ -234,9 +233,6 @@ function createCard(character) {
       <div class="small">
         <strong>${character.role}</strong> • ${character.fandom}
       </div>
-      <div class="tags">
-        ${(character.tags || []).slice(0, 4).map(tag => `<span class="tag">${tag}</span>`).join("")}
-      </div>
     </div>
   `;
 
@@ -270,13 +266,18 @@ function showView(name) {
   }
 }
 
-function createInfoBox(label, value) {
-  return `
-    <div class="info-box">
-      <strong>${label}</strong>
-      <span>${value || "—"}</span>
-    </div>
-  `;
+function convertYoutubeToEmbed(url) {
+  if (url.includes("youtu.be/")) {
+    const id = url.split("youtu.be/")[1].split("?")[0];
+    return `https://www.youtube.com/embed/${id}`;
+  }
+
+  if (url.includes("watch?v=")) {
+    const id = url.split("watch?v=")[1].split("&")[0];
+    return `https://www.youtube.com/embed/${id}`;
+  }
+
+  return url;
 }
 
 function renderCharacterPage(slug) {
@@ -285,33 +286,7 @@ function renderCharacterPage(slug) {
 
   currentCharacterSlug = slug;
 
-  const factsHtml = (character.facts || [])
-    .map(fact => `<li>${fact}</li>`)
-    .join("");
-
-  const relationshipsHtml = (character.relationships || [])
-    .map(
-      rel => `
-        <div class="relation">
-          <strong>${rel.name}</strong>
-          <span>${rel.type}</span>
-          <p>${rel.detail}</p>
-        </div>
-      `
-    )
-    .join("");
-
-  const quotesHtml = (character.quotes || [])
-    .map(
-      q => `
-        <div class="quote-item">
-          “${q}”
-        </div>
-      `
-    )
-    .join("");
-
-  const tracksHtml = (character.music || [])
+  const musicHtml = (character.music || [])
     .map(
       (track, index) => `
         <div class="track">
@@ -329,9 +304,9 @@ function renderCharacterPage(slug) {
 
   const galleryImagesHtml = (character.gallery || [])
     .map(
-      img => `
-        <button class="gallery-item gallery-open" type="button" data-image="${img}">
-          <img src="${img}" alt="${character.name}">
+      image => `
+        <button class="gallery-item gallery-open" type="button" data-image="${image}">
+          <img src="${image}" alt="${character.name}">
         </button>
       `
     )
@@ -362,6 +337,26 @@ function renderCharacterPage(slug) {
         </div>
       `;
     })
+    .join("");
+
+  const quotesHtml = (character.quotes || [])
+    .map(q => `<div class="quote-item">“${q}”</div>`)
+    .join("");
+
+  const relationshipsHtml = (character.relationships || [])
+    .map(
+      rel => `
+        <div class="relation">
+          <strong>${rel.name}</strong>
+          <span>${rel.type}</span>
+          <p>${rel.detail}</p>
+        </div>
+      `
+    )
+    .join("");
+
+  const factsHtml = (character.facts || [])
+    .map(fact => `<li>${fact}</li>`)
     .join("");
 
   characterView.innerHTML = `
@@ -404,12 +399,30 @@ function renderCharacterPage(slug) {
           </div>
 
           <div class="info-grid">
-            ${createInfoBox("Age", character.age)}
-            ${createInfoBox("Birthday", character.birthday)}
-            ${createInfoBox("Origin", character.origin)}
-            ${createInfoBox("Status", character.status)}
-            ${createInfoBox("Species", character.species)}
-            ${createInfoBox("Color", character.color)}
+            <div class="info-box">
+              <strong>Age</strong>
+              <span>${character.age || "—"}</span>
+            </div>
+            <div class="info-box">
+              <strong>Birthday</strong>
+              <span>${character.birthday || "—"}</span>
+            </div>
+            <div class="info-box">
+              <strong>Origin</strong>
+              <span>${character.origin || "—"}</span>
+            </div>
+            <div class="info-box">
+              <strong>Status</strong>
+              <span>${character.status || "—"}</span>
+            </div>
+            <div class="info-box">
+              <strong>Species</strong>
+              <span>${character.species || "—"}</span>
+            </div>
+            <div class="info-box">
+              <strong>Color</strong>
+              <span>${character.color || "—"}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -419,60 +432,59 @@ function renderCharacterPage(slug) {
           <div class="box">
             <h3>Story</h3>
             <p>${character.story || "No story yet."}</p>
-          </div>
-
-          <div class="box">
+            <br>
             <h3>Personality</h3>
-            <p>${character.personality || "No personality text yet."}</p>
+            <p>${character.personality || "No personality yet."}</p>
           </div>
 
           <div class="box">
-            <h3>Favorites</h3>
-            <p>${character.favorites || "No favorites yet."}</p>
-          </div>
-
-          <div class="box">
-            <h3>Aesthetics</h3>
-            <p>${character.aesthetics || "No aesthetics yet."}</p>
-          </div>
-
-          <div class="box">
-            <h3>Facts</h3>
-            <ul>
-              ${factsHtml || "<li>No facts yet.</li>"}
-            </ul>
-          </div>
-
-          <div class="box">
-            <h3>Quotes</h3>
-            <div class="quote-list">
-              ${quotesHtml || `<div class="quote-item">No quotes yet.</div>`}
+            <h3>Music</h3>
+            <div class="track-list">
+              ${musicHtml || `<div class="track"><div class="track-info"><strong>No music yet.</strong></div></div>`}
             </div>
           </div>
         </div>
 
         <div class="stack">
           <div class="box">
+            <h3>Gallery</h3>
+            <div class="gallery-grid">
+              ${galleryImagesHtml || ""}
+            </div>
+            <br>
+            <h3>Videos</h3>
+            <div class="gallery-grid">
+              ${videosHtml || `<p class="small">No videos yet.</p>`}
+            </div>
+          </div>
+        </div>
+
+        <div class="stack">
+          <div class="box">
+            <h3>Extra</h3>
+            <p><strong>Favorites:</strong> ${character.favorites || "—"}</p>
+            <p><strong>Aesthetics:</strong> ${character.aesthetics || "—"}</p>
+            <br>
+
+            <h3>Facts</h3>
+            <ul>
+              ${factsHtml || "<li>No facts yet.</li>"}
+            </ul>
+
+            <br>
+
+            <h3>Quotes</h3>
+            <div class="quote-list">
+              ${quotesHtml || `<div class="quote-item">No quotes yet.</div>`}
+            </div>
+
+            <br>
+
             <h3>Relationships</h3>
             <div class="relationships">
               ${relationshipsHtml || `<div class="relation"><strong>No relationships yet.</strong></div>`}
             </div>
           </div>
-
-          <div class="box">
-            <h3>Music</h3>
-            <div class="track-list">
-              ${tracksHtml || `<div class="track"><div class="track-info"><strong>No tracks yet.</strong></div></div>`}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="box">
-        <h3>Gallery</h3>
-        <div class="gallery-grid">
-          ${galleryImagesHtml || ""}
-          ${videosHtml || ""}
         </div>
       </div>
     </div>
@@ -495,26 +507,14 @@ function renderCharacterPage(slug) {
 
   document.querySelectorAll(".gallery-open").forEach(btn => {
     btn.addEventListener("click", () => {
-      const img = btn.dataset.image;
-      if (!img) return;
-      lightboxImage.src = img;
+      const image = btn.dataset.image;
+      if (!image) return;
+      lightboxImage.src = image;
       lightbox.classList.add("open");
     });
   });
-}
 
-function convertYoutubeToEmbed(url) {
-  if (url.includes("youtu.be/")) {
-    const id = url.split("youtu.be/")[1].split("?")[0];
-    return `https://www.youtube.com/embed/${id}`;
-  }
-
-  if (url.includes("watch?v=")) {
-    const id = url.split("watch?v=")[1].split("&")[0];
-    return `https://www.youtube.com/embed/${id}`;
-  }
-
-  return url;
+  playCharacterTrack(character.slug, character.defaultTrack || 0);
 }
 
 function route() {
@@ -574,17 +574,21 @@ function playCharacterTrack(slug, index = 0) {
 
 function playNextTrack() {
   if (!currentPlaylist.length) return;
-  const nextIndex = currentTrackIndex === null
-    ? 0
-    : (currentTrackIndex + 1) % currentPlaylist.length;
+  const nextIndex =
+    currentTrackIndex === null
+      ? 0
+      : (currentTrackIndex + 1) % currentPlaylist.length;
+
   playFromPlaylist(nextIndex);
 }
 
 function playPrevTrack() {
   if (!currentPlaylist.length) return;
-  const prevIndex = currentTrackIndex === null
-    ? 0
-    : (currentTrackIndex - 1 + currentPlaylist.length) % currentPlaylist.length;
+  const prevIndex =
+    currentTrackIndex === null
+      ? 0
+      : (currentTrackIndex - 1 + currentPlaylist.length) % currentPlaylist.length;
+
   playFromPlaylist(prevIndex);
 }
 
@@ -611,8 +615,10 @@ function playClickSound() {
   clickSound.play().catch(() => {});
 }
 
-function goHome() {
-  window.location.hash = "#home";
+function showRandomCharacter() {
+  if (!characters.length) return;
+  const random = characters[Math.floor(Math.random() * characters.length)];
+  openCharacter(random.slug);
 }
 
 function showRecentCharacter() {
@@ -621,24 +627,16 @@ function showRecentCharacter() {
   openCharacter(slug);
 }
 
-function showRandomCharacter() {
-  if (!characters.length) return;
-  const random = characters[Math.floor(Math.random() * characters.length)];
-  openCharacter(random.slug);
-}
-
 function toggleMainMusic() {
   if (!mainMusic) return;
 
   if (mainMusic.paused) {
     mainMusic.volume = 0.4;
     mainMusic.play().catch(() => {});
-    mainMusicPlaying = true;
-    if (toggleMainMusicBtn) toggleMainMusicBtn.textContent = "Pause Main Music";
+    toggleMainMusicBtn.textContent = "Pause Main Music";
   } else {
     mainMusic.pause();
-    mainMusicPlaying = false;
-    if (toggleMainMusicBtn) toggleMainMusicBtn.textContent = "Play Main Music";
+    toggleMainMusicBtn.textContent = "Play Main Music";
   }
 }
 
@@ -654,7 +652,7 @@ function shuffleAllMusic() {
   if (!allTracks.length) return;
 
   currentPlaylist = allTracks;
-  const randomIndex = Math.floor(Math.random() * currentPlaylist.length);
+  const randomIndex = Math.floor(Math.random() * allTracks.length);
   playFromPlaylist(randomIndex);
 }
 
@@ -698,7 +696,6 @@ filterChips?.addEventListener("click", e => {
 
   currentFilter = btn.dataset.filter;
   favoritesOnly = false;
-
   renderCards();
 });
 
@@ -709,7 +706,7 @@ sortSelect?.addEventListener("change", () => {
 
 showFavoritesBtn?.addEventListener("click", () => {
   favoritesOnly = true;
-  goHome();
+  window.location.hash = "#home";
   renderCards();
 });
 
@@ -722,8 +719,8 @@ surpriseSidebarBtn?.addEventListener("click", () => {
 });
 
 browseArchiveBtn?.addEventListener("click", () => {
-  goHome();
-  document.getElementById("profilesSection")?.scrollIntoView({ behavior: "smooth" });
+  window.location.hash = "#home";
+  profilesSection?.scrollIntoView({ behavior: "smooth" });
 });
 
 surpriseMeBtn?.addEventListener("click", () => {
@@ -739,7 +736,7 @@ toggleMainMusicBtn?.addEventListener("click", () => {
 });
 
 goHomeBtn?.addEventListener("click", () => {
-  goHome();
+  window.location.hash = "#home";
 });
 
 changeThemeBtn?.addEventListener("click", cycleTheme);
@@ -817,12 +814,7 @@ function init() {
   route();
 
   profileCount.textContent = characters.length;
-
   audioPlayer.volume = Number(volumeBar?.value || 0.8);
-
-  if (toggleMainMusicBtn) {
-    toggleMainMusicBtn.textContent = "Play Main Music";
-  }
 }
 
 init();
