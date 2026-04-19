@@ -3,11 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Archive</title>
+  <title>My Archive ✦</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body data-theme="pink-glitter-dream">
-  <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Open menu">☰</button>
+  <button
+    class="sidebar-toggle"
+    id="sidebarToggle"
+    type="button"
+    aria-label="Open menu"
+  >
+    ☰
+  </button>
 
   <div class="cursor-glow" id="cursorGlow"></div>
   <div class="sparkles" id="sparkles"></div>
@@ -22,7 +29,7 @@
         <span class="brand-kicker">Amina Mukhtaova</span>
         <h1>My Archive</h1>
         <p>
-          Anime, games, movies, real life, OC's and everything that is special.
+          Anime, games, movies, real life, OCs, and everything that is special.
         </p>
       </div>
 
@@ -48,7 +55,9 @@
       <div class="sidebar-group">
         <h3>Saved Favorites</h3>
         <div class="fav-list" id="favoritesList"></div>
-        <div class="fav-empty" id="favoritesEmpty">No favorites yet. Press the heart on any profile.</div>
+        <div class="fav-empty" id="favoritesEmpty">
+          No favorites yet. Press the heart on any profile.
+        </div>
       </div>
     </aside>
 
@@ -68,8 +77,12 @@
               </p>
 
               <div class="hero-actions">
-                <button class="soft-btn primary-glow" id="browseArchiveBtn" type="button">Browse Archive</button>
-                <button class="soft-btn" id="surpriseMeBtn" type="button">Show Me Something Random</button>
+                <button class="soft-btn primary-glow" id="browseArchiveBtn" type="button">
+                  Browse Archive
+                </button>
+                <button class="soft-btn" id="surpriseMeBtn" type="button">
+                  Show Me Something Random
+                </button>
               </div>
             </div>
 
@@ -80,7 +93,11 @@
                 <span>characters in my universe</span>
               </div>
 
-              <button class="hero-stat-card theme-card-btn premium-theme-switcher" id="themeCycleCard" type="button">
+              <button
+                class="hero-stat-card theme-card-btn premium-theme-switcher"
+                id="themeCycleCard"
+                type="button"
+              >
                 <small>Click to switch the vibe ✦</small>
                 <strong id="themeName">Sugar Bling</strong>
                 <span id="themePalette">too much pink? never heard of it.</span>
@@ -96,11 +113,12 @@
               class="search-input"
               id="searchInput"
               placeholder="Search names, fandoms, tags, vibes, lore, titles..."
+              autocomplete="off"
             />
           </div>
 
           <div class="panel">
-            <select class="sort-select" id="sortSelect">
+            <select class="sort-select" id="sortSelect" aria-label="Sort profiles">
               <option value="default">Sort: Default</option>
               <option value="name-asc">Name A–Z</option>
               <option value="name-desc">Name Z–A</option>
@@ -128,11 +146,11 @@
         <div class="cards-grid" id="cardsGrid"></div>
 
         <div class="footer-note">
-          This Website created <strong>Amina</strong>, for <strong>fun</strong>, so stfu <strong>cutely</strong>.
+          This website was created by <strong>Amina</strong> for <strong>fun</strong>.
         </div>
       </section>
 
-      <section class="view" id="characterView"></section>
+      <section class="view character-view-shell" id="characterView"></section>
     </main>
   </div>
 
@@ -157,15 +175,23 @@
 
     <div class="player-center">
       <div class="player-controls">
-        <button class="circle-btn" id="prevBtn" type="button">⏮</button>
-        <button class="circle-btn" id="playPauseBtn" type="button">▶</button>
-        <button class="circle-btn" id="nextBtn" type="button">⏭</button>
+        <button class="circle-btn" id="prevBtn" type="button" aria-label="Previous track">⏮</button>
+        <button class="circle-btn" id="playPauseBtn" type="button" aria-label="Play or pause">▶</button>
+        <button class="circle-btn" id="nextBtn" type="button" aria-label="Next track">⏭</button>
       </div>
 
       <div class="progress-wrap">
         <div class="progress-row">
           <span id="currentTime">0:00</span>
-          <input type="range" min="0" max="100" value="0" class="progress" id="progressBar" />
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value="0"
+            class="progress"
+            id="progressBar"
+            aria-label="Playback progress"
+          />
           <span id="duration">0:00</span>
         </div>
       </div>
@@ -173,12 +199,21 @@
 
     <div class="player-right">
       <button class="mini-btn" id="stopBtn" type="button">Stop</button>
-      <input type="range" min="0" max="1" step="0.01" value="0.8" class="volume" id="volumeBar" />
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        value="0.8"
+        class="volume"
+        id="volumeBar"
+        aria-label="Volume"
+      />
     </div>
   </div>
 
   <div class="lightbox" id="lightbox">
-    <button class="lightbox-close" id="lightboxClose" type="button">✕</button>
+    <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close image">✕</button>
     <img id="lightboxImage" alt="Expanded image" />
   </div>
 
