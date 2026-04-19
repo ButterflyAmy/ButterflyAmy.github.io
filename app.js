@@ -67,6 +67,7 @@ let currentPlaylist = [];
 let mainMusicPlaying = false;
 let currentSort = "default";
 let introHasPlayed = false;
+let activeAudioSource = null; // "main" | "theme" | "track" | null
 
 const favoriteKey = "dreamArchiveFavorites";
 const recentKey = "dreamArchiveRecent";
@@ -150,6 +151,58 @@ function isFavorite(slug) {
 function addRecent(slug) {
   recentViewed = [slug, ...recentViewed.filter(item => item !== slug)].slice(0, 8);
   saveRecent();
+}
+
+function updatePlayerInfo(title, meta) {
+  if (playerTrackTitle) playerTrackTitle.textContent = title || "Nothing playing";
+  if (playerTrackMeta) playerTrackMeta.textContent = meta || "Choose a profile or a song";
+}
+
+function resetPlayerUi() {
+  if (playPauseBtn) playPauseBtn.textContent = "▶";
+  if (progressBar) progressBar.value = 0;
+  if (currentTime) currentTime.textContent = "0:00";
+  if (duration) duration.textContent = "0:00";
+}
+
+function stopThemeSound(resetSrc = false) {
+  if (!themeSound) return;
+  themeSound.pause();
+  themeSound.currentTime = 0;
+
+  if (resetSrc) {
+    themeSound.removeAttribute("src");
+    themeSound.load();
+  }
+}
+
+function stopTrackAudio(resetSrc = false) {
+  if (!audioPlayer) return;
+  audioPlayer.pause();
+  audioPlayer.currentTime = 0;
+
+  if (resetSrc) {
+    audioPlayer.removeAttribute("src");
+    audioPlayer.load();
+  }
+}
+
+function stopMainMusic() {
+  if (!mainMusic) return;
+  mainMusic.pause();
+  mainMusic.currentTime = 0;
+  mainMusicPlaying = false;
+  if (toggleMainMusicBtn) toggleMainMusicBtn.textContent = "Play Main Music";
+}
+
+function stopEverything(resetSources = false) {
+  stopTrackAudio(resetSources);
+  stopThemeSound(resetSources);
+  stopMainMusic();
+
+  activeAudioSource = null;
+  currentTrackIndex = null;
+  resetPlayerUi();
 }
 
 function toggleFavorite(slug) {
@@ -393,7 +446,7 @@ function renderCharacterPage(slug, playDefaultTrack = false) {
 
           <div class="summary-actions">
             <button class="favorite-btn ${isFavorite(character.slug) ? "active" : ""}" id="favoriteBtn" type="button">
-              ${isFavorite(character.slug) ? "♥ Favorited" : "♡ Add to Favorites"}
+              ${isFavorite(character.slug) ? "♥ Favorited" : "♡ Favorite"}
             </button>
 
             <button class="soft-btn" id="playDefaultBtn" type="button">Play Character Theme</button>
@@ -679,65 +732,30 @@ function openCharacter(slug, playDefault = true) {
   window.location.hash = `#character/${slug}`;
 }
 
-function stopMainMusic() {
-  if (!mainMusic) return;
-  mainMusic.pause();
-  mainMusic.currentTime = 0;
-  mainMusicPlaying = false;
-  if (toggleMainMusicBtn) toggleMainMusicBtn.textContent = "Play Main Music";
-}
-
-function stopEverything() {
-  if (audioPlayer) {
-    audioPlayer.pause();
-    audioPlayer.currentTime = 0;
-  }
-
-  if (themeSound) {
-    themeSound.pause();
-    themeSound.currentTime = 0;
-  }
-
-  stopMainMusic();
-
-  if (playPauseBtn) playPauseBtn.textContent = "▶";
-  if (progressBar) progressBar.value = 0;
-  if (currentTime) currentTime.textContent = "0:00";
-  if (duration) duration.textContent = "0:00";
-}
-
 async function toggleMainMusic() {
   if (!mainMusic) return;
 
   try {
     if (!mainMusicPlaying) {
-      audioPlayer?.pause();
-      if (audioPlayer) audioPlayer.currentTime = 0;
-
-      if (themeSound) {
-        themeSound.pause();
-        themeSound.currentTime = 0;
-      }
+      stopTrackAudio(false);
+      stopThemeSound(true);
 
       await mainMusic.play();
       mainMusicPlaying = true;
+      activeAudioSource = "main";
+
       if (toggleMainMusicBtn) toggleMainMusicBtn.textContent = "Pause Main Music";
-      if (playerTrackTitle) playerTrackTitle.textContent = "Main Page Theme";
-      if (playerTrackMeta) playerTrackMeta.textContent = "Dream Archive";
+      updatePlayerInfo("Main Page Theme", "Dream Archive");
       if (playPauseBtn) playPauseBtn.textContent = "❚❚";
     } else {
       stopMainMusic();
+      activeAudioSource = null;
       updatePlayerInfo("Nothing playing", "Choose a profile or a song");
       if (playPauseBtn) playPauseBtn.textContent = "▶";
     }
   } catch {
     alert("Browser blocked music. Click again after interacting with the page.");
   }
-}
-
-function updatePlayerInfo(title, meta) {
-  if (playerTrackTitle) playerTrackTitle.textContent = title || "Nothing playing";
-  if (playerTrackMeta) playerTrackMeta.textContent = meta || "Choose a profile or a song";
 }
 
 function buildCharacterPlaylist(character) {
@@ -762,16 +780,13 @@ async function playFromPlaylist(index) {
   if (!currentPlaylist.length || !currentPlaylist[index] || !audioPlayer) return;
 
   stopMainMusic();
-
-  if (themeSound) {
-    themeSound.pause();
-    themeSound.currentTime = 0;
-  }
+  stopThemeSound(true);
 
   currentTrackIndex = index;
 
   const track = currentPlaylist[currentTrackIndex];
   currentCharacterSlug = track.slug;
+  activeAudioSource = "track";
 
   audioPlayer.src = track.url;
   audioPlayer.volume = Number(volumeBar?.value ?? 0.8);
@@ -780,7 +795,8 @@ async function playFromPlaylist(index) {
     await audioPlayer.play();
     updatePlayerInfo(track.title, `${track.ownerName} • ${track.artist}`);
     if (playPauseBtn) playPauseBtn.textContent = "❚❚";
-  } catch {
+  } catch (err) {
+    console.error("Track failed:", track.url, err);
     updatePlayerInfo(track.title, `${track.ownerName} • ${track.artist}`);
     if (playPauseBtn) playPauseBtn.textContent = "▶";
   }
@@ -1004,21 +1020,20 @@ async function playThemeSound(soundUrl, themeLabel) {
   if (!themeSound || !soundUrl) return;
 
   try {
-    audioPlayer?.pause();
-    if (audioPlayer) audioPlayer.currentTime = 0;
+    stopTrackAudio(false);
     stopMainMusic();
+    stopThemeSound(true);
 
-    themeSound.pause();
-    themeSound.currentTime = 0;
     themeSound.src = soundUrl;
     themeSound.volume = Number(volumeBar?.value ?? 0.8);
+    activeAudioSource = "theme";
 
     await themeSound.play();
 
     updatePlayerInfo(`${themeLabel} Theme`, "Theme sound");
     if (playPauseBtn) playPauseBtn.textContent = "❚❚";
-  } catch {
-    // browser may block autoplay before user interaction
+  } catch (err) {
+    console.error("Theme sound failed:", soundUrl, err);
   }
 }
 
@@ -1097,64 +1112,61 @@ function attachCardTilt(card) {
 }
 
 playPauseBtn?.addEventListener("click", async () => {
-  if (!audioPlayer?.src && !mainMusicPlaying && !themeSound?.src) return;
-
-  if (mainMusicPlaying) {
-    if (mainMusic.paused) {
-      try {
+  try {
+    if (activeAudioSource === "main" && mainMusic) {
+      if (mainMusic.paused) {
         await mainMusic.play();
-        playPauseBtn.textContent = "❚❚";
-      } catch {}
-    } else {
-      mainMusic.pause();
-      playPauseBtn.textContent = "▶";
-    }
-    return;
-  }
-
-  if (themeSound && !themeSound.paused && themeSound.src) {
-    themeSound.pause();
-    playPauseBtn.textContent = "▶";
-    return;
-  }
-
-  if (themeSound && themeSound.paused && themeSound.src && (!audioPlayer.src || audioPlayer.paused)) {
-    try {
-      await themeSound.play();
-      playPauseBtn.textContent = "❚❚";
+        if (playPauseBtn) playPauseBtn.textContent = "❚❚";
+      } else {
+        mainMusic.pause();
+        if (playPauseBtn) playPauseBtn.textContent = "▶";
+      }
       return;
-    } catch {}
-  }
+    }
 
-  if (audioPlayer.paused) {
-    try {
-      await audioPlayer.play();
-      playPauseBtn.textContent = "❚❚";
-    } catch {}
-  } else {
-    audioPlayer.pause();
-    playPauseBtn.textContent = "▶";
-  }
+    if (activeAudioSource === "theme" && themeSound?.src) {
+      if (themeSound.paused) {
+        await themeSound.play();
+        if (playPauseBtn) playPauseBtn.textContent = "❚❚";
+      } else {
+        themeSound.pause();
+        if (playPauseBtn) playPauseBtn.textContent = "▶";
+      }
+      return;
+    }
+
+    if (activeAudioSource === "track" && audioPlayer?.src) {
+      if (audioPlayer.paused) {
+        await audioPlayer.play();
+        if (playPauseBtn) playPauseBtn.textContent = "❚❚";
+      } else {
+        audioPlayer.pause();
+        if (playPauseBtn) playPauseBtn.textContent = "▶";
+      }
+    }
+  } catch {}
 });
 
 prevBtn?.addEventListener("click", playPrevTrack);
 nextBtn?.addEventListener("click", playNextTrack);
 
 stopBtn?.addEventListener("click", () => {
-  stopEverything();
+  stopEverything(true);
   updatePlayerInfo("Nothing playing", "Choose a profile or a song");
 });
 
 progressBar?.addEventListener("input", () => {
-  if (mainMusicPlaying) {
-    if (isFinite(mainMusic.duration)) {
-      mainMusic.currentTime = (progressBar.value / 100) * mainMusic.duration;
-    }
-  } else if (themeSound && !themeSound.paused && isFinite(themeSound.duration)) {
+  if (activeAudioSource === "main" && isFinite(mainMusic.duration)) {
+    mainMusic.currentTime = (progressBar.value / 100) * mainMusic.duration;
+    return;
+  }
+
+  if (activeAudioSource === "theme" && isFinite(themeSound.duration)) {
     themeSound.currentTime = (progressBar.value / 100) * themeSound.duration;
-  } else if (themeSound && themeSound.src && isFinite(themeSound.duration) && audioPlayer.paused) {
-    themeSound.currentTime = (progressBar.value / 100) * themeSound.duration;
-  } else if (isFinite(audioPlayer.duration)) {
+    return;
+  }
+
+  if (activeAudioSource === "track" && isFinite(audioPlayer.duration)) {
     audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
   }
 });
@@ -1172,21 +1184,21 @@ changeThemeBtn?.addEventListener("click", cycleTheme);
 themeCycleCard?.addEventListener("click", cycleTheme);
 
 audioPlayer?.addEventListener("timeupdate", () => {
-  if (!isFinite(audioPlayer.duration)) return;
+  if (activeAudioSource !== "track" || !isFinite(audioPlayer.duration)) return;
   if (currentTime) currentTime.textContent = formatTime(audioPlayer.currentTime);
   if (duration) duration.textContent = formatTime(audioPlayer.duration);
   if (progressBar) progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
 });
 
 mainMusic?.addEventListener("timeupdate", () => {
-  if (!mainMusicPlaying || !isFinite(mainMusic.duration)) return;
+  if (activeAudioSource !== "main" || !isFinite(mainMusic.duration)) return;
   if (currentTime) currentTime.textContent = formatTime(mainMusic.currentTime);
   if (duration) duration.textContent = formatTime(mainMusic.duration);
   if (progressBar) progressBar.value = (mainMusic.currentTime / mainMusic.duration) * 100;
 });
 
 themeSound?.addEventListener("timeupdate", () => {
-  if (!isFinite(themeSound.duration)) return;
+  if (activeAudioSource !== "theme" || !isFinite(themeSound.duration)) return;
   if (currentTime) currentTime.textContent = formatTime(themeSound.currentTime);
   if (duration) duration.textContent = formatTime(themeSound.duration);
   if (progressBar) progressBar.value = (themeSound.currentTime / themeSound.duration) * 100;
@@ -1194,14 +1206,15 @@ themeSound?.addEventListener("timeupdate", () => {
 
 audioPlayer?.addEventListener("play", () => {
   mainMusic?.pause();
-  if (themeSound) themeSound.pause();
+  stopThemeSound(false);
   mainMusicPlaying = false;
+  activeAudioSource = "track";
   if (toggleMainMusicBtn) toggleMainMusicBtn.textContent = "Play Main Music";
   if (playPauseBtn) playPauseBtn.textContent = "❚❚";
 });
 
 audioPlayer?.addEventListener("pause", () => {
-  if (!audioPlayer.ended && playPauseBtn && (!themeSound || themeSound.paused)) {
+  if (!audioPlayer.ended && activeAudioSource === "track" && playPauseBtn) {
     playPauseBtn.textContent = "▶";
   }
 });
@@ -1211,15 +1224,16 @@ audioPlayer?.addEventListener("ended", () => {
 });
 
 mainMusic?.addEventListener("play", () => {
-  if (themeSound) themeSound.pause();
+  stopThemeSound(false);
   mainMusicPlaying = true;
+  activeAudioSource = "main";
   if (playPauseBtn) playPauseBtn.textContent = "❚❚";
 });
 
 mainMusic?.addEventListener("pause", () => {
   mainMusicPlaying = false;
-  if ((!audioPlayer || audioPlayer.paused) && (!themeSound || themeSound.paused)) {
-    if (playPauseBtn) playPauseBtn.textContent = "▶";
+  if (activeAudioSource === "main" && playPauseBtn) {
+    playPauseBtn.textContent = "▶";
   }
 });
 
@@ -1227,18 +1241,21 @@ themeSound?.addEventListener("play", () => {
   mainMusic?.pause();
   audioPlayer?.pause();
   mainMusicPlaying = false;
+  activeAudioSource = "theme";
   if (toggleMainMusicBtn) toggleMainMusicBtn.textContent = "Play Main Music";
   if (playPauseBtn) playPauseBtn.textContent = "❚❚";
 });
 
 themeSound?.addEventListener("pause", () => {
-  if ((!audioPlayer || audioPlayer.paused) && !mainMusicPlaying) {
-    if (playPauseBtn) playPauseBtn.textContent = "▶";
+  if (activeAudioSource === "theme" && playPauseBtn) {
+    playPauseBtn.textContent = "▶";
   }
 });
 
 themeSound?.addEventListener("ended", () => {
-  if (playPauseBtn) playPauseBtn.textContent = "▶";
+  if (activeAudioSource === "theme") {
+    if (playPauseBtn) playPauseBtn.textContent = "▶";
+  }
 });
 
 searchInput?.addEventListener("input", () => {
@@ -1410,6 +1427,7 @@ function init() {
     themeSound.volume = Number(volumeBar.value);
   }
 
+  updatePlayerInfo("Nothing playing", "Choose a profile or a song");
   playHeroIntro();
 
   if (window.location.hash.startsWith("#character/")) {
