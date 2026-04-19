@@ -101,6 +101,12 @@ const themes = [
     name: "Deep Siren",
     palette: "water glow / bubbles / sea glass dream",
     sparkles: 22
+  },
+  {
+  id: "dreamcore",
+  name: "Dreamcore",
+  palette: "liminal glow / soft nostalgia / blurry memory",
+  sparkles: 14
   }
 ];
 
