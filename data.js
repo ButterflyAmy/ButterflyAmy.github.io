@@ -428,5 +428,53 @@ export const characters = [
     ],
     defaultTrack: 0,
     tags: ["real person", "dreamy", "emotional", "important"]
+  },
+  {
+    id: 9,
+    slug: "sawada",
+    name: "Sawada",
+    category: "Movie",
+    fandom: "Gokusen",
+    role: "delinquent",
+    vibe: "relaxed,smart, loyal",
+    quote: "hm..baka",
+    cover: "images/saw1.jpg",
+    gallery: [
+      "images/saw2.png",
+      "images/saw3.jpg",
+      "images/saw4.jpg"
+    ],
+    videos: [
+      "videos/Bildschirmaufnahme 2026-04-19 054240.mp4",
+      "videos/sunvid.mp4"
+    ],
+    age: "18",
+    birthday: "January 1st",
+    origin: "Japan",
+    status: "alive",
+    species: "Human",
+    color: "white- gray",
+    favorites: "music, memories, pretty things, comfort characters, late-night thoughts",
+    personality: "Sensitive, expressive, passionate, sometimes chaotic, but full of love and ambition.",
+    story: "A person connected to this little archive and its emotional world.",
+    facts: [
+      "He rarely wastes words",
+      "First student to respect Yankumi",
+      "Leader of the class 3-D"
+    ],
+    aesthetics: "pink glow, night sky, edits, nostalgia, roses, soft chaos, playlists, dreamcore",
+    relationships: [
+      { name: "Sunnita", type: "Connection", detail: "Part of the personal universe behind the archive." }
+    ],
+    quotes: [
+      "Don’t judge people by appearances",
+      "Teachers can’t be trusted."
+    ],
+    music: [
+      { title: "Meow", artist: "Meow", url: "/music/rallysong.mp3" },
+      { title: "Tsukiyomi", artist: "Kurosagi", url: "music/kurosagi.mp3" }
+    ],
+    defaultTrack: 0,
+    tags: ["real person", "dreamy", "emotional", "important"]
   }
 ];
