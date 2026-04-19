@@ -240,8 +240,8 @@ export const characters = [
   },
   {
     id: 6,
-    slug: "Dari",
-    name: "Rally",
+    slug: "dari",
+    name: "Dari",
     category: "Animal",
     fandom: "real life",
     role: "cat",
