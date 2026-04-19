@@ -74,7 +74,7 @@ export const characters = [
     fandom: "Heaven Official's Blessing",
     role: "Ghost King",
     vibe: "loyal, dangerous, romantic, elegant",
-    quote: "I pray to never rest in peace.",
+    quote: "Your Highness, I am forever your most devoted believer.",
     cover: "images/𓈒𓂃꙳⋆  Hua Cheng 𖥔 ࣪  ♡ _  TGCF.jpg",
     gallery: [
       "images/๖ۣۜ➻❥_ 𝒜𝑛𝑖𝑚𝑒 𝐼𝑐𝑜𝑛_⊹⊱ 𝐒𝒂𝒏 𝐋𝒂𝒏𝒈ུ ི࿐ཽ༵.jpg",
@@ -92,26 +92,44 @@ export const characters = [
     color: "Red / Silver / Black",
     favorites: "Xie Lian, butterflies, silver chains",
     personality: "Devoted, calm, teasing, powerful, deeply emotional beneath control.",
-    story: "A powerful ghost king whose entire existence is shaped by devotion and unwavering love.",
+    story: "Hua Cheng was born as a mortal boy who lived a life marked by hardship, rejection, and misfortune. As a child, he met Xie Lian, the beloved Crown Prince of Xianle, whose kindness and courage left a permanent mark on him. That single act of compassion became the light Hua Cheng carried through the darkest parts of his life. After death, his powerful emotions and unwavering will allowed him to rise as a ghost. Over time, he became one of the most feared and respected Ghost Kings, known throughout the three realms for his strength, intelligence, and unpredictability. He built vast wealth, influence, and power, yet remained detached from status or praise. Though terrifying to enemies, Hua Cheng’s true nature is deeply loyal and devoted. For centuries, he waited for Xie Lian, watching over him from afar and helping him in secret whenever possible. When they finally meet again, Hua Cheng chooses to stand beside him openly.",
     facts: [
+      "His title is Crimson rain saught flower",
+      "Also known by the name San Lang.",
       "One of the strongest ghosts.",
       "Known for silver butterflies.",
-      "Would destroy the world for one person."
+      "Would destroy the world for one person.",
+      "Rarely shows respect to heavenly officials.",
+      "His weapon is the scimitar E-Ming.",
+      "He is notorious for having the worst handwriting in the three realms",
+      
     ],
     aesthetics: "Red robes, silver chains, butterflies, lantern light, night streets.",
     relationships: [
-      { name: "Xie Lian", type: "Unwavering devotion", detail: "His entire heart belongs to him." }
+      { name: "Xie Lian", type: "Unwavering devotion", detail: "His entire heart belongs to him." },
+      { name: "He Xuan", type: "Mutual Respect", detail: "Maintains a pragmatic alliance built on understanding and shared interests." },
+      { name: "Yin Yu", type: "Trusted Subordinate", detail: "One of the few people Hua Cheng trusts to handle matters within Ghost City." },
+      { name: "Qi Rong", type: "Contempt", detail: "Has little patience for his cruelty, cowardice, and chaotic behavior." },
+      { name: "Feng Xin", type: "Tension", detail: "Often clashes with him due to protectiveness over Xie Lian." },
+      { name: "Mu Qing", type: "Tension", detail: "Their interactions are sharp and distrustful, especially regarding Xie Lian." },
+      { name: "Shi Qingxuan", type: "Tolerance", detail: "More patient with them than most heavenly officials because of their kindness to Xie Lian." }
     ],
     quotes: [
+      "I pray to never rest in peace.",
       "Your Highness, I understand your everything.",
       "I only live for one person."
+      "I might not be able to decide whether the road is easy or not, but whether I walk it is entirely up to me.",
+      "If your dream is to save the common people, then my dream, is only you.",
+      "There is no banquet in this world that doesn’t come to an end. But I will never leave you",
+      "I don't know if any of you missed me... but I haven't thought about any of you at all",
+      "To die in a battle for you is my greatest honor.",
     ],
     music: [
       { title: "Mary on a Cross", artist: "Ghost", url: "music/mary on a cross(bestpart!slowed) [edit audio].mp3" },
       { title: "Cardigan", artist: "Taylor Swift", url: "music/cardigan (slowed  reverb) - taylor swift [edit audio].mp3" }
     ],
     defaultTrack: 0,
-    tags: ["ghost", "romantic", "devotion", "powerful"]
+    tags: ["ghost", "devotion", "powerful"]
   },
   {
     id: 3,
@@ -121,7 +139,7 @@ export const characters = [
     fandom: "Tokyo Ghoul",
     role: "Main Character",
     vibe: "broken, soft, haunted, intense",
-    quote: "It hurts, doesn't it?",
+    quote: "1000-7",
     cover: "images/Kaneki Ken _ Tokyo Ghoul.jpg",
     gallery: [
       "images/kaneki-1.jpg",
