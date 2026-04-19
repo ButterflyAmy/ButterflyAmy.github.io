@@ -445,7 +445,7 @@ export const characters = [
       "images/saw4.jpg"
     ],
     videos: [
-      "videos/Bildschirmaufnahme 2026-04-19 054240.mp4",
+      "videos/Bildschirmaufnahme 2026-04-20 011524.mp4",
       "videos/sunvid.mp4"
     ],
     age: "18",
