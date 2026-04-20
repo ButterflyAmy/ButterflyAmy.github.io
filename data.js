@@ -280,7 +280,7 @@ export const characters = [
     ],
     music: [
       { title: "Meow", artist: "Meow", url: "/music/rallysong.mp3" },
-      { title: "Tsukiyomi", artist: "Kurosagi", url: "music/kurosagi.mp3" }
+      { title: "miau", artist: "prrt", url: "music/Bildschirmaufnahme 2026-04-20 182323.mp3" }
     ],
     defaultTrack: 0,
     tags: ["cat", "cute", "playful", "soft"]
