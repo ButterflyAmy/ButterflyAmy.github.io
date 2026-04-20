@@ -524,8 +524,8 @@ export const characters = [
       "All the world is made of faith, and trust, and pixie dust"
     ],
     music: [
-      { title: "In the stars", artist: "Ruth B", url: "music/Bildschirmaufnahme 2026-04-20 020607.mp3" },
-      { title: "Lost Boy", artist: "ruth B", url: "music/Bildschirmaufnahme 2026-04-20 020207.mp3" }
+      { title: "Lost Boy", artist: "Ruth B", url: "music/Bildschirmaufnahme 2026-04-20 021203.mp3" },
+      { title: "In the stars", artist: "ruth B", url: "music/Bildschirmaufnahme 2026-04-20 020607.mp3" }
     ],
     defaultTrack: 0,
     tags: ["real person", "dreamy", "emotional", "important"]
