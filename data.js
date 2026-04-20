@@ -215,19 +215,19 @@ export const characters = [
     color: "Pink / Black / Silver",
     favorites: "music, memories, pretty things, comfort characters, late-night thoughts",
     personality: "Sensitive, expressive, passionate, sometimes chaotic, but full of love and ambition.",
-    story: "A girl trying to build a beautiful life while carrying a thousand feelings at once. She overthinks, dreams too much, gets attached deeply, and still keeps going.",
+    story: "I will write here later. Kein Bock gerade :P",
     facts: [
       "Wants to pass MedAT.",
-      "Gets attached to fictional characters and emotions very deeply.",
-      "Can be dramatic but also very sincere."
+      "Likes pokemon like CRAZY",
+      "Likes Avocado "
     ],
-    aesthetics: "pink glow, night sky, edits, nostalgia, roses, soft chaos, playlists, dreamcore",
+    aesthetics: "pink, white, beige, sun",
     relationships: [
-      { name: "Lee", type: "Inspiration", detail: "A source of strength and motivation when giving up feels easy." }
+      { name: "iddisd", type: "Inspiration", detail: "A source of strength and motivation when giving up feels easy." }
     ],
     quotes: [
       "Nigers stink",
-      "Everything and everyone is beautiful on their own way.",
+      "Everything and everyone is beautiful on their own way."
       
     ],
     music: [
@@ -293,7 +293,7 @@ export const characters = [
     fandom: "real life",
     role: "cat",
     vibe: "relaxed, cute, playful",
-    quote: "meow meow meow meow meow meow.",
+    quote: "meow.",
     cover: "images/dari1.png",
     gallery: [
       "images/dari2.png",
@@ -341,7 +341,7 @@ export const characters = [
     fandom: "real life",
     role: "cat",
     vibe: "relaxed, cute, playful",
-    quote: "meow meow meow meow meow meow.",
+    quote: "meoooow, meoww",
     cover: "images/sina1.png",
     gallery: [
       "images/sina2.png",
@@ -389,7 +389,7 @@ export const characters = [
     fandom: "real life",
     role: "ordinary girl",
     vibe: "relaxed, cute, playful",
-    quote: "meow meow meow meow meow meow.",
+    quote: "I am gay for Arleccino",
     cover: "images/mar1.png",
     gallery: [
       "images/mar2.png",
@@ -400,9 +400,9 @@ export const characters = [
       "videos/Bildschirmaufnahme 2026-04-19 054240.mp4",
       "videos/sunvid.mp4"
     ],
-    age: "Unknown",
-    birthday: "January 1st",
-    origin: "Austria",
+    age: "16",
+    birthday: "september ",
+    origin: "Chechen",
     status: "alive",
     species: "Human",
     color: "white- gray",
