@@ -476,5 +476,58 @@ export const characters = [
     ],
     defaultTrack: 0,
     tags: ["real person", "dreamy", "emotional", "important"]
+  },
+  {
+    id: 10,
+    slug: "peter-pan",
+    name: "Peter Pan",
+    category: "fictional",
+    fandom: "Peter Pan",
+    role: "Neverland",
+    vibe: "funny, childish, playful",
+    quote: "Never say goodbye, because goodbye means going away and going away means forgetting ",
+    cover: "images/peter1.jpg",
+    gallery: [
+      "images/peter2.jpg",
+      "images/peter3.jpg",
+      "images/peter4.jpg"
+    ],
+    videos: [
+      "videos/Bildschirmaufnahme 2026-04-20 011524.mp4",
+      "videos/sunvid.mp4"
+    ],
+    age: "never grows up",
+    birthday: "January 1st",
+    origin: "Neverland",
+    status: "alive",
+    species: "Human",
+    color: "white- gray",
+    favorites: "music, memories, pretty things, comfort characters, late-night thoughts",
+    personality: "Sensitive, expressive, passionate, sometimes chaotic, but full of love and ambition.",
+    story: "A person connected to this little archive and its emotional world.",
+    facts: [
+      "He rarely wastes words",
+      "First student to respect Yankumi",
+      "Leader of the class 3-D"
+    ],
+    aesthetics: "pink glow, night sky, edits, nostalgia, roses, soft chaos, playlists, dreamcore",
+    relationships: [
+      { name: "Sunnita", type: "Connection", detail: "Part of the personal universe behind the archive." }
+    ],
+    quotes: [
+      "All children, except one, grow up",
+      "Second star to the right and straight on till morning",
+      "Now, think of the happiest things. It's the same as having wings!",
+      "Never is an awfully long time",
+      "When people grow up they forget the way",
+      "Come with me, where dreams are born, and time is never planned",
+      "All the world is made of faith, and trust, and pixie dust"
+    ],
+    music: [
+      { title: "Lost Boy", artist: "Ruth B", url: "music/Bildschirmaufnahme 2026-04-20 020207.mp3" },
+      { title: "Tsukiyomi", artist: "Kurosagi", url: "music/kurosagi.mp3" }
+    ],
+    defaultTrack: 0,
+    tags: ["real person", "dreamy", "emotional", "important"]
   }
 ];
