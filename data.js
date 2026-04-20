@@ -390,7 +390,7 @@ export const characters = [
     role: "ordinary girl",
     vibe: "relaxed, cute, playful",
     quote: "I am gay for Arleccino",
-    cover: "images/mar1.png",
+    cover: "images/marr1.png",
     gallery: [
       "images/mar2.png",
       "images/mar3.png",
