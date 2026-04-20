@@ -423,8 +423,8 @@ export const characters = [
       "prrrt?? meoww."
     ],
     music: [
-      { title: "Meow", artist: "Meow", url: "/music/rallysong.mp3" },
-      { title: "Tsukiyomi", artist: "Kurosagi", url: "music/kurosagi.mp3" }
+      { title: "Chandalier", artist: "Sia", url: "music/Chandelier- edit audio.mp3" },
+      { title: "It Girl", artist: "Aliyahs interlude", url: "music/it girl - aliyah's interlude [edit audio].mp3" }
     ],
     defaultTrack: 0,
     tags: ["real person", "dreamy", "emotional", "important"]
